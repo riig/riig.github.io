@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Next‑Level Homepage</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: radial-gradient(circle at center, #0d0126, #000);
+      color: #e0e0ff;
+      overflow-x: hidden;
+    }
+
+    /* Menu Bar */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      background: rgba(20, 0, 40, 0.6);
+      backdrop-filter: blur(10px);
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 10;
+      border-bottom: 1px solid rgba(120, 80, 255, 0.4);
+    }
+
+    nav .logo {
+      font-size: 24px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      color: #9f7bff;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 30px;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav ul li a {
+      color: #e0e0ff;
+      text-decoration: none;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+
+    nav ul li a:hover {
+      color: #9f7bff;
+    }
+
+    /* Center 3D Product Globe */
+    .center {
+      margin-top: 140px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: calc(100vh - 140px);
+    }
+
+    .globe-container {
+      width: 400px;
+      height: 400px;
+      position: relative;
+      perspective: 1200px;
+    }
+
+    .globe {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      transform-style: preserve-3d;
+      animation: spin 20s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotateY(0deg); }
+      to { transform: rotateY(360deg); }
+    }
+
+    .product {
+      width: 120px;
+      height: 120px;
+      background: rgba(160, 120, 255, 0.2);
+      border: 2px solid #9f7bff;
+      border-radius: 12px;
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      font-size: 16px;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 0 20px #9f7bff;
+      transform-style: preserve-3d;
+    }
+
+    /* Positioning sample product cards around the 3D sphere */
+    .p1 { transform: rotateY(0deg) translateZ(200px); }
+    .p2 { transform: rotateY(72deg) translateZ(200px); }
+    .p3 { transform: rotateY(144deg) translateZ(200px); }
+    .p4 { transform: rotateY(216deg) translateZ(200px); }
+    .p5 { transform: rotateY(288deg) translateZ(200px); }
+
+    /* Hover effect for interaction */
+    .product:hover {
+      background: rgba(160, 120, 255, 0.4);
+      cursor: pointer;
+      transform: scale(1.1) translateZ(200px) !important;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="logo">MY BRAND</div>
+    <ul>
+      <li><a href="#">Home</a></li>
+      <li><a href="#">About</a></li>
+      <li><a href="#">Products</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="center">
+    <div class="globe-container">
+      <div class="globe" id="globe">
+        <div class="product p1">Product 1</div>
+        <div class="product p2">Product 2</div>
+        <div class="product p3">Product 3</div>
+        <div class="product p4">Product 4</div>
+        <div class="product p5">Product 5</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Enable dragging to rotate the globe
+    const globe = document.getElementById('globe');
+    let isDragging = false;
+    let startX = 0;
+    let currentRotation = 0;
+
+    globe.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      startX = e.clientX;
+      globe.style.animation = 'none';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      const delta = e.clientX - startX;
+      globe.style.transform = `rotateY(${currentRotation + delta / 2}deg)`;
+    });
+
+    document.addEventListener('mouseup', (e) => {
+      if (!isDragging) return;
+      const delta = e.clientX - startX;
+      currentRotation += delta / 2;
+      isDragging = false;
+    });
+  </script>
+</body>
+</html>
