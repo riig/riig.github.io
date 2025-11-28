@@ -1,102 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home</title>
-    <style>
-        /* Reset */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3D Globe</title>
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
 
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            color: #ffffff;
-            background: #0e0e0e;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* Subtle paisley smoke pattern */
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('https://images.unsplash.com/photo-1526401485004-2fda9f6aa5b4?auto=format&fit=crop&w=1200&q=60');
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center;
-            opacity: 0.13;
-            filter: blur(3px) contrast(120%);
-            z-index: -1;
-        }
-
-        header {
-            width: 100%;
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.35);
-            backdrop-filter: blur(6px);
-        }
-
-        nav a {
-            color: #ffffff;
-            text-decoration: none;
-            margin-left: 25px;
-            font-size: 1.1rem;
-            transition: 0.3s;
-        }
-
-        nav a:hover {
-            color: #c7b5ff;
-        }
-
-        .hero {
-            height: calc(100vh - 80px);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 20px;
-            background: radial-gradient(circle at center, rgba(255,255,255,0.06), rgba(0,0,0,0));
-        }
-
-        h1 {
-            font-size: 3.5rem;
-            margin-bottom: 15px;
-            letter-spacing: 2px;
-        }
-
-        p {
-            max-width: 600px;
-            font-size: 1.2rem;
-            opacity: 0.8;
-            line-height: 1.6rem;
-        }
-    </style>
+    #popup {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 300px;
+      height: 200px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 12px;
+      display: none;
+      padding: 15px;
+      color: #fff;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <div class="logo" style="font-size:1.4rem; font-weight:bold; letter-spacing:1px;">MySite</div>
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="Contact.html">Contact</a>
-        </nav>
-    </header>
+  <div id="popup">Product Preview</div>
 
-    <section class="hero">
-        <h1>Welcome</h1>
-        <p>Your sleek, minimal, modern landing page with a soft paisley-smoked background aesthetic. More content coming soon.</p>
-    </section>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+
+  <script>
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    camera.position.set(0, 0, 3);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.rotateSpeed = 0.5;
+    controls.enablePan = false;
+    controls.minDistance = 2;
+    controls.maxDistance = 4;
+
+    // Globe texture
+    const textureLoader = new THREE.TextureLoader();
+    const earthTexture = textureLoader.load('https://raw.githubusercontent.com/creativetimofficial/public-assets/master/earth.jpg');
+
+    const globeGeometry = new THREE.SphereGeometry(1, 64, 64);
+    const globeMaterial = new THREE.MeshStandardMaterial({ map: earthTexture });
+    const globe = new THREE.Mesh(globeGeometry, globeMaterial);
+    scene.add(globe);
+
+    const light = new THREE.PointLight(0xffffff, 1);
+    light.position.set(5, 5, 5);
+    scene.add(light);
+
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    let pins = [];
+
+    function addPin(lat, lon, productPage) {
+      const pinGeometry = new THREE.SphereGeometry(0.02, 16, 16);
+      const pinMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+      const pin = new THREE.Mesh(pinGeometry, pinMaterial);
+
+      const phi = (90 - lat) * (Math.PI / 180);
+      const theta = (lon + 180) * (Math.PI / 180);
+
+      pin.position.x = Math.sin(phi) * Math.cos(theta);
+      pin.position.y = Math.cos(phi);
+      pin.position.z = Math.sin(phi) * Math.sin(theta);
+
+      pin.userData = { productPage };
+
+      scene.add(pin);
+      pins.push(pin);
+    }
+
+    // Generate 10 random pins
+    for (let i = 1; i <= 10; i++) {
+      const lat = (Math.random() * 180) - 90;
+      const lon = (Math.random() * 360) - 180;
+      addPin(lat, lon, `Product${i}.html`);
+    }
+
+    function onMouseMove(event) {
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(pins);
+
+      const popup = document.getElementById('popup');
+
+      if (intersects.length > 0) {
+        popup.style.display = 'block';
+        popup.innerHTML = `<h3>${intersects[0].object.userData.productPage}</h3><p>Preview this product.</p>`;
+      } else {
+        popup.style.display = 'none';
+      }
+    }
+
+    window.addEventListener('mousemove', onMouseMove);
+
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
 </body>
 </html>
-
