@@ -67,8 +67,23 @@
   .nav-logo span { color: var(--accent); }
   .nav-tag {
     font-family: 'Share Tech Mono', monospace;
-    font-size: 0.68rem; color: var(--dim); letter-spacing: 0.14em;
+    font-size: 0.68rem; letter-spacing: 0.14em;
+    display: flex; align-items: center; gap: 0;
   }
+  .p-user   { color: #4af27a; font-weight: bold; }
+  .p-host   { color: #4af27a; font-weight: bold; }
+  .p-colon  { color: #e2e8f0; }
+  .p-path   { color: #6ab0f5; font-weight: bold; }
+  .p-dollar { color: #e2e8f0; }
+  .cursor {
+    display: inline-block;
+    width: 7px; height: 0.85em;
+    background: #e2e8f0;
+    margin-left: 1px;
+    vertical-align: middle;
+    animation: blink 1.1s step-start infinite;
+  }
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
   .hero {
     flex: 1; display: flex; flex-direction: column;
@@ -173,34 +188,34 @@
 
   <nav>
     <a class="nav-logo" href="index.html">riig<span>.github.io</span></a>
-    <span class="nav-tag">// Cybersecurity</span>
+    <span class="nav-tag"><span class="p-user" id="p-user">user</span><span class="p-colon">@</span><span class="p-host" id="p-host">localhost</span><span class="p-colon">:</span><span class="p-path">~</span><span class="p-dollar">$ </span><span class="cursor"></span></span>
   </nav>
 
   <section class="hero">
     <div class="hero-eyebrow">Personal Study Archive</div>
     <h1 class="hero-title">RIIG</h1>
-    <p class="hero-desc">HackTheBox Academy Cheat Sheet</p>
+    <p class="hero-desc">Cybersecurity Cheat Sheet</p>
 
     <div class="dir-grid">
 
       <a class="dir-card cyan" href="library.html">
         <div class="dir-card-icon">📚</div>
         <div class="dir-card-name">Study Library</div>
-        <p class="dir-card-desc">Course notes reformatted into clean, searchable cheat sheets by module.</p>
+        <p class="dir-card-desc">Course notes reformatted into friendly, graspable parts.</p>
         <div class="dir-card-cta">Enter Library</div>
       </a>
 
       <div class="dir-card locked">
         <div class="dir-card-icon">🛠️</div>
-        <div class="dir-card-name">Pentest Tools</div>
-        <p class="dir-card-desc">Command references, tool cheat sheets, and quick-use snippets.</p>
+        <div class="dir-card-name">Tools & Resources</div>/div>
+        <p class="dir-card-desc">Popular software, reliable APIs, and much more.</p>
         <div class="dir-card-cta">Coming Soon</div>
       </div>
 
       <div class="dir-card locked">
         <div class="dir-card-icon">🚩</div>
-        <div class="dir-card-name">CTF Notes</div>
-        <p class="dir-card-desc">Write-ups, techniques, and patterns from CTF challenges.</p>
+        <div class="dir-card-name">Placeholder Page</div>
+        <p class="dir-card-desc">Don't have anything to show here yet!</p>
         <div class="dir-card-cta">Coming Soon</div>
       </div>
 
@@ -208,12 +223,53 @@
 
     <div class="status-bar">
       <span class="status-dot"></span>
-      Hosted on GitHub Pages · More sections loading as courses progress
+      Sections are added to the library as I learn about them in 'HTB: Academy', but I am not affiliated with that service in any way, this is a personal study spot for myself and open to anyone who finds it useful.
     </div>
   </section>
 
   <footer>riig.github.io</footer>
 
 </div>
+<script>
+  (function() {
+    const ua = navigator.userAgent;
+
+    // ── Detect OS ──
+    let os = 'unknown';
+    if      (/Windows NT 10|Windows NT 11/.test(ua)) os = 'win11';
+    else if (/Windows NT 6\.3/.test(ua))              os = 'win8';
+    else if (/Windows/.test(ua))                      os = 'windows';
+    else if (/iPhone/.test(ua))                       os = 'iphone';
+    else if (/iPad/.test(ua))                         os = 'ipad';
+    else if (/Android/.test(ua))                      os = 'android';
+    else if (/Mac OS X/.test(ua))                     os = 'macos';
+    else if (/Linux/.test(ua))                        os = 'linux';
+    else if (/CrOS/.test(ua))                         os = 'chromeos';
+
+    // ── Detect Browser ──
+    let browser = 'browser';
+    if      (/Edg\//.test(ua))                        browser = 'edge';
+    else if (/OPR\/|Opera/.test(ua))                  browser = 'opera';
+    else if (/Brave/.test(ua))                        browser = 'brave';
+    else if (/Firefox\//.test(ua))                    browser = 'firefox';
+    else if (/Chrome\//.test(ua))                     browser = 'chrome';
+    else if (/Safari\//.test(ua))                     browser = 'safari';
+
+    // ── Build username: browser-os ──
+    const username = browser + '_' + os;
+
+    // ── Build hostname from timezone + lang ──
+    // e.g. "America/New_York" → "new_york"
+    let tz = 'localhost';
+    try {
+      tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'localhost';
+      // grab just the city part: "America/New_York" → "new_york"
+      tz = tz.split('/').pop().replace(/[-\s]/g, '_').toLowerCase();
+    } catch(e) {}
+
+    document.getElementById('p-user').textContent = username;
+    document.getElementById('p-host').textContent = tz;
+  })();
+</script>
 </body>
 </html>
