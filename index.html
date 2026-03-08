@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>riig.github.io</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Exo+2:ital,wght@0,300;0,400;0,600;0,700;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:      #0a0d13;
+    --panel:   #111827;
+    --border:  #1e2d45;
+    --accent:  #00e5ff;
+    --accent2: #ff4d6d;
+    --accent3: #a3e635;
+    --gold:    #fbbf24;
+    --text:    #c9d1e0;
+    --dim:     #6b7fa3;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px);
+    background-size: 44px 44px;
+    pointer-events: none; z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%);
+    pointer-events: none; z-index: 0;
+  }
+
+  .wrap {
+    position: relative; z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 28px 64px;
+    flex: 1; display: flex; flex-direction: column;
+  }
+
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 24px 0 22px;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Orbitron', monospace; font-weight: 900;
+    font-size: 1.05rem; letter-spacing: 0.08em;
+    color: #fff; text-decoration: none;
+  }
+  .nav-logo span { color: var(--accent); }
+  .nav-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.68rem; color: var(--dim); letter-spacing: 0.14em;
+  }
+
+  .hero {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 80px 0 56px;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem; letter-spacing: 0.3em; color: var(--accent);
+    text-transform: uppercase; margin-bottom: 22px;
+    display: flex; align-items: center; gap: 14px; opacity: 0.85;
+  }
+  .hero-eyebrow::before, .hero-eyebrow::after {
+    content: ''; width: 36px; height: 1px; background: var(--accent); opacity: 0.45;
+  }
+
+  h1.hero-title {
+    font-family: 'Orbitron', monospace; font-weight: 900;
+    font-size: clamp(2.8rem, 7vw, 5.2rem); letter-spacing: 0.04em; line-height: 1.0;
+    background: linear-gradient(135deg, #ffffff 0%, var(--accent) 50%, #0055cc 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    margin-bottom: 18px;
+  }
+
+  .hero-desc {
+    font-size: 0.93rem; color: var(--dim); max-width: 440px;
+    line-height: 1.75; margin-bottom: 54px; font-style: italic;
+  }
+
+  .dir-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 14px; width: 100%; max-width: 680px; margin: 0 auto;
+  }
+
+  .dir-card {
+    display: flex; flex-direction: column;
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 10px; padding: 22px 22px 20px;
+    text-decoration: none;
+    transition: transform 0.18s, box-shadow 0.22s, border-color 0.22s;
+    position: relative; overflow: hidden;
+  }
+  .dir-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 2px; transition: opacity 0.2s; opacity: 0;
+  }
+  .dir-card:hover { transform: translateY(-3px); }
+  .dir-card:hover::before { opacity: 1; }
+  .dir-card.cyan::before { background: linear-gradient(90deg, var(--accent), #0077ff); }
+  .dir-card.cyan:hover { border-color: var(--accent); box-shadow: 0 8px 32px rgba(0,229,255,0.12); }
+
+  .dir-card.locked {
+    opacity: 0.38; pointer-events: none; cursor: default;
+  }
+
+  .dir-card-icon { font-size: 1.55rem; margin-bottom: 12px; line-height: 1; }
+  .dir-card-name {
+    font-family: 'Orbitron', monospace; font-size: 0.8rem; font-weight: 700;
+    letter-spacing: 0.07em; color: #fff; margin-bottom: 6px;
+  }
+  .dir-card-desc { font-size: 0.76rem; color: var(--dim); line-height: 1.55; flex: 1; }
+  .dir-card-cta {
+    margin-top: 16px; font-family: 'Share Tech Mono', monospace;
+    font-size: 0.67rem; color: var(--accent); letter-spacing: 0.12em;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .dir-card-cta::after { content: '→'; font-size: 0.88rem; }
+  .dir-card.locked .dir-card-cta { color: var(--dim); }
+  .dir-card.locked .dir-card-cta::after { content: '🔒'; font-size: 0.72rem; }
+
+  .status-bar {
+    margin-top: 46px;
+    display: flex; align-items: center; justify-content: center; gap: 9px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.66rem; color: var(--dim); letter-spacing: 0.14em;
+  }
+  .status-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--accent3);
+    animation: pulse 2.2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  footer {
+    text-align: center; padding: 26px 0 0;
+    border-top: 1px solid var(--border);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.66rem; color: var(--dim); letter-spacing: 0.1em;
+  }
+
+  @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+  .hero-eyebrow { animation: fadeUp 0.4s ease both; }
+  h1.hero-title  { animation: fadeUp 0.45s 0.05s ease both; }
+  .hero-desc     { animation: fadeUp 0.45s 0.1s ease both; }
+  .dir-grid      { animation: fadeUp 0.5s 0.18s ease both; }
+  .status-bar    { animation: fadeUp 0.5s 0.28s ease both; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav>
+    <a class="nav-logo" href="index.html">riig<span>.github.io</span></a>
+    <span class="nav-tag">// Cybersecurity</span>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-eyebrow">Personal Study Archive</div>
+    <h1 class="hero-title">RIIG</h1>
+    <p class="hero-desc">HackTheBox Academy Cheat Sheet</p>
+
+    <div class="dir-grid">
+
+      <a class="dir-card cyan" href="library.html">
+        <div class="dir-card-icon">📚</div>
+        <div class="dir-card-name">Study Library</div>
+        <p class="dir-card-desc">Course notes reformatted into clean, searchable cheat sheets by module.</p>
+        <div class="dir-card-cta">Enter Library</div>
+      </a>
+
+      <div class="dir-card locked">
+        <div class="dir-card-icon">🛠️</div>
+        <div class="dir-card-name">Pentest Tools</div>
+        <p class="dir-card-desc">Command references, tool cheat sheets, and quick-use snippets.</p>
+        <div class="dir-card-cta">Coming Soon</div>
+      </div>
+
+      <div class="dir-card locked">
+        <div class="dir-card-icon">🚩</div>
+        <div class="dir-card-name">CTF Notes</div>
+        <p class="dir-card-desc">Write-ups, techniques, and patterns from CTF challenges.</p>
+        <div class="dir-card-cta">Coming Soon</div>
+      </div>
+
+    </div>
+
+    <div class="status-bar">
+      <span class="status-dot"></span>
+      Hosted on GitHub Pages · More sections loading as courses progress
+    </div>
+  </section>
+
+  <footer>riig.github.io</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linux Fundamentals — riig.github.io</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Exo+2:ital,wght@0,300;0,400;0,600;0,700;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #0a0d13;
+    --bg2:       #0f1420;
+    --bg3:       #141926;
+    --panel:     #111827;
+    --border:    #1e2d45;
+    --accent:    #00e5ff;
+    --accent2:   #ff4d6d;
+    --accent3:   #a3e635;
+    --gold:      #fbbf24;
+    --purple:    #a78bfa;
+    --text:      #c9d1e0;
+    --dim:       #6b7fa3;
+    --code-bg:   #080c14;
+    --code-bdr:  #1a3a5c;
+    --glow:      0 0 20px rgba(0,229,255,0.2);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px);
+    background-size: 44px 44px;
+    pointer-events: none; z-index: 0;
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: 980px; margin: 0 auto; padding: 0 24px 80px; }
+
+  /* ── NAV ── */
+  nav {
+    display: flex; align-items: center; gap: 10px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--dim);
+    letter-spacing: 0.1em;
+  }
+  nav a { color: var(--accent); text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+  .nav-sep { color: var(--border); }
+
+  /* ── COURSE HEADER ── */
+  .course-header {
+    padding: 48px 0 38px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0;
+    position: relative;
+  }
+  .course-header::after {
+    content: '';
+    position: absolute; bottom: -1px; left: 0; width: 240px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+  }
+  .ch-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    color: var(--accent3);
+    background: #a3e63510;
+    border: 1px solid #a3e63530;
+    padding: 4px 12px;
+    border-radius: 3px;
+    margin-bottom: 16px;
+  }
+  .ch-badge::before { content: '●'; font-size: 0.5rem; }
+  h1.course-title {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: clamp(1.6rem, 4vw, 2.6rem);
+    letter-spacing: 0.06em;
+    background: linear-gradient(135deg, #fff 0%, var(--accent) 60%, #0077ff 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    margin-bottom: 10px;
+  }
+  .course-meta {
+    display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--dim);
+    letter-spacing: 0.1em;
+    margin-top: 12px;
+  }
+  .meta-item { display: flex; align-items: center; gap: 6px; }
+  .meta-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent3); }
+  .meta-dot.red { background: var(--accent2); }
+
+  /* ── TAB BAR ── */
+  .tab-bar {
+    display: flex; gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 40px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tab-bar::-webkit-scrollbar { display: none; }
+
+  .tab-btn {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 16px 28px 14px;
+    border: none; background: none; cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .tab-btn:hover .tab-label { color: var(--text); }
+  .tab-btn.active { border-bottom-color: var(--accent); }
+  .tab-btn.active .tab-label { color: var(--accent); }
+  .tab-btn.locked { cursor: not-allowed; opacity: 0.38; }
+
+  .tab-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-bottom: 3px;
+    transition: color 0.2s;
+  }
+  .tab-sub {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--dim);
+    letter-spacing: 0.1em;
+    opacity: 0.7;
+  }
+  .tab-lock {
+    position: absolute; top: 10px; right: 10px;
+    font-size: 0.6rem; opacity: 0.4;
+  }
+
+  /* ── CONTENT PANELS ── */
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── COMING SOON PANEL ── */
+  .coming-panel {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 80px 20px;
+    text-align: center;
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+  }
+  .coming-icon { font-size: 3rem; margin-bottom: 20px; opacity: 0.35; }
+  .coming-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.1rem;
+    color: var(--dim);
+    letter-spacing: 0.1em;
+    margin-bottom: 10px;
+  }
+  .coming-sub { font-size: 0.85rem; color: var(--dim); opacity: 0.7; max-width: 380px; line-height: 1.7; }
+
+  /* ══════════════════════════════════════════
+     SHARED CONTENT STYLES (same as Part 1)
+  ══════════════════════════════════════════ */
+
+  .quick-ref {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-top: 2px solid var(--accent);
+    border-radius: 8px;
+    padding: 26px 30px;
+    margin-bottom: 36px;
+    box-shadow: var(--glow);
+  }
+  .sec-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sec-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--border), transparent); }
+
+  .cmd-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 9px;
+  }
+  .cmd-pill {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--code-bg);
+    border: 1px solid var(--code-bdr);
+    border-radius: 6px;
+    padding: 8px 13px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .cmd-pill:hover { border-color: var(--accent); box-shadow: 0 0 10px rgba(0,229,255,0.12); }
+  .cmd-pill code {
+    font-family: 'Share Tech Mono', monospace; font-size: 0.8rem; color: var(--accent); white-space: nowrap;
+  }
+  .cmd-pill span { font-size: 0.72rem; color: var(--dim); line-height: 1.3; }
+
+  /* section cards */
+  .section-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 28px;
+    overflow: hidden;
+    transition: box-shadow 0.3s;
+  }
+  .section-card:hover { box-shadow: 0 4px 32px rgba(0,229,255,0.07); }
+
+  .card-header {
+    display: flex; align-items: center; gap: 13px;
+    padding: 16px 26px;
+    background: linear-gradient(90deg, #0f1e30, var(--bg3));
+    border-bottom: 1px solid var(--border);
+  }
+  .card-icon {
+    width: 34px; height: 34px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 7px; font-size: 1rem; flex-shrink: 0;
+  }
+  .icon-blue  { background: #00e5ff1a; border: 1px solid #00e5ff33; }
+  .icon-red   { background: #ff4d6d1a; border: 1px solid #ff4d6d33; }
+  .icon-green { background: #a3e6351a; border: 1px solid #a3e63533; }
+  .icon-gold  { background: #fbbf241a; border: 1px solid #fbbf2433; }
+  .icon-purple{ background: #a78bfa1a; border: 1px solid #a78bfa33; }
+
+  .card-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.86rem; font-weight: 700; letter-spacing: 0.07em; color: #fff;
+  }
+  .card-num { margin-left: auto; font-family: 'Share Tech Mono', monospace; font-size: 0.68rem; color: var(--dim); letter-spacing: 0.14em; }
+
+  /* quiz gap badge */
+  .quiz-badge {
+    margin-left: 10px;
+    display: inline-flex; align-items: center; gap: 5px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: #fbbf2415;
+    border: 1px solid #fbbf2440;
+    color: var(--gold);
+    padding: 3px 9px;
+    border-radius: 3px;
+  }
+  .quiz-badge::before { content: '★'; }
+
+  .card-body { padding: 22px 26px; }
+
+  p { margin-bottom: 13px; font-size: 0.93rem; color: var(--text); line-height: 1.75; }
+  p:last-child { margin-bottom: 0; }
+  strong, b { color: #fff; font-weight: 600; }
+  .hi   { color: var(--accent);  font-weight: 600; }
+  .hi-r { color: var(--accent2); font-weight: 600; }
+  .hi-g { color: var(--accent3); font-weight: 600; }
+  .hi-y { color: var(--gold);    font-weight: 600; }
+  .hi-p { color: var(--purple);  font-weight: 600; }
+
+  /* terminal block */
+  .cmd-block { margin: 16px 0; border-radius: 8px; overflow: hidden; border: 1px solid var(--code-bdr); box-shadow: 0 2px 14px rgba(0,0,0,0.4); }
+  .cmd-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 7px 14px;
+    background: #0b1929;
+    border-bottom: 1px solid var(--code-bdr);
+  }
+  .dots { display: flex; gap: 5px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dr { background: #ff5f57; } .dy { background: #febc2e; } .dg { background: #28c840; }
+  .cmd-lbl { font-family: 'Share Tech Mono', monospace; font-size: 0.65rem; color: var(--dim); letter-spacing: 0.12em; }
+  .cmd-content {
+    background: var(--code-bg); padding: 15px 18px;
+    font-family: 'Share Tech Mono', monospace; font-size: 0.82rem; line-height: 1.85; overflow-x: auto;
+  }
+  .pr  { color: var(--accent3); }
+  .ct  { color: #e2e8f0; }
+  .cc  { color: var(--dim); }
+  .out { color: #94a3b8; }
+  .oh  { color: var(--gold); }
+
+  code {
+    font-family: 'Share Tech Mono', monospace; font-size: 0.84em;
+    background: #0f1e30; color: var(--accent);
+    padding: 2px 6px; border-radius: 4px; border: 1px solid var(--code-bdr);
+  }
+
+  .note-box {
+    display: flex; gap: 13px; padding: 13px 16px;
+    border-radius: 8px; margin: 16px 0; font-size: 0.87rem;
+  }
+  .note-box.tip  { background: #00e5ff0a; border-left: 3px solid var(--accent); }
+  .note-box.warn { background: #ff4d6d0a; border-left: 3px solid var(--accent2); }
+  .note-box.good { background: #a3e6350a; border-left: 3px solid var(--accent3); }
+  .note-box.quiz { background: #fbbf240a; border-left: 3px solid var(--gold); }
+  .ni { font-size: 1.05rem; flex-shrink: 0; line-height: 1.65; }
+  .nt { color: var(--text); line-height: 1.65; }
+  .nt strong { display: block; margin-bottom: 4px; }
+
+  .styled-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; margin: 16px 0; }
+  .styled-table th {
+    background: #0b1929; color: var(--accent);
+    font-family: 'Orbitron', monospace; font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 9px 15px; text-align: left; border-bottom: 1px solid var(--border);
+  }
+  .styled-table td { padding: 9px 15px; border-bottom: 1px solid #151f30; vertical-align: top; }
+  .styled-table tr:hover td { background: #0f1c2e; }
+  .styled-table td:first-child { font-family: 'Share Tech Mono', monospace; color: var(--accent); white-space: nowrap; }
+  .styled-table td:last-child { color: var(--dim); }
+
+  .shortcut-row { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 14px; }
+  .sc-chip {
+    display: flex; align-items: center; gap: 7px;
+    background: var(--code-bg); border: 1px solid var(--border);
+    border-radius: 6px; padding: 6px 12px; font-size: 0.8rem;
+  }
+  .key {
+    font-family: 'Share Tech Mono', monospace; font-size: 0.75rem;
+    background: #1a2840; border: 1px solid #2a4060; color: var(--gold);
+    padding: 2px 7px; border-radius: 4px;
+  }
+  .sc-chip span:last-child { color: var(--dim); font-size: 0.76rem; }
+
+  .divider {
+    display: flex; align-items: center; gap: 14px;
+    margin: 36px 0; color: var(--dim);
+    font-family: 'Share Tech Mono', monospace; font-size: 0.68rem; letter-spacing: 0.2em;
+  }
+  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; }
+  .divider::before { background: linear-gradient(90deg, transparent, var(--border)); }
+  .divider::after  { background: linear-gradient(90deg, var(--border), transparent); }
+
+  footer {
+    text-align: center; padding-top: 44px;
+    border-top: 1px solid var(--border); margin-top: 16px;
+    font-family: 'Share Tech Mono', monospace; font-size: 0.68rem;
+    color: var(--dim); letter-spacing: 0.1em;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+
+  @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+  .section-card { animation: fadeUp 0.45s ease both; }
+  .section-card:nth-child(2) { animation-delay:.04s; }
+  .section-card:nth-child(3) { animation-delay:.08s; }
+  .section-card:nth-child(4) { animation-delay:.12s; }
+  .section-card:nth-child(5) { animation-delay:.16s; }
+  .section-card:nth-child(6) { animation-delay:.20s; }
+  .section-card:nth-child(7) { animation-delay:.24s; }
+  .section-card:nth-child(8) { animation-delay:.28s; }
+  .section-card:nth-child(9) { animation-delay:.32s; }
+  .section-card:nth-child(10){ animation-delay:.36s; }
+  .section-card:nth-child(11){ animation-delay:.40s; }
+  .section-card:nth-child(12){ animation-delay:.44s; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav>
+    <a href="index.html">riig.github.io</a>
+    <span class="nav-sep">/</span>
+    <a href="library.html">Library</a>
+    <span class="nav-sep">/</span>
+    <span>Linux Fundamentals</span>
+  </nav>
+
+  <div class="course-header">
+    <div class="ch-badge">In Progress · 8/30 Sections</div>
+    <h1 class="course-title">LINUX FUNDAMENTALS</h1>
+    <div class="course-meta">
+      <div class="meta-item"><span class="meta-dot"></span> HackTheBox Academy</div>
+      <div class="meta-item"><span class="meta-dot"></span> 30 Sections · 3 Parts</div>
+      <div class="meta-item"><span class="meta-dot red"></span> Part 1 Active (Sections 1–10)</div>
+    </div>
+  </div>
+
+  <!-- TAB BAR -->
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab(0)" id="tab0">
+      <span class="tab-label">Part 1</span>
+      <span class="tab-sub">Sections 1–10</span>
+    </button>
+    <button class="tab-btn locked" onclick="return false" id="tab1">
+      <span class="tab-label">Part 2</span>
+      <span class="tab-sub">Sections 11–20</span>
+      <span class="tab-lock">🔒</span>
+    </button>
+    <button class="tab-btn locked" onclick="return false" id="tab2">
+      <span class="tab-label">Part 3</span>
+      <span class="tab-sub">Sections 21–30</span>
+      <span class="tab-lock">🔒</span>
+    </button>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       PART 1 PANEL
+  ═══════════════════════════════════════ -->
+  <div class="tab-panel active" id="panel0">
+
+    <!-- QUICK REF -->
+    <div class="quick-ref">
+      <div class="sec-label">⚡ Quick Command Reference — Part 1</div>
+      <div class="cmd-grid">
+        <div class="cmd-pill"><code>whoami</code><span>Current username</span></div>
+        <div class="cmd-pill"><code>id</code><span>User identity &amp; groups</span></div>
+        <div class="cmd-pill"><code>hostname</code><span>System hostname</span></div>
+        <div class="cmd-pill"><code>uname</code><span>OS / kernel info</span></div>
+        <div class="cmd-pill"><code>pwd</code><span>Working directory</span></div>
+        <div class="cmd-pill"><code>ifconfig</code><span>Network interfaces</span></div>
+        <div class="cmd-pill"><code>ip a</code><span>Interfaces + MTU info</span></div>
+        <div class="cmd-pill"><code>ip link</code><span>Link-layer interface info</span></div>
+        <div class="cmd-pill"><code>netstat</code><span>Network status</span></div>
+        <div class="cmd-pill"><code>ss</code><span>Socket investigation</span></div>
+        <div class="cmd-pill"><code>ps</code><span>Process status</span></div>
+        <div class="cmd-pill"><code>who</code><span>Logged-in users</span></div>
+        <div class="cmd-pill"><code>env</code><span>Environment variables</span></div>
+        <div class="cmd-pill"><code>lsblk</code><span>Block devices</span></div>
+        <div class="cmd-pill"><code>lsusb</code><span>USB devices</span></div>
+        <div class="cmd-pill"><code>lsof</code><span>Open files</span></div>
+        <div class="cmd-pill"><code>lspci</code><span>PCI devices</span></div>
+        <div class="cmd-pill"><code>ls</code><span>List directory</span></div>
+        <div class="cmd-pill"><code>ls -i</code><span>List with inode numbers</span></div>
+        <div class="cmd-pill"><code>cd</code><span>Change directory</span></div>
+        <div class="cmd-pill"><code>touch</code><span>Create empty file</span></div>
+        <div class="cmd-pill"><code>mkdir</code><span>Create directory</span></div>
+        <div class="cmd-pill"><code>mv</code><span>Move / rename</span></div>
+        <div class="cmd-pill"><code>cp</code><span>Copy file</span></div>
+        <div class="cmd-pill"><code>tree</code><span>Visual dir tree</span></div>
+        <div class="cmd-pill"><code>clear</code><span>Clear terminal</span></div>
+      </div>
+    </div>
+
+    <!-- 01: SSH -->
+    <div class="section-card">
+      <div class="card-header">
+        <div class="card-icon icon-blue">🔐</div>
+        <div class="card-title">Connecting via SSH</div>
+        <div class="card-num">01 / 10</div>
+      </div>
+      <div class="card-body">
+        <p>SSH (Secure Shell) lets you remotely access target machines securely over a network. This is the standard way to connect to HTB lab machines.</p>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
+          <div class="cmd-content">
+<span class="pr">$</span> <span class="ct">ssh htb-student@&lt;TARGET_IP&gt;</span><br>
+<span class="out">htb-student@&lt;TARGET_IP&gt;'s password: <span class="oh">••••••••</span></span><br>
+<span class="out">Welcome to Ubuntu 20.04 LTS...</span><br>
+<span class="out">htb-student@JohnDoe:~$</span>
+          </div>
+        </div>
+        <div class="note-box tip"><span class="ni">💡</span><div class="nt"><strong>Tip</strong>Replace <code>&lt;TARGET_IP&gt;</code> with the actual IP shown in your HTB lab. The password is provided in the module instructions.</div></div>
+      </div>
+    </div>
+
+    <!-- 02: hostname -->
+    <div class="section-card">
+      <div class="card-header">
+        <div class="card-icon icon-green">🖥️</div>
+        <div class="card-title">hostname — Identify the Machine</div>
+        <div class="card-num">02 / 10</div>
+      </div>
+      <div class="card-body">
+        <p>The <span class="hi">hostname</span> command prints the name of the computer you are currently logged into. Confirms which machine you've accessed during an engagement.</p>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
+          <div class="cmd-content">
+<span class="pr">JohnDoe@htb[~]$</span> <span class="ct">hostname</span><br>
+<span class="out oh">HP-Laptop-123</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 03: whoami -->
+    <div class="section-card">
+      <div class="card-header">
+        <div class="card-icon icon-red">👤</div>
+        <div class="card-title">whoami — Current User</div>
+        <div class="card-num">03 / 10</div>
+      </div>
+      <div class="card-body">
+        <p><span class="hi">whoami</span> works on both <strong>Windows and Linux</strong>. After gaining access to a system, this is one of the <span class="hi-y">first commands to run</span> — knowing who you are tells you what you can do.</p>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
+          <div class="cmd-content">
+<span class="pr">JohnDoe@htb[~]$</span> <span class="ct">whoami</span><br>
+<span class="out oh">JohnDoe</span>
+          </div>
+        </div>
+        <div class="note-box warn"><span class="ni">⚠️</span><div class="nt"><strong>Why it matters in pentesting</strong>Your current user determines <strong>privileges</strong> and <strong>access</strong> on the target — a critical first step before attempting privilege escalation.</div></div>
+      </div>
+    </div>
+
+    <!-- 04: id -->
+    <div class="section-card">
+      <div class="card-header">
+        <div class="card-icon icon-gold">🪪</div>
+        <div class="card-title">id — User Identity &amp; Group Membership</div>
+        <div class="card-num">04 / 10</div>
+      </div>
+      <div class="card-body">
+        <p><span class="hi">id</span> expands on <code>whoami</code> by showing your effective group memberships and IDs — invaluable for understanding what permissions you have.</p>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
+          <div class="cmd-content">
+<span class="pr">JohnDoe@htb[~]$</span> <span class="ct">id</span><br>
+<span class="out">uid=1000(<span class="oh">JohnDoe</span>) gid=1000(JohnDoe) groups=1000(JohnDoe),</span><br>
+<span class="out">  1337(<span class="oh">hackthebox</span>),4(adm),24(cdrom),27(<span class="oh">sudo</span>),30(dip),46(plugdev),</span><br>
+<span class="out">  116(lpadmin),126(sambashare)</span>
+          </div>
+        </div>
+        <table class="styled-table">
+          <thead><tr><th>Group</th><th>What it means</th></tr></thead>
+          <tbody>
+            <tr><td>hackthebox (1337)</td><td>Non-standard — investigate its permissions and accessible files</td></tr>
+            <tr><td>adm (4)</td><td>Can read logs in <code>/var/log</code> — potential access to sensitive info</td></tr>
+            <tr><td>sudo (27)</td><td>🚨 Can run commands as root — key privilege escalation target</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 05: ip / MTU — QUIZ GAP -->
+    <div class="section-card">
+      <div class="card-header">
+        <div class="card-icon icon-purple">🌐</div>
+        <div class="card-title">ip — Network Interfaces &amp; MTU <span class="quiz-badge">Quiz Gap</span></div>
+        <div class="card-num">05 / 10</div>
+      </div>
+      <div class="card-body">
+        <p>The <span class="hi">ip</span> command is used to show or manipulate routing, network devices, interfaces, and tunnels. The key subcommands for enumeration are <code>ip a</code> (addresses) and <code>ip link</code> (link-layer info).</p>
+        <p>The <span class="hi-y">MTU (Maximum Transmission Unit)</span> is a property of each network interface — it defines the largest packet size that can be transmitted. The default for Ethernet is <strong>1500 bytes</strong>. Finding which interface has MTU 1500 is a common recon/quiz task.</p>
+
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — ip a (show all interfaces)</span></div>
+          <div class="cmd-content">
+<span class="pr">JohnDoe@htb[~]$</span> <span class="ct">ip a</span><br>
+<span class="out">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu <span class="oh">65536</span> qdisc noqueue state UNKNOWN</span><br>
+<span class="out">    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</span><br>
+<span class="out">    inet 127.0.0.1/8 scope host lo</span><br>
+<span class="out">2: <span class="oh">eth0</span>: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu <span class="oh">1500</span> qdisc pfifo_fast</span><br>
+<span class="out">    link/ether 00:0c:29:xx:xx:xx brd ff:ff:ff:ff:ff:ff</span><br>
+<span class="out">    inet 10.129.x.x/16 scope global eth0</span>
+          </div>
+        </div>
+
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — filter MTU lines only (faster)</span></div>
+          <div class="cmd-content">
+<span class="pr">JohnDoe@htb[~]$</span> <span class="ct">ip a | grep mtu</span><br>
+<span class="out">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 ...</span><br>
+<span class="out">2: <span class="oh">eth0</span>: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu <span class="oh">1500</span> ...</span><br><br>
+<span class="cc"># Or use ip link for link-layer only:</span><br>
+<span class="pr">JohnDoe@htb[~]$</span> <span class="ct">ip link</span>
+          </div>
+        </div>
+
+        <div class="note-box quiz">
+          <span class="ni">★</span>
+          <div class="nt">
+            <strong>How to answer the MTU quiz question</strong>
+            The question asks for the <strong>name of the interface</strong> with MTU 1500. Look at the line containing <code>mtu 1500</code> — the interface name is the word before the colon on that line.<br><br>
+            <code>2: eth0: ... mtu 1500</code> → answer is <span class="hi-y">eth0</span><br>
+            <code>3: ens33: ... mtu 1500</code> → answer is <span class="hi-y">ens33</span>
+          </div>
+        </div>
+
+        <table class="styled-table">
+          <thead><tr><th>Command</th><th>What it shows</th></tr></thead>
+          <tbody>
+            <tr><td>ip a</td><td>All interfaces with IP addresses, MTU, and state</td></tr>
+            <tr><td>ip addr</td><td>Same as <code>ip a</code> (full form)</td></tr>
+            <tr><td>ip link</td><td>Link-layer info (MAC, MTU, flags) — no IP addresses</td></tr>
+            <tr><td>ip a | grep mtu</td><td>Show only MTU lines for all interfaces</td></tr>
+            <tr><td>ip route</td><td>Routing table — useful for finding gateways</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 06: ls -i inode — QUIZ GAP -->
+    <div class="section-card">
+      <div class="card-header">
+        <div class="card-icon icon-gold">🔢</div>
+        <div class="card-title">ls -i — Inode (Index) Numbers <span class="quiz-badge">Quiz Gap</span></div>
+        <div class="card-num">06 / 10</div>
+      </div>
+      <div class="card-body">
+        <p>Every file in Linux has an <span class="hi-y">inode (index node)</span> — a unique number that the filesystem uses to identify it, regardless of filename. This wasn't covered in the main notes but appeared as a quiz question.</p>
+        <p>The <span class="hi">-i</span> flag on <code>ls</code> adds the inode number as a column to the left of each file name. <code>ls -la</code> alone does <strong>not</strong> show inodes — you need <code>-i</code> specifically.</p>
+
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — ls -i (all files in current dir)</span></div>
+          <div class="cmd-content">
+<span class="pr">JohnDoe@htb[~]$</span> <span class="ct">ls -i</span><br>
+<span class="out"><span class="oh">262401</span> sudoers   <span class="oh">131074</span> passwd   <span class="oh">655362</span> shadow</span><br><br>
+<span class="cc"># Target a specific file:</span><br>
+<span class="pr">JohnDoe@htb[~]$</span> <span class="ct">ls -i sudoers</span><br>
+<span class="out"><span class="oh">262401</span> sudoers</span>
+          </div>
+        </div>
+
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — combine with -la for full detail</span></div>
+          <div class="cmd-content">
+<span class="pr">JohnDoe@htb[~]$</span> <span class="ct">ls -ila</span><br>
+<span class="out"><span class="oh">262401</span> -r--r----- 1 root root 669 Jan 19 2021 sudoers</span><br>
+<span class="out"><span class="oh">131074</span> -rw-r--r-- 1 root root 1822 Jan 19 2021 passwd</span>
+          </div>
+        </div>
+
+        <div class="note-box quiz">
+          <span class="ni">★</span>
+          <div class="nt">
+            <strong>How to answer the inode quiz question</strong>
+            Navigate to the directory containing the file, then run <code>ls -i &lt;filename&gt;</code>. The <strong>number on the left</strong> is the inode (index number).<br><br>
+            <code>262401 sudoers</code> → answer is <span class="hi-y">262401</span>
+          </div>
+        </div>
+
+        <table class="styled-table">
+          <thead><tr><th>Command</th><th>What it shows</th></tr></thead>
+          <tbody>
+            <tr><td>ls -i</td><td>Inode number for all files in current directory</td></tr>
+            <tr><td>ls -i &lt;file&gt;</td><td>Inode number for a specific file</td></tr>
+            <tr><td>ls -ila</td><td>Inode + long format + hidden files (maximum detail)</td></tr>
+            <tr><td>stat &lt;file&gt;</td><td>Full inode info including block count, timestamps, and links</td></tr>
+          </tbody>
+        </table>
+
+        <div class="note-box warn">
+          <span class="ni">⚠️</span>
+          <div class="nt"><strong>Why ls -la doesn't show it</strong><code>ls -la</code> shows permissions, owner, size, and timestamps — but <strong>not</strong> the inode. You need the <code>-i</code> flag specifically for that.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 07: uname -->
+    <div class="section-card">
+      <div class="card-header">
+        <div class="card-icon icon-blue">⚙️</div>
+        <div class="card-title">uname — Kernel &amp; System Info</div>
+        <div class="card-num">07 / 10</div>
+      </div>
+      <div class="card-body">
+        <p><span class="hi">uname</span> prints OS information. The most useful flags are <code>-a</code> (all info) and <code>-r</code> (kernel release — for finding kernel exploits).</p>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
+          <div class="cmd-content">
+<span class="pr">JohnDoe@htb[~]$</span> <span class="ct">uname -a</span><br>
+<span class="out">Linux box <span class="oh">4.15.0-99-generic</span> #100-Ubuntu SMP Wed Apr 22 20:32:56 UTC 2020 x86_64 GNU/Linux</span><br><br>
+<span class="pr">JohnDoe@htb[~]$</span> <span class="ct">uname -r</span><br>
+<span class="out oh">4.15.0-99-generic</span>
+          </div>
+        </div>
+        <table class="styled-table">
+          <thead><tr><th>Flag</th><th>Output</th></tr></thead>
+          <tbody>
+            <tr><td>uname -a</td><td>All info (kernel, hostname, release, version, arch, OS)</td></tr>
+            <tr><td>uname -r</td><td>Kernel release — use to search for kernel exploits</td></tr>
+            <tr><td>uname -s</td><td>Kernel name (e.g. <code>Linux</code>)</td></tr>
+            <tr><td>uname -n</td><td>Network node hostname</td></tr>
+            <tr><td>uname -m</td><td>Machine hardware (e.g. <code>x86_64</code>)</td></tr>
+            <tr><td>uname -o</td><td>OS (e.g. <code>GNU/Linux</code>)</td></tr>
+          </tbody>
+        </table>
+        <div class="note-box tip"><span class="ni">💡</span><div class="nt"><strong>Kernel exploit tip</strong>Run <code>uname -r</code>, then search <em>"4.15.0-99-generic exploit"</em> to quickly find known kernel vulnerabilities for privilege escalation.</div></div>
+      </div>
+    </div>
+
+    <!-- 08: Navigation -->
+    <div class="section-card">
+      <div class="card-header">
+        <div class="card-icon icon-green">🗂️</div>
+        <div class="card-title">Navigation — pwd, ls, cd</div>
+        <div class="card-num">08 / 10</div>
+      </div>
+      <div class="card-body">
+        <p>Navigation in Linux is done entirely through the terminal. Confirm <em>where you are</em> with <span class="hi">pwd</span>, list contents with <span class="hi">ls</span>, and move with <span class="hi">cd</span>.</p>
+
+        <div class="sec-label" style="margin-top:4px;">pwd — Print Working Directory</div>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
+          <div class="cmd-content">
+<span class="pr">JohnDoe@htb[~]$</span> <span class="ct">pwd</span><br>
+<span class="out oh">/home/JohnDoe</span>
+          </div>
+        </div>
+
+        <div class="sec-label">ls — List Directory Contents</div>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — ls variants</span></div>
+          <div class="cmd-content">
+<span class="cc"># Basic list</span><br>
+<span class="pr">JohnDoe@htb[~]$</span> <span class="ct">ls</span><br>
+<span class="out">Desktop  Documents  Downloads  Music  Pictures  Public  Templates  Videos</span><br><br>
+<span class="cc"># Long format (permissions, owner, size, date)</span><br>
+<span class="pr">JohnDoe@htb[~]$</span> <span class="ct">ls -l</span><br>
+<span class="out">drwxr-xr-x 2 JohnDoe htbacademy 4096 Nov 13 17:37 Desktop</span><br>
+<span class="out">drwxr-xr-x 2 JohnDoe htbacademy 4096 Nov 13 17:34 Documents ...</span><br><br>
+<span class="cc"># Long format + hidden files (names starting with .)</span><br>
+<span class="pr">JohnDoe@htb[~]$</span> <span class="ct">ls -la</span><br>
+<span class="out"><span class="oh">.bash_history  .bashrc</span>  Desktop  Documents ...</span><br><br>
+<span class="cc"># List specific path without navigating</span><br>
+<span class="pr">JohnDoe@htb[~]$</span> <span class="ct">ls -l /var/</span>
+          </div>
+        </div>
+
+        <div class="sec-label">ls -l Column Breakdown</div>
+        <table class="styled-table">
+          <thead><tr><th>Column</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td>drwxr-xr-x</td><td>Type (<code>d</code>=dir, <code>-</code>=file) + permissions (owner/group/others)</td></tr>
+            <tr><td>2</td><td>Number of hard links</td></tr>
+            <tr><td>JohnDoe</td><td>Owner</td></tr>
+            <tr><td>htbacademy</td><td>Group owner</td></tr>
+            <tr><td>4096</td><td>Size in bytes</td></tr>
+            <tr><td>Nov 13 17:37</td><td>Last modified</td></tr>
+          </tbody>
+        </table>
+
+        <div class="sec-label">cd — Change Directory</div>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — cd variants</span></div>
+          <div class="cmd-content">
+<span class="cc"># Navigate to absolute path</span><br>
+<span class="pr">JohnDoe@htb[~]$</span> <span class="ct">cd /dev/shm</span><br>
+<span class="out">JohnDoe@htb[<span class="oh">/dev/shm</span>]$</span><br><br>
+<span class="cc"># Jump back to last directory</span><br>
+<span class="pr">JohnDoe@htb[/dev/shm]$</span> <span class="ct">cd -</span><br>
+<span class="out">JohnDoe@htb[<span class="oh">~</span>]$</span><br><br>
+<span class="cc"># Go up one level</span><br>
+<span class="pr">JohnDoe@htb[/dev/shm]$</span> <span class="ct">cd ..</span><br>
+<span class="out">JohnDoe@htb[<span class="oh">/dev</span>]$</span><br><br>
+<span class="cc"># TAB auto-complete</span><br>
+<span class="pr">JohnDoe@htb[~]$</span> <span class="ct">cd /dev/s</span> <span class="cc">[TAB TAB]</span><br>
+<span class="out oh">shm/  snd/</span>
+          </div>
+        </div>
+        <div class="note-box tip"><span class="ni">💡</span><div class="nt"><strong>Dot notation</strong><code>.</code> = current dir &nbsp;|&nbsp; <code>..</code> = parent dir &nbsp;|&nbsp; <code>~</code> = home dir</div></div>
+      </div>
+    </div>
+
+    <!-- 09: File Management -->
+    <div class="section-card">
+      <div class="card-header">
+        <div class="card-icon icon-gold">📁</div>
+        <div class="card-title">File Management — touch, mkdir, mv, cp</div>
+        <div class="card-num">09 / 10</div>
+      </div>
+      <div class="card-body">
+        <p>Linux gives you full control over files and directories from the command line — creating, moving, renaming, and copying are all fast one-liners.</p>
+
+        <div class="sec-label">Creating Files &amp; Directories</div>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
+          <div class="cmd-content">
+<span class="cc"># Create an empty file</span><br>
+<span class="pr">JohnDoe@htb[~]$</span> <span class="ct">touch info.txt</span><br><br>
+<span class="cc"># Create a directory</span><br>
+<span class="pr">JohnDoe@htb[~]$</span> <span class="ct">mkdir Storage</span><br><br>
+<span class="cc"># Create nested directories in one shot (-p = parents)</span><br>
+<span class="pr">JohnDoe@htb[~]$</span> <span class="ct">mkdir -p Storage/local/user/documents</span><br><br>
+<span class="cc"># Create a file inside a specific path</span><br>
+<span class="pr">JohnDoe@htb[~]$</span> <span class="ct">touch ./Storage/local/user/userinfo.txt</span><br><br>
+<span class="cc"># Visualize the directory tree</span><br>
+<span class="pr">JohnDoe@htb[~]$</span> <span class="ct">tree .</span><br>
+<span class="out">.</span><br>
+<span class="out">├── info.txt</span><br>
+<span class="out">└── Storage/local/user/</span><br>
+<span class="out">    ├── documents</span><br>
+<span class="out">    └── <span class="oh">userinfo.txt</span></span>
+          </div>
+        </div>
+
+        <div class="sec-label">mv — Move &amp; Rename · cp — Copy</div>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — mv syntax: mv &lt;src&gt; &lt;dest&gt;</span></div>
+          <div class="cmd-content">
+<span class="cc"># Rename a file</span><br>
+<span class="pr">JohnDoe@htb[~]$</span> <span class="ct">mv info.txt information.txt</span><br><br>
+<span class="cc"># Move multiple files into a directory</span><br>
+<span class="pr">JohnDoe@htb[~]$</span> <span class="ct">touch readme.txt</span><br>
+<span class="pr">JohnDoe@htb[~]$</span> <span class="ct">mv information.txt readme.txt Storage/</span><br><br>
+<span class="cc"># Copy a file (original stays)</span><br>
+<span class="pr">JohnDoe@htb[~]$</span> <span class="ct">cp Storage/readme.txt Storage/local/</span>
+          </div>
+        </div>
+        <div class="note-box warn"><span class="ni">⚠️</span><div class="nt"><strong>mv vs cp</strong><code>mv</code> moves (source is deleted). <code>cp</code> copies (source remains). Always double-check before moving important files.</div></div>
+      </div>
+    </div>
+
+    <!-- 10: Tips -->
+    <div class="section-card">
+      <div class="card-header">
+        <div class="card-icon icon-blue">⌨️</div>
+        <div class="card-title">Terminal Shortcuts &amp; Study Tips</div>
+        <div class="card-num">10 / 10</div>
+      </div>
+      <div class="card-body">
+        <p>Mastering shortcuts makes you significantly faster — especially during CTF challenges with time pressure.</p>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
+          <div class="cmd-content">
+<span class="cc"># Navigate and clear in one command</span><br>
+<span class="pr">JohnDoe@htb[~]$</span> <span class="ct">cd /dev/shm &amp;&amp; clear</span>
+          </div>
+        </div>
+
+        <div class="sec-label" style="margin-top:20px;">Essential Shortcuts</div>
+        <div class="shortcut-row">
+          <div class="sc-chip"><span class="key">Ctrl</span><span>+</span><span class="key">L</span><span>Clear terminal</span></div>
+          <div class="sc-chip"><span class="key">Ctrl</span><span>+</span><span class="key">R</span><span>Search command history</span></div>
+          <div class="sc-chip"><span class="key">↑</span><span>/</span><span class="key">↓</span><span>Scroll history</span></div>
+          <div class="sc-chip"><span class="key">TAB</span><span>Auto-complete</span></div>
+          <div class="sc-chip"><span class="key">TAB TAB</span><span>Show all completions</span></div>
+          <div class="sc-chip"><span class="key">Ctrl</span><span>+</span><span class="key">C</span><span>Kill process</span></div>
+          <div class="sc-chip"><span class="key">Ctrl</span><span>+</span><span class="key">Z</span><span>Suspend process</span></div>
+        </div>
+
+        <div style="margin-top:22px;">
+          <div class="note-box tip"><span class="ni">📖</span><div class="nt"><strong>Use man pages</strong>Type <code>man &lt;command&gt;</code> for the full manual of any command. You'll often find powerful flags you didn't know existed.</div></div>
+          <div class="note-box good"><span class="ni">🧪</span><div class="nt"><strong>Experiment on your VM</strong>Take a snapshot first, then break things intentionally. Fixing what you broke is the fastest way to learn.</div></div>
+          <div class="note-box warn"><span class="ni">🔍</span><div class="nt"><strong>Think like an attacker</strong>For every command you learn, ask: <em>how would this be used during a pentest?</em> Commands like <code>uname -r</code>, <code>id</code>, <code>ip a</code>, and <code>ls -la</code> are among the first run after gaining access.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider">── end of part 1 · sections 1–10 ──</div>
+
+  </div><!-- end panel0 -->
+
+  <!-- PART 2 PANEL -->
+  <div class="tab-panel" id="panel1">
+    <div class="coming-panel">
+      <div class="coming-icon">🔒</div>
+      <div class="coming-title">Part 2 — Unlocking Soon</div>
+      <p class="coming-sub">Sections 11–20 will appear here as progress continues through the course. Check back after reaching section 11.</p>
+    </div>
+  </div>
+
+  <!-- PART 3 PANEL -->
+  <div class="tab-panel" id="panel2">
+    <div class="coming-panel">
+      <div class="coming-icon">🔒</div>
+      <div class="coming-title">Part 3 — Unlocking Soon</div>
+      <p class="coming-sub">Sections 21–30 will appear here once the final stretch of the course is reached.</p>
+    </div>
+  </div>
+
+  <footer>
+    <p><a href="index.html">← Home</a> &nbsp;·&nbsp; <a href="library.html">Library</a> &nbsp;·&nbsp; Linux Fundamentals &nbsp;·&nbsp; riig.github.io</p>
+  </footer>
+
+</div>
+
+<script>
+  function switchTab(index) {
+    document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === index));
+    document.querySelectorAll('.tab-panel').forEach((p, i) => p.classList.toggle('active', i === index));
+  }
+</script>
+</body>
+</html>
