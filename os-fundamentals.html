@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OS Fundamentals — riig.github.io</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Exo+2:ital,wght@0,300;0,400;0,600;0,700;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:      #0a0d13;
+    --bg2:     #0f1420;
+    --panel:   #111827;
+    --border:  #1e2d45;
+    --accent:  #00e5ff;
+    --accent2: #ff4d6d;
+    --accent3: #a3e635;
+    --gold:    #fbbf24;
+    --purple:  #a78bfa;
+    --text:    #c9d1e0;
+    --dim:     #6b7fa3;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px);
+    background-size: 44px 44px;
+    pointer-events: none; z-index: 0;
+    animation: gridDrift 40s linear infinite;
+  }
+  @keyframes gridDrift { 0%{background-position:0 0;} 100%{background-position:44px 44px;} }
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.45) 100%);
+    pointer-events: none; z-index: 0;
+  }
+
+  .wrap {
+    position: relative; z-index: 1;
+    max-width: 960px; margin: 0 auto; padding: 0 28px 80px;
+  }
+
+  /* NAV */
+  nav {
+    display: flex; align-items: center; gap: 10px;
+    padding: 22px 0; border-bottom: 1px solid var(--border);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.73rem; color: var(--dim); letter-spacing: 0.1em;
+  }
+  nav a { color: var(--accent); text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+  .sep { color: var(--border); }
+
+  /* PAGE HEADER */
+  .page-header {
+    padding: 48px 0 40px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    animation: fadeUp 0.4s ease both;
+  }
+  .page-header::after {
+    content: '';
+    position: absolute; bottom: -1px; left: 0; width: 220px; height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+  }
+  .ph-eyebrow {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.68rem; letter-spacing: 0.2em; color: var(--accent);
+    text-transform: uppercase; margin-bottom: 14px; opacity: 0.8;
+  }
+  h1.page-title {
+    font-family: 'Orbitron', monospace; font-weight: 900;
+    font-size: clamp(1.7rem, 4vw, 2.7rem); letter-spacing: 0.06em;
+    background: linear-gradient(135deg, #fff 0%, var(--accent) 60%, #0077ff 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    margin-bottom: 16px;
+  }
+  .ph-sub {
+    font-size: 0.88rem; color: var(--dim); line-height: 1.6; max-width: 580px; margin-bottom: 20px;
+  }
+  .stat-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 4px; }
+  .stat-chip {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 20px;
+  }
+  .stat-num {
+    font-family: 'Orbitron', monospace; font-size: 1.5rem;
+    font-weight: 700; color: var(--accent); line-height: 1;
+  }
+  .stat-label {
+    font-family: 'Share Tech Mono', monospace; font-size: 0.65rem;
+    letter-spacing: 0.14em; color: var(--dim); text-transform: uppercase;
+  }
+
+  /* SECTION DIVIDER */
+  .sec-label {
+    display: flex; align-items: center; gap: 14px;
+    font-family: 'Orbitron', monospace; font-size: 0.62rem;
+    letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent);
+    margin: 44px 0 22px;
+  }
+  .sec-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--border), transparent); }
+
+  /* COURSE CARDS */
+  .course-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .course-card {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 14px; overflow: hidden;
+    text-decoration: none; display: block;
+    transition: transform 0.2s, box-shadow 0.25s, border-color 0.25s;
+    position: relative;
+  }
+  .course-card:hover { transform: translateY(-4px); }
+  .course-card.active-card:hover {
+    box-shadow: 0 12px 44px rgba(0,229,255,0.12);
+    border-color: var(--accent);
+  }
+  .course-card.locked-card { opacity: 0.38; pointer-events: none; }
+
+  .card-stripe { height: 3px; width: 100%; }
+  .stripe-cyan   { background: linear-gradient(90deg, var(--accent), #0077ff); }
+  .stripe-red    { background: linear-gradient(90deg, var(--accent2), #ff8c00); }
+  .stripe-gold   { background: linear-gradient(90deg, var(--gold), #f59e0b); }
+  .stripe-green  { background: linear-gradient(90deg, var(--accent3), #22c55e); }
+
+  .card-inner { padding: 24px 26px 22px; }
+  .card-top {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .card-icon-wrap {
+    width: 48px; height: 48px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; flex-shrink: 0;
+  }
+  .ci-cyan   { background: #00e5ff18; border: 1px solid #00e5ff33; }
+  .ci-red    { background: #ff4d6d18; border: 1px solid #ff4d6d33; }
+  .ci-gold   { background: #fbbf2418; border: 1px solid #fbbf2433; }
+  .ci-green  { background: #a3e63518; border: 1px solid #a3e63533; }
+
+  .card-badge {
+    font-family: 'Share Tech Mono', monospace; font-size: 0.62rem;
+    letter-spacing: 0.13em; padding: 4px 10px; border-radius: 20px; text-transform: uppercase;
+  }
+  .badge-active { background: #a3e63520; color: var(--accent3); border: 1px solid #a3e63540; }
+  .badge-soon   { background: #6b7fa320; color: var(--dim);     border: 1px solid #6b7fa340; }
+
+  .card-name {
+    font-family: 'Orbitron', monospace; font-size: 1rem; font-weight: 700;
+    color: #fff; letter-spacing: 0.05em; margin-bottom: 8px;
+  }
+  .card-desc { font-size: 0.82rem; color: var(--dim); line-height: 1.65; margin-bottom: 20px; }
+
+  .card-progress { margin-bottom: 16px; }
+  .prog-label {
+    display: flex; justify-content: space-between;
+    font-family: 'Share Tech Mono', monospace; font-size: 0.63rem;
+    color: var(--dim); letter-spacing: 0.09em; margin-bottom: 6px;
+  }
+  .prog-label span:last-child { color: var(--accent3); }
+  .prog-bar { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .prog-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--accent), #0077ff); }
+
+  .card-parts { display: flex; gap: 7px; flex-wrap: wrap; }
+  .part-chip {
+    font-family: 'Share Tech Mono', monospace; font-size: 0.66rem;
+    padding: 4px 10px; border-radius: 4px; letter-spacing: 0.07em;
+  }
+  .part-active { border: 1px solid var(--accent);  color: var(--accent);  background: #00e5ff0f; }
+  .part-soon   { border: 1px solid var(--border);  color: var(--dim);     background: var(--bg2); opacity: 0.5; }
+
+  .card-cta {
+    margin-top: 20px; display: flex; align-items: center; gap: 8px;
+    font-family: 'Share Tech Mono', monospace; font-size: 0.68rem;
+    color: var(--accent); letter-spacing: 0.12em;
+    transition: gap 0.2s;
+  }
+  .course-card:hover .card-cta { gap: 13px; }
+  .card-cta::after { content: '→'; font-size: 0.9rem; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+  .page-header { animation: fadeUp 0.4s ease both; }
+  .course-card { animation: fadeUp 0.45s ease both; }
+  .course-card:nth-child(2) { animation-delay: 0.07s; }
+  .course-card:nth-child(3) { animation-delay: 0.14s; }
+  .course-card:nth-child(4) { animation-delay: 0.21s; }
+
+  /* FOOTER */
+  footer {
+    text-align: center; padding-top: 52px; margin-top: 10px;
+    border-top: 1px solid var(--border);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.66rem; color: var(--dim); letter-spacing: 0.1em;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav>
+    <a href="index.html">riig.github.io</a>
+    <span class="sep">/</span>
+    <a href="library.html">Library</a>
+    <span class="sep">/</span>
+    <span>OS Fundamentals</span>
+  </nav>
+
+  <div class="page-header">
+    <div class="ph-eyebrow">OS Fundamentals &mdash; Operating System Knowledge</div>
+    <h1 class="page-title">OS FUNDAMENTALS</h1>
+    <p class="ph-sub">Understand how operating systems work at a deep level. Each course covers core concepts, commands, file structures, and security-relevant knowledge for that OS.</p>
+    <div class="stat-row">
+      <div class="stat-chip">
+        <span class="stat-num">1</span>
+        <span class="stat-label">Course Active</span>
+      </div>
+      <div class="stat-chip">
+        <span class="stat-num">4</span>
+        <span class="stat-label">Total Courses</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-label">// Courses</div>
+
+  <div class="course-grid">
+
+    <!-- Linux Fundamentals — ACTIVE -->
+    <a class="course-card active-card" href="linux-fundamentals.html">
+      <div class="card-stripe stripe-cyan"></div>
+      <div class="card-inner">
+        <div class="card-top">
+          <div class="card-icon-wrap ci-cyan">🐧</div>
+          <span class="card-badge badge-active">In Progress</span>
+        </div>
+        <div class="card-name">Linux Fundamentals</div>
+        <p class="card-desc">SSH, system recon, navigation, file management, text editors, file search, redirections, filtering, and regular expressions.</p>
+        <div class="card-progress">
+          <div class="prog-label"><span>Parts Available</span><span>2 / 3</span></div>
+          <div class="prog-bar"><div class="prog-fill" style="width:67%"></div></div>
+        </div>
+        <div class="card-parts">
+          <span class="part-chip part-active">Part 1 &middot; Foundation</span>
+          <span class="part-chip part-active">Part 2 &middot; Filtering</span>
+          <span class="part-chip part-soon">Part 3 &middot; Advanced</span>
+        </div>
+        <div class="card-cta">Start Learning</div>
+      </div>
+    </a>
+
+    <!-- Windows Fundamentals — Coming Soon -->
+    <div class="course-card locked-card">
+      <div class="card-stripe stripe-red"></div>
+      <div class="card-inner">
+        <div class="card-top">
+          <div class="card-icon-wrap ci-red">🪟</div>
+          <span class="card-badge badge-soon">Coming Soon</span>
+        </div>
+        <div class="card-name">Windows Fundamentals</div>
+        <p class="card-desc">Windows internals, PowerShell, the registry, Active Directory basics, and enumeration techniques for Windows environments.</p>
+        <div class="card-parts">
+          <span class="part-chip part-soon">Part 1</span>
+          <span class="part-chip part-soon">Part 2</span>
+          <span class="part-chip part-soon">Part 3</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- macOS Fundamentals — Coming Soon -->
+    <div class="course-card locked-card">
+      <div class="card-stripe stripe-gold"></div>
+      <div class="card-inner">
+        <div class="card-top">
+          <div class="card-icon-wrap ci-gold">🍎</div>
+          <span class="card-badge badge-soon">Coming Soon</span>
+        </div>
+        <div class="card-name">macOS Fundamentals</div>
+        <p class="card-desc">macOS architecture, Terminal usage, file system layout, and security features specific to Apple environments.</p>
+        <div class="card-parts">
+          <span class="part-chip part-soon">Part 1</span>
+          <span class="part-chip part-soon">Part 2</span>
+          <span class="part-chip part-soon">Part 3</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Android Fundamentals — Coming Soon -->
+    <div class="course-card locked-card">
+      <div class="card-stripe stripe-green"></div>
+      <div class="card-inner">
+        <div class="card-top">
+          <div class="card-icon-wrap ci-green">🤖</div>
+          <span class="card-badge badge-soon">Coming Soon</span>
+        </div>
+        <div class="card-name">Android Fundamentals</div>
+        <p class="card-desc">Android architecture, ADB, permissions model, APK analysis, and mobile security concepts for Android devices.</p>
+        <div class="card-parts">
+          <span class="part-chip part-soon">Part 1</span>
+          <span class="part-chip part-soon">Part 2</span>
+          <span class="part-chip part-soon">Part 3</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <p><a href="index.html">← Home</a> &nbsp;·&nbsp; <a href="library.html">Library</a> &nbsp;·&nbsp; OS Fundamentals &nbsp;·&nbsp; riig.github.io</p>
+  </footer>
+
+</div>
+</body>
+</html>

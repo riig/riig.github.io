@@ -1,0 +1,453 @@
+File Descriptors and Redirections
+
+A file descriptor (FD) in Unix/Linux operating systems is a reference, maintained by the kernel, that allows the system to manage Input/Output (I/O) operations. It acts as a unique identifier for an open file, socket, or any other I/O resource. In Windows-based operating systems, this is known as a file handle. Essentially, the file descriptor is the system's way of keeping track of active I/O connections, such as reading from or writing to a file.
+
+Think of it as a ticket number you get when checking in your coat at a coatroom. The ticket (file descriptor) represents your connection to your coat (file or resource), and whenever you need to retrieve your coat (perform I/O), you present the ticket to the attendant (operating system) who knows exactly where your coat is stored (which resource the file descriptor refers to). Without the ticket, you'd have no way of efficiently accessing your coat among the many others stored, just as without a file descriptor, the operating system wouldn't know which resource to interact with. You will soon see why file descriptors are so important and why understanding them is crucial as we dive into the upcoming examples.
+
+By default, the first three file descriptors in Linux are:
+
+    Data Stream for Input
+        STDIN – 0
+    Data Stream for Output
+        STDOUT – 1
+    Data Stream for Output that relates to an error occurring.
+        STDERR – 2
+
+STDIN and STDOUT
+
+Let us see an example with cat. When running cat, we give the running program our standard input (STDIN - FD 0), marked green, wherein this case "SOME INPUT" is. As soon as we have confirmed our input with [ENTER], it is returned to the terminal as standard output (STDOUT - FD 1), marked red.
+
+Terminal window with user 'JohnDoe@target' displaying the command 'cat' and output 'Think Outside The Box' highlighted twice, once in green and once in red.
+STDOUT and STDERR
+
+In the next example, by using the find command, we will see the standard output (STDOUT - FD 1) marked in green and standard error (STDERR - FD 2) marked in red.
+
+Command: find /etc/ -name shadow
+
+Terminal window with user 'JohnDoe@target' executing 'find /etc/ -name shadow'. Output shows '/etc/shadow' and 'Permission denied' for other directories
+
+In this case, the error is marked and displayed with "Permission denied". We can check this by redirecting the file descriptor for the errors (FD 2 - STDERR) to "/dev/null." This way, we redirect the resulting errors to the "null device," which discards all data.
+
+Command: find /etc/ -name shadow 2>/dev/null
+
+Terminal window with user 'JohnDoe@target executing 'find /etc/ -name shadow 2>/dev/null'. Output shows '/etc/shadow'.
+Redirect STDOUT to a File
+
+Now we can see that all errors (STDERR) previously presented with "Permission denied" are no longer displayed. The only result we see now is the standard output (STDOUT), which we can also redirect to a file with the name results.txt that will only contain standard output without the standard errors.
+
+Command: find /etc/ -name shadow 2>/dev/null > results.txt
+
+Terminal window with user 'JohnDoe@target' executing 'find /etc/ -name shadow 2>/dev/null > results.txt' and 'cat results.txt'. Output shows '/etc/shadow'.
+Redirect STDOUT and STDERR to Separate Files
+
+We should have noticed that we did not use a number before the greater-than sign (>) in the last example. That is because we redirected all the standard errors to the "null device" before, and the only output we get is the standard output (FD 1 - STDOUT). To make this more precise, we will redirect standard error (FD 2 - STDERR) and standard output (FD 1 - STDOUT) to different files.
+
+Command: find /etc/ -name shadow 2> stderr.txt 1> stdout.txt
+
+Terminal window with user 'JohnDoe@target' executing 'find /etc/ -name shadow 2> stderr.txt 1> stdout.txt'. Output shows '/etc/shadow' in stdout.txt and 'Permission denied' messages in stderr.txt.
+Redirect STDIN
+
+As we have already seen, in combination with the file descriptors, we can redirect errors and output with greater-than character (>). This also works with the lower-than sign (<). However, the lower-than sign serves as standard input (FD 0 - STDIN). These characters can be seen as "direction" in the form of an arrow that tells us "from where" and "where to" the data should be redirected. We use the cat command to use the contents of the file "stdout.txt" as STDIN.
+
+Command: cat < stdout.txt
+
+Terminal window with user 'JohnDoe@target' executing 'cat < stdout.txt'. Output shows '/etc/shadow'.
+Redirect STDOUT and Append to a File
+
+When we use the greater-than sign (>) to redirect our STDOUT, a new file is automatically created if it does not already exist. If this file exists, it will be overwritten without asking for confirmation. If we want to append STDOUT to our existing file, we can use the double greater-than sign (>>).
+
+Command: find /etc/ -name passwd >> stdout.txt 2>/dev/null
+
+Terminal window with user 'JohnDoe@target' executing 'find /etc/ -name passwd >> stdout.txt 2>/dev/null' and 'cat stdout.txt'. Output shows '/etc/pam.d/passwd', '/etc/cron.daily/passwd', and '/etc/passwd'.
+Redirect STDIN Stream to a File
+
+We can also use the double lower-than characters (<<) to add our standard input through a stream. We can use the so-called End-Of-File (EOF) function of a Linux system file, which defines the input's end. In the next example, we will use the cat command to read our streaming input through the stream and direct it to a file called "stream.txt."
+
+Command: cat << EOF > stream.txt
+
+Terminal window with user 'JohnDoe@target' executing 'cat << EOF > stream.txt' with input 'Hack The Box' and 'EOF'. Then 'cat stream.txt' displays 'Hack The Box'.
+Pipes
+
+Another way to redirect STDOUT is to use pipes (|). These are useful when we want to use the STDOUT from one program to be processed by another. One of the most commonly used tools is grep, which we will use in the next example. Grep is used to filter STDOUT according to the pattern we define. In the next example, we use the find command to search for all files in the "/etc/" directory with a ".conf" extension. Any errors are redirected to the "null device" (/dev/null). Using grep, we filter out the results and specify that only the lines containing the pattern "systemd" should be displayed.
+
+Command: find /etc/ -name *.conf 2>/dev/null | grep systemd
+
+Terminal window with user 'JohnDoe@target' executing 'find /etc/ -name *.conf 2>/dev/null | grep systemd'. Output lists systemd configuration files: system.conf, timesyncd.conf, journald.conf, user.conf, logind.conf, resolved.conf.
+
+The redirections work, not only once. We can use the obtained results to redirect them to another program. For the next example, we will use the tool called wc, which should count the total number of obtained results.
+
+Command: find /etc/ -name *.conf 2>/dev/null | grep systemd | wc -l
+
+Terminal window with user 'JohnDoe@target' executing 'find /etc/ -name *.conf 2>/dev/null | grep systemd | wc -l'. Output shows '6'.
+
+Now that we have a fundamental understanding of file descriptors, redirections, and pipes, we can structure our commands more efficiently to extract the exact information we need. This knowledge allows us to manipulate how input and output flows between files, processes, and the system, enabling us to handle data more effectively. By leveraging these tools, we can streamline tasks, avoid unnecessary steps, and work with files and system resources in a much more organized and efficient manner, ultimately enhancing our productivity and precision in managing operations.
+
+
+
+
+Filter Contents
+
+In the previous section, we explored how to use redirection to send the output of one program into another for further processing. Now, let's talk about reading files directly from the command line, without needing to open a text editor.
+
+There are two powerful tools for this - more and less. These are known as pagers, and they allow you to view the contents of a file interactively, one screen at a time. While both tools serve a similar purpose, they have some differences in functionality, which we'll touch on later.
+
+Using more and less, you can easily scroll through large files, search for text, and navigate forward or backward without modifying the file itself. This is especially useful when you're working with large logs or text files that don't fit neatly into one screen.
+
+The goal for this section is to learn how to filter content and handle the redirected output from previous commands. But before we dive into filtering, we need to become familiar with some essential tools and commands that are specifically designed to make filtering more efficient and powerful.
+
+Before we start filtering the output of commands, let’s explore a few foundational tools that will help you efficiently sift through and manipulate text. These tools are crucial when working with large amounts of data or when you need to automate tasks that involve searching, sorting, or processing information.
+
+Let's look at some examples to understand how these tools work in practice.
+More
+
+Command: cat /etc/passwd | more
+
+The /etc/passwd file in Linux is like a phone directory for users on the system. It includes details such as the username, user ID, group ID, home directory, and the default shell they use.
+
+After we read the content using cat and redirected it to more, the already mentioned pager opens, and we will automatically start at the beginning of the file.
+
+shellsession
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+<SNIP>
+--More--
+
+With the [Q] key, we can leave this pager. We will notice that the output remains in the terminal.
+Less
+
+If we now take a look at the tool less, we will notice on the man page that it contains many more features than more.
+
+Command: less /etc/passwd
+
+The presentation is almost the same as with more.
+
+shellsession
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+<SNIP>
+:
+
+When closing less with the [Q] key, we will notice that the output we have seen, unlike more, does not remain in the terminal.
+Head
+
+Sometimes we will only be interested in specific issues either at the beginning of the file or the end. If we only want to get the first lines of the file, we can use the tool head. By default, head prints the first ten lines of the given file or input, if not specified otherwise.
+
+Command: head /etc/passwd
+
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/usr/sbin/nologin
+man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+
+Tail
+
+If we only want to see the last parts of a file or results, we can use the counterpart of head called tail, which returns the last ten lines.
+
+Command: tail /etc/passwd
+
+miredo:x:115:65534::/var/run/miredo:/usr/sbin/nologin
+usbmux:x:116:46:usbmux daemon,,,:/var/lib/usbmux:/usr/sbin/nologin
+rtkit:x:117:119:RealtimeKit,,,:/proc:/usr/sbin/nologin
+nm-openvpn:x:118:120:NetworkManager OpenVPN,,,:/var/lib/openvpn/chroot:/usr/sbin/nologin
+nm-openconnect:x:119:121:NetworkManager OpenConnect plugin,,,:/var/lib/NetworkManager:/usr/sbin/nologin
+pulse:x:120:122:PulseAudio daemon,,,:/var/run/pulse:/usr/sbin/nologin
+beef-xss:x:121:124::/var/lib/beef-xss:/usr/sbin/nologin
+lightdm:x:122:125:Light Display Manager:/var/lib/lightdm:/bin/false
+do-agent:x:998:998::/home/do-agent:/bin/false
+user6:x:1000:1000:,,,:/home/user6:/bin/bash
+
+It would be highly beneficial to explore the available options these tools offer and experiment with them.
+Sort
+
+Depending on which results and files are dealt with, they are rarely sorted. Often it is necessary to sort the desired results alphabetically or numerically to get a better overview. For this, we can use a tool called sort.
+
+Command: cat /etc/passwd | sort
+
+_apt:x:104:65534::/nonexistent:/usr/sbin/nologin
+backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+cr4y0n:x:1001:1001::/home/cr4y0n:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+dnsmasq:x:107:65534:dnsmasq,,,:/var/lib/misc:/usr/sbin/nologin
+dovecot:x:114:117:Dovecot mail server,,,:/usr/lib/dovecot:/usr/sbin/nologin
+dovenull:x:115:118:Dovecot login user,,,:/nonexistent:/usr/sbin/nologin
+ftp:x:113:65534::/srv/ftp:/usr/sbin/nologin
+games:x:5:60:games:/usr/games:/usr/sbin/nologin
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
+JohnDoe:x:1002:1002::/home/JohnDoe:/bin/bash
+<SNIP>
+
+As we can see now, the output no longer starts with root but is now sorted alphabetically.
+Grep
+
+In many cases, we will need to search for specific results that match patterns we define. One of the most commonly used tools for this purpose is grep, which provides a wide range of powerful features for pattern searching. For instance, we can use grep to search for users who have their default shell set to /bin/bash.
+
+Command: cat /etc/passwd | grep "/bin/bash"
+
+root:x:0:0:root:/root:/bin/bash
+mrb3n:x:1000:1000:mrb3n:/home/mrb3n:/bin/bash
+cr4y0n:x:1001:1001::/home/cr4y0n:/bin/bash
+JohnDoe:x:1002:1002::/home/JohnDoe:/bin/bash
+
+This is just one example of how grep can be applied to efficiently filter data based on predefined patterns. Another possibility is to exclude specific results. For this, the option "-v" is used with grep. In the next example, we exclude all users who have disabled the standard shell with the name "/bin/false" or "/usr/bin/nologin".
+
+Command: cat /etc/passwd | grep -v "false\|nologin"
+
+root:x:0:0:root:/root:/bin/bash
+sync:x:4:65534:sync:/bin:/bin/sync
+postgres:x:111:117:PostgreSQL administrator,,,:/var/lib/postgresql:/bin/bash
+user6:x:1000:1000:,,,:/home/user6:/bin/bash
+
+Cut
+
+Specific results with different characters may be separated as delimiters. Here it is handy to know how to remove specific delimiters and show the words on a line in a specified position. One of the tools that can be used for this is cut. Therefore we use the option "-d" and set the delimiter to the colon character (:) and define with the option "-f" the position in the line we want to output.
+
+Command: cat /etc/passwd | grep -v "false\|nologin" | cut -d":" -f1
+
+root
+sync
+postgres
+mrb3n
+cr4y0n
+JohnDoe
+
+Tr
+
+Another possibility to replace certain characters from a line with characters defined by us is the tool tr. As the first option, we define which character we want to replace, and as a second option, we define the character we want to replace it with. In the next example, we replace the colon character with space.
+
+Command: cat /etc/passwd | grep -v "false\|nologin" | tr ":" " "
+
+root x 0 0 root /root /bin/bash
+sync x 4 65534 sync /bin /bin/sync
+postgres x 111 117 PostgreSQL administrator,,, /var/lib/postgresql /bin/bash
+mrb3n x 1000 1000 mrb3n /home/mrb3n /bin/bash
+cr4y0n x 1001 1001  /home/cr4y0n /bin/bash
+JohnDoe x 1002 1002  /home/JohnDoe /bin/bash
+
+Column
+
+Since search results can often have an unclear representation, the tool column is well suited to display such results in tabular form using the "-t."
+
+Command: cat /etc/passwd | grep -v "false\|nologin" | tr ":" " " | column -t
+
+root         x  0     0      root               /root                /bin/bash
+sync         x  4     65534  sync               /bin                 /bin/sync
+postgres     x  111   117    PostgreSQL         administrator,,,    /var/lib/postgresql     /bin/bash
+mrb3n        x  1000  1000   mrb3n              /home/mrb3n          /bin/bash
+cr4y0n     x  1001  1001   /home/cr4y0n     /bin/bash
+JohnDoe  x  1002  1002   /home/JohnDoe  /bin/bash
+
+Awk
+
+As we may have noticed, the line for the user "postgres" has one column too many. To keep it as simple as possible to sort out such results, the (g)awk programming is beneficial, which allows us to display the first ($1) and last ($NF) result of the line.
+
+Command: cat /etc/passwd | grep -v "false\|nologin" | tr ":" " " | awk '{print $1, $NF}'
+
+root /bin/bash
+sync /bin/sync
+postgres /bin/bash
+mrb3n /bin/bash
+cr4y0n /bin/bash
+JohnDoe /bin/bash
+
+Sed
+
+There will come moments when we want to change specific names in the whole file or standard input. One of the tools we can use for this is the stream editor called sed. One of the most common uses of this is substituting text. Here, sed looks for patterns we have defined in the form of regular expressions (regex) and replaces them with another pattern that we have also defined. Let us stick to the last results and say we want to replace the word "bin" with "BOX."
+
+The "s" flag at the beginning stands for the substitute command. Then we specify the pattern we want to replace. After the slash (/), we enter the pattern we want to use as a replacement in the third position. Finally, we use the "g" flag, which stands for replacing all matches.
+
+Command: cat /etc/passwd | grep -v "false\|nologin" | tr ":" " " | awk '{print $1, $NF}' | sed 's/bin/BOX/g'
+
+root /BOX/bash
+sync /BOX/sync
+postgres /BOX/bash
+mrb3n /BOX/bash
+cr4y0n /BOX/bash
+JohnDoe /BOX/bash
+
+Wc
+
+Last but not least, it will often be useful to know how many successful matches we have. To avoid counting the lines or characters manually, we can use the tool wc. With the "-l" option, we specify that only the lines are counted.
+
+Command: cat /etc/passwd | grep -v "false\|nologin" | tr ":" " " | awk '{print $1, $NF}' | wc -l
+
+6
+
+
+
+Regular Expressions
+
+Regular expressions (RegEx) are like the art of crafting precise blueprints for searching patterns in text or files. They allow you to find, replace, and manipulate data with incredible precision. Think of RegEx as a highly customizable filter that lets you sift through strings of text, looking for exactly what you need—whether it's analyzing data, validating input, or performing advanced search operations.
+
+At its core, a regular expression is a sequence of characters and symbols that together form a search pattern. These patterns often involve special symbols called metacharacters, which define the structure of the search rather than representing literal text. For example, metacharacters allow you to specify whether you're searching for digits, letters, or any character that fits a certain pattern.
+
+RegEx is available in many programming languages and tools, such as grep or sed, making it a versatile and powerful tool in a our toolkit.
+Grouping
+
+Among other things, regex offers us the possibility to group the desired search patterns. Basically, regex follows three different concepts, which are distinguished by the three different brackets:
+Grouping Operators
+	Operators	Description
+1	(a)	The round brackets are used to group parts of a regex. Within the brackets, you can define further patterns which should be processed together.
+2	[a-z]	The square brackets are used to define character classes. Inside the brackets, you can specify a list of characters to search for.
+3	{1,10}	The curly brackets are used to define quantifiers. Inside the brackets, you can specify a number or a range that indicates how often a previous pattern should be repeated.
+4	|	Also called the OR operator and shows results when one of the two expressions matches
+5	.*	Operates similarly to an AND operator by displaying results only when both expressions are present and match in the specified order
+
+Suppose we use the OR operator. The regex searches for one of the given search parameters. In the next example, we search for lines containing the word my or false. To use these operators, you need to apply the extended regex using the -E option in grep.
+OR operator
+
+Command:  grep -E "(my|false)" /etc/passwd
+
+lxd:x:105:65534::/var/lib/lxd/:/bin/false
+pollinate:x:109:1::/var/cache/pollinate:/bin/false
+mysql:x:116:120:MySQL Server,,:/nonexistent:/bin/false
+
+Since one of the two search parameters always occurs in the three lines, all three lines are displayed accordingly. However, if we use the AND operator, we will get a different result for the same search parameters.
+AND operator
+
+Command:  grep -E "(my.*false)" /etc/passwd
+
+mysql:x:116:120:MySQL Server,,:/nonexistent:/bin/false
+
+Basically, what we are saying with this command is that we are looking for a line where we want to see both my and false. A simplified example would also be to use grep twice and look like this:
+
+Command:  grep -E "my" /etc/passwd | grep -E "false"
+
+mysql:x:116:120:MySQL Server,,:/nonexistent:/bin/false
+
+
+Permission Management
+
+In Linux, permissions are like keys that control access to files and directories. These permissions are assigned to both users and groups, much like keys being distributed to specific individuals and teams within an organization. Each user can belong to multiple groups, and being part of a group grants additional access rights, allowing users to perform specific actions on files and directories.
+
+Every file and directory has an owner (a user) and is associated with a group. The permissions for these files are defined for both the owner and the group, determining what actions—like reading, writing, or executing—are allowed. When you create a new file or directory, it automatically becomes "yours" and is associated with the group you belong to, similar to how a project within a company might default to your team’s oversight.
+
+In essence, Linux permissions act like a set of rules or keys that dictate who can access or modify certain resources, ensuring security and proper collaboration across the system.
+
+When a user wants to access the contents of a Linux directory, it's similar to unlocking a door before stepping inside. To "traverse" or navigate into a directory, the user must first have the right key—this key is the execute permission on the directory. Without it, even if the contents of the directory are visible to the user, they won't be able to enter or move through it.
+
+In other words, having execute permissions on a directory is like having permission to walk through a hallway to access the rooms inside. It doesn't allow you to see or modify what's inside, but it does grant you the ability to step inside and explore the directory's structure. Without this permission, the user cannot access the directory's contents and will instead be presented with a “Permission Denied" error message.
+
+Command: ls -l
+
+drw-rw-r-- 3 JohnDoe JohnDoe   4096 Jan 12 12:30 scripts
+
+
+Command: ls -al mydirectory/
+
+ls: cannot access 'mydirectory/script.sh': Permission denied
+ls: cannot access 'mydirectory/..': Permission denied
+ls: cannot access 'mydirectory/subdirectory': Permission denied
+ls: cannot access 'mydirectory/.': Permission denied
+total 0
+d????????? ? ? ? ?            ? .
+d????????? ? ? ? ?            ? ..
+-????????? ? ? ? ?            ? script.sh
+d????????? ? ? ? ?            ? subdirectory
+
+It is important to note that execute permissions are necessary to traverse a directory, no matter the user's level of access. Also, execute permissions on a directory do not allow a user to execute or modify any files or contents within the directory, only to traverse and access the content of the directory.
+
+To execute files within the directory, a user needs execute permissions on the corresponding file. To modify the contents of a directory (create, delete, or rename files and subdirectories), the user needs write permissions on the directory.
+
+The whole permission system on Linux systems is based on the octal number system, and basically, there are three different types of permissions a file or directory can be assigned:
+
+    (r) - Read
+    (w) - Write
+    (x) - Execute
+
+The permissions can be set for the owner, group, and others like presented in the next example with their corresponding permissions.
+
+Command: ls -l /etc/passwd
+
+- rwx rw- r--   1 root root 1641 May  4 23:42 /etc/passwd
+- --- --- ---   |  |    |    |   |__________|
+|  |   |   |    |  |    |    |        |_ Date
+|  |   |   |    |  |    |    |__________ File Size
+|  |   |   |    |  |    |_______________ Group
+|  |   |   |    |  |____________________ User
+|  |   |   |    |_______________________ Number of hard links
+|  |   |   |_ Permission of others (read)
+|  |   |_____ Permissions of the group (read, write)
+|  |_________ Permissions of the owner (read, write, execute)
+|____________ File type (- = File, d = Directory, l = Link, ... )
+
+Change Permissions
+
+We can modify permissions using the chmod command, permission group references (u - owner, g - Group, o - others, a - All users), and either a + or a - to add or remove the designated permissions. In the following example, let us assume we have a file called shell and we want to change permissions for it so this script is owned by that user, becomes not executable, and set with read/write permissions for all users.
+
+Command: ls -l shell
+
+-rwxr-x--x   1 JohnDoe JohnDoe 0 May  4 22:12 shell
+
+We can then apply read permissions for all users and see the result.
+
+Command: chmod a+r shell && ls -l shell
+
+-rwxr-xr-x   1 JohnDoe JohnDoe 0 May  4 22:12 shell
+
+We can also set the permissions for all other users to read only using the octal value assignment.
+
+Command: chmod 754 shell && ls -l shell
+
+-rwxr-xr--   1 JohnDoe JohnDoe 0 May  4 22:12 shell
+
+Let us look at all the representations associated with it to understand better how the permission assignment is calculated.
+
+shellsession
+Binary Notation:                4 2 1  |  4 2 1  |  4 2 1
+----------------------------------------------------------
+Binary Representation:          1 1 1  |  1 0 1  |  1 0 0
+----------------------------------------------------------
+Octal Value:                      7    |    5    |    4
+----------------------------------------------------------
+Permission Representation:      r w x  |  r - x  |  r - -
+
+If we sum the set bits from the Binary Representation assigned to the values from Binary Notation together, we get the Octal Value. The Permission Representation represents the bits set in the Binary Representation by using the three characters, which only recognizes the set permissions easier.
+Change Owner
+
+To change the owner and/or the group assignments of a file or directory, we can use the chown command. The syntax is like following:
+Syntax - chown
+
+Command: chown <user>:<group> <file/directory>
+
+In this example, "shell" can be replaced with any arbitrary file or folder.
+
+Command: chown root:root shell && ls -l shell
+
+-rwxr-xr--   1 root root 0 May  4 22:12 shell
+
+SUID & SGID
+
+In addition to standard user and group permissions, Linux allows us to configure special permissions on files through the Set User ID (SUID) and Set Group ID (SGID) bits. These bits function like temporary access passes, enabling users to run certain programs with the privileges of another user or group. For example, administrators can use SUID or SGID to grant users elevated rights for specific applications, allowing tasks to be performed with the necessary permissions, even if the user themselves doesn’t normally have them.
+
+The presence of these permissions is indicated by an s in place of the usual x in the file's permission set. When a program with the SUID or SGID bit set is executed, it runs with the permissions of the file's owner or group, rather than the user who launched it. This can be useful for certain system tasks but also introduces potential security risks if not used carefully.
+
+One common risk is when administrators, unfamiliar with an application's full functionality, assign SUID or SGID bits indiscriminately. For example, if the SUID bit is applied to a program like journalctl, which includes a function to launch a shell from within its interface, any user running this program could execute a shell as root. This grants them complete control over the system, presenting a significant security vulnerability. More information about this and other such applications can be found at GTFObins.
+Sticky Bit
+
+Sticky bits in Linux are like locks on files within shared spaces. When set on a directory, the sticky bit adds an extra layer of security, ensuring that only certain individuals can modify or delete files, even if others have access to the directory.
+
+Imagine a communal workspace where many people can enter and use the same tools, but each person has their own drawer that only they (or the manager) can open. The sticky bit acts like a lock on these drawers, preventing anyone else from tampering with the contents. In a shared directory, this means only the file's owner, the directory's owner, or the root user (the system administrator) can delete or rename files. Other users can still access the directory but can’t modify files they don’t own.
+
+This feature is especially useful in shared environments, like public directories, where multiple users are working together. By setting the sticky bit, you ensure that important files aren’t accidentally or maliciously altered by someone who shouldn’t have the authority to do so, adding an important safeguard to collaborative workspaces.
+
+Command: ls -l
+
+drw-rw-r-t 3 JohnDoe JohnDoe   4096 Jan 12 12:30 scripts
+drw-rw-r-T 3 JohnDoe JohnDoe   4096 Jan 12 12:32 reports
+
+In this example, we see that both directories have the sticky bit set. However, the reports folder has an uppercase T, and the scripts folder has a lowercase t.
+
+If the sticky bit is capitalized (T), then this means that all other users do not have execute (x) permissions and, therefore, cannot see the contents of the folder nor run any programs from it. The lowercase sticky bit (t) is the sticky bit where the execute (x) permissions have been set.
