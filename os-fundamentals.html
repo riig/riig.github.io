@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OS Fundamentals — riig.github.io</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Exo+2:ital,wght@0,300;0,400;0,600;0,700;1,300&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0a0d13;--bg2:#0f1420;--panel:#111827;--border:#1e2d45;--accent:#00e5ff;--accent2:#ff4d6d;--accent3:#a3e635;--gold:#fbbf24;--purple:#a78bfa;--text:#c9d1e0;--dim:#6b7fa3;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;font-weight:300;min-height:100vh;overflow-x:hidden;}
+  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,229,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.025) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;z-index:0;animation:gridDrift 40s linear infinite;}
+  @keyframes gridDrift{0%{background-position:0 0;}100%{background-position:44px 44px;}}
+  body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,0.45) 100%);pointer-events:none;z-index:0;}
+  .wrap{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:0 28px 80px;}
+  nav{display:flex;align-items:center;gap:10px;padding:22px 0;border-bottom:1px solid var(--border);font-family:'Share Tech Mono',monospace;font-size:0.73rem;color:var(--dim);letter-spacing:0.1em;}
+  nav a{color:var(--accent);text-decoration:none;}nav a:hover{text-decoration:underline;}
+  .sep{color:var(--border);}
+  .page-header{padding:48px 0 36px;border-bottom:1px solid var(--border);position:relative;animation:fadeUp 0.4s ease both;}
+  .page-header::after{content:'';position:absolute;bottom:-1px;left:0;width:220px;height:2px;background:linear-gradient(90deg,var(--accent),transparent);}
+  .ph-eyebrow{font-family:'Share Tech Mono',monospace;font-size:0.68rem;letter-spacing:0.2em;color:var(--accent);text-transform:uppercase;margin-bottom:14px;opacity:0.8;}
+  h1.page-title{font-family:'Orbitron',monospace;font-weight:900;font-size:clamp(1.7rem,4vw,2.7rem);letter-spacing:0.06em;background:linear-gradient(135deg,#fff 0%,var(--accent) 60%,#0077ff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  .sec-label{display:flex;align-items:center;gap:14px;font-family:'Orbitron',monospace;font-size:0.62rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--accent);margin:40px 0 18px;}
+  .sec-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);}
+  .cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;}
+  .cat-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;overflow:hidden;text-decoration:none;display:flex;align-items:center;gap:14px;padding:13px 16px;transition:transform 0.15s,box-shadow 0.2s,border-color 0.2s;position:relative;animation:fadeUp 0.45s ease both;}
+  .cat-card:nth-child(2){animation-delay:.06s;}.cat-card:nth-child(3){animation-delay:.12s;}.cat-card:nth-child(4){animation-delay:.18s;}
+  .cat-card.active-c:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,229,255,0.1);border-color:var(--accent);}
+  .cat-card.locked-c{opacity:0.32;pointer-events:none;}
+  .c-stripe{position:absolute;left:0;top:0;bottom:0;width:3px;}
+  .sc{background:linear-gradient(180deg,var(--accent),#0077ff);}
+  .sr{background:linear-gradient(180deg,var(--accent2),#c2185b);}
+  .sg{background:linear-gradient(180deg,var(--gold),#f97316);}
+  .sp{background:linear-gradient(180deg,var(--purple),#6366f1);}
+  .c-icon{font-size:1.2rem;flex-shrink:0;width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:7px;}
+  .ic{background:#00e5ff12;border:1px solid #00e5ff25;}
+  .ir{background:#ff4d6d12;border:1px solid #ff4d6d25;}
+  .ig{background:#fbbf2412;border:1px solid #fbbf2425;}
+  .ip{background:#a78bfa12;border:1px solid #a78bfa25;}
+  .c-info{flex:1;min-width:0;}
+  .c-name{font-family:'Orbitron',monospace;font-size:0.76rem;font-weight:700;color:#fff;letter-spacing:0.05em;margin-bottom:2px;}
+  .c-sub{font-family:'Share Tech Mono',monospace;font-size:0.61rem;color:var(--dim);letter-spacing:0.07em;}
+  .c-badge{font-family:'Share Tech Mono',monospace;font-size:0.57rem;letter-spacing:0.12em;padding:2px 8px;border-radius:20px;text-transform:uppercase;flex-shrink:0;}
+  .ba{background:#a3e63515;color:var(--accent3);border:1px solid #a3e63530;}
+  .bs{background:#6b7fa315;color:var(--dim);border:1px solid #6b7fa328;}
+  footer{text-align:center;padding-top:52px;margin-top:10px;border-top:1px solid var(--border);font-family:'Share Tech Mono',monospace;font-size:0.66rem;color:var(--dim);letter-spacing:0.1em;}
+  footer a{color:var(--accent);text-decoration:none;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <a href="index.html">riig.github.io</a><span class="sep">/</span>
+    <a href="library.html">Cyber Library</a><span class="sep">/</span>
+    <span>OS Fundamentals</span>
+  </nav>
+  <div class="page-header">
+    <div class="ph-eyebrow">Topic · Operating Systems</div>
+    <h1 class="page-title">OS FUNDAMENTALS</h1>
+  </div>
+  <div class="sec-label">// Categories</div>
+  <div class="cat-grid">
+    <a class="cat-card active-c" href="linux-fundamentals.html">
+      <div class="c-stripe sc"></div>
+      <div class="c-icon ic">🐧</div>
+      <div class="c-info">
+        <div class="c-name">Linux Fundamentals</div>
+        <div class="c-sub">Parts 1–2 active · 14 / 30 sections</div>
+      </div>
+      <span class="c-badge ba">Active</span>
+    </a>
+    <div class="cat-card locked-c">
+      <div class="c-stripe sr"></div>
+      <div class="c-icon ir">🪟</div>
+      <div class="c-info">
+        <div class="c-name">Windows Fundamentals</div>
+        <div class="c-sub">Coming soon</div>
+      </div>
+      <span class="c-badge bs">Soon</span>
+    </div>
+    <div class="cat-card locked-c">
+      <div class="c-stripe sg"></div>
+      <div class="c-icon ig">🍎</div>
+      <div class="c-info">
+        <div class="c-name">macOS Fundamentals</div>
+        <div class="c-sub">Coming soon</div>
+      </div>
+      <span class="c-badge bs">Soon</span>
+    </div>
+    <div class="cat-card locked-c">
+      <div class="c-stripe sp"></div>
+      <div class="c-icon ip">🤖</div>
+      <div class="c-info">
+        <div class="c-name">Android Fundamentals</div>
+        <div class="c-sub">Coming soon</div>
+      </div>
+      <span class="c-badge bs">Soon</span>
+    </div>
+  </div>
+  <footer>
+    <p><a href="index.html">← Home</a> &nbsp;·&nbsp; <a href="library.html">Cyber Library</a> &nbsp;·&nbsp; OS Fundamentals &nbsp;·&nbsp; riig.github.io</p>
+  </footer>
+</div>
+</body>
+</html>

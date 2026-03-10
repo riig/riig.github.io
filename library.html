@@ -3,307 +3,96 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Study Library — riig.github.io</title>
+<title>Cyber Library — riig.github.io</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Exo+2:ital,wght@0,300;0,400;0,600;0,700;1,300&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg:      #0a0d13;
-    --bg2:     #0f1420;
-    --panel:   #111827;
-    --border:  #1e2d45;
-    --accent:  #00e5ff;
-    --accent2: #ff4d6d;
-    --accent3: #a3e635;
-    --gold:    #fbbf24;
-    --text:    #c9d1e0;
-    --dim:     #6b7fa3;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Exo 2', sans-serif;
-    font-weight: 300;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background-image:
-      linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px);
-    background-size: 44px 44px;
-    pointer-events: none; z-index: 0;
-    animation: gridDrift 40s linear infinite;
-  }
-  @keyframes gridDrift { 0%{background-position:0 0;} 100%{background-position:44px 44px;} }
-  body::after {
-    content: '';
-    position: fixed; inset: 0;
-    background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.45) 100%);
-    pointer-events: none; z-index: 0;
-  }
-
-  .wrap {
-    position: relative; z-index: 1;
-    max-width: 960px; margin: 0 auto; padding: 0 28px 80px;
-  }
-
-  /* NAV */
-  nav {
-    display: flex; align-items: center; gap: 10px;
-    padding: 22px 0; border-bottom: 1px solid var(--border);
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.73rem; color: var(--dim); letter-spacing: 0.1em;
-  }
-  nav a { color: var(--accent); text-decoration: none; }
-  nav a:hover { text-decoration: underline; }
-  .sep { color: var(--border); }
-
-  /* PAGE HEADER */
-  .page-header {
-    padding: 48px 0 40px;
-    border-bottom: 1px solid var(--border);
-    position: relative;
-    animation: fadeUp 0.4s ease both;
-  }
-  .page-header::after {
-    content: '';
-    position: absolute; bottom: -1px; left: 0; width: 220px; height: 2px;
-    background: linear-gradient(90deg, var(--accent), transparent);
-  }
-  .ph-eyebrow {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.68rem; letter-spacing: 0.2em; color: var(--accent);
-    text-transform: uppercase; margin-bottom: 14px; opacity: 0.8;
-  }
-  h1.page-title {
-    font-family: 'Orbitron', monospace; font-weight: 900;
-    font-size: clamp(1.7rem, 4vw, 2.7rem); letter-spacing: 0.06em;
-    background: linear-gradient(135deg, #fff 0%, var(--accent) 60%, #0077ff 100%);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    margin-bottom: 16px;
-  }
-  .ph-sub {
-    font-size: 0.88rem; color: var(--dim); line-height: 1.6; max-width: 560px; margin-bottom: 20px;
-  }
-  .stat-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 4px; }
-  .stat-chip {
-    display: inline-flex; align-items: center; gap: 10px;
-    background: var(--panel); border: 1px solid var(--border);
-    border-radius: 8px; padding: 10px 20px;
-  }
-  .stat-num {
-    font-family: 'Orbitron', monospace; font-size: 1.5rem;
-    font-weight: 700; color: var(--accent); line-height: 1;
-  }
-  .stat-label {
-    font-family: 'Share Tech Mono', monospace; font-size: 0.65rem;
-    letter-spacing: 0.14em; color: var(--dim); text-transform: uppercase;
-  }
-
-  /* SECTION DIVIDER */
-  .sec-label {
-    display: flex; align-items: center; gap: 14px;
-    font-family: 'Orbitron', monospace; font-size: 0.62rem;
-    letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent);
-    margin: 44px 0 22px;
-  }
-  .sec-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--border), transparent); }
-
-  /* CATEGORY CARDS */
-  .cat-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
-  }
-
-  .cat-card {
-    background: var(--panel); border: 1px solid var(--border);
-    border-radius: 14px; overflow: hidden;
-    text-decoration: none; display: block;
-    transition: transform 0.2s, box-shadow 0.25s, border-color 0.25s;
-    position: relative;
-    animation: fadeUp 0.45s ease both;
-  }
-  .cat-card:nth-child(2) { animation-delay: 0.07s; }
-  .cat-card:nth-child(3) { animation-delay: 0.14s; }
-  .cat-card:hover { transform: translateY(-4px); }
-  .cat-card.active-cat:hover {
-    box-shadow: 0 12px 44px rgba(0,229,255,0.12);
-    border-color: var(--accent);
-  }
-  .cat-card.locked-cat { opacity: 0.38; pointer-events: none; }
-
-  .card-stripe { height: 3px; width: 100%; }
-  .stripe-cyan   { background: linear-gradient(90deg, var(--accent), #0077ff); }
-  .stripe-purple { background: linear-gradient(90deg, #a78bfa, #6366f1); }
-  .stripe-green  { background: linear-gradient(90deg, var(--accent3), #22c55e); }
-
-  .card-inner { padding: 24px 26px 22px; }
-  .card-top {
-    display: flex; align-items: flex-start; justify-content: space-between;
-    margin-bottom: 14px;
-  }
-  .card-icon-wrap {
-    width: 48px; height: 48px; border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.5rem; flex-shrink: 0;
-  }
-  .ci-cyan   { background: #00e5ff18; border: 1px solid #00e5ff33; }
-  .ci-purple { background: #a78bfa18; border: 1px solid #a78bfa33; }
-  .ci-green  { background: #a3e63518; border: 1px solid #a3e63533; }
-
-  .card-badge {
-    font-family: 'Share Tech Mono', monospace; font-size: 0.62rem;
-    letter-spacing: 0.13em; padding: 4px 10px; border-radius: 20px; text-transform: uppercase;
-  }
-  .badge-active { background: #a3e63520; color: var(--accent3); border: 1px solid #a3e63540; }
-  .badge-soon   { background: #6b7fa320; color: var(--dim);     border: 1px solid #6b7fa340; }
-
-  .card-name {
-    font-family: 'Orbitron', monospace; font-size: 1rem; font-weight: 700;
-    color: #fff; letter-spacing: 0.05em; margin-bottom: 8px;
-  }
-  .card-desc { font-size: 0.82rem; color: var(--dim); line-height: 1.65; margin-bottom: 20px; }
-
-  .card-progress { margin-bottom: 16px; }
-  .prog-label {
-    display: flex; justify-content: space-between;
-    font-family: 'Share Tech Mono', monospace; font-size: 0.63rem;
-    color: var(--dim); letter-spacing: 0.09em; margin-bottom: 6px;
-  }
-  .prog-label span:last-child { color: var(--accent3); }
-  .prog-bar { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
-  .prog-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--accent), #0077ff); }
-
-  .card-parts { display: flex; gap: 7px; flex-wrap: wrap; }
-  .part-chip {
-    font-family: 'Share Tech Mono', monospace; font-size: 0.66rem;
-    padding: 4px 10px; border-radius: 4px; letter-spacing: 0.07em;
-  }
-  .part-active { border: 1px solid var(--accent);  color: var(--accent);  background: #00e5ff0f; }
-  .part-soon   { border: 1px solid var(--border);  color: var(--dim);     background: var(--bg2); opacity: 0.5; }
-
-  .card-cta {
-    margin-top: 20px; display: flex; align-items: center; gap: 8px;
-    font-family: 'Share Tech Mono', monospace; font-size: 0.68rem;
-    color: var(--accent); letter-spacing: 0.12em;
-    transition: gap 0.2s;
-  }
-  .cat-card:hover .card-cta { gap: 13px; }
-  .card-cta::after { content: '→'; font-size: 0.9rem; }
-
-  /* FOOTER */
-  footer {
-    text-align: center; padding-top: 52px; margin-top: 10px;
-    border-top: 1px solid var(--border);
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.66rem; color: var(--dim); letter-spacing: 0.1em;
-  }
-  footer a { color: var(--accent); text-decoration: none; }
-
-  @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+  :root { --bg:#0a0d13;--bg2:#0f1420;--panel:#111827;--border:#1e2d45;--accent:#00e5ff;--accent2:#ff4d6d;--accent3:#a3e635;--gold:#fbbf24;--text:#c9d1e0;--dim:#6b7fa3; }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;font-weight:300;min-height:100vh;overflow-x:hidden;}
+  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,229,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.025) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;z-index:0;animation:gridDrift 40s linear infinite;}
+  @keyframes gridDrift{0%{background-position:0 0;}100%{background-position:44px 44px;}}
+  body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,0.45) 100%);pointer-events:none;z-index:0;}
+  .wrap{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:0 28px 80px;}
+  nav{display:flex;align-items:center;gap:10px;padding:22px 0;border-bottom:1px solid var(--border);font-family:'Share Tech Mono',monospace;font-size:0.73rem;color:var(--dim);letter-spacing:0.1em;}
+  nav a{color:var(--accent);text-decoration:none;}
+  nav a:hover{text-decoration:underline;}
+  .sep{color:var(--border);}
+  .page-header{padding:48px 0 36px;border-bottom:1px solid var(--border);position:relative;animation:fadeUp 0.4s ease both;}
+  .page-header::after{content:'';position:absolute;bottom:-1px;left:0;width:220px;height:2px;background:linear-gradient(90deg,var(--accent),transparent);}
+  .ph-eyebrow{font-family:'Share Tech Mono',monospace;font-size:0.68rem;letter-spacing:0.2em;color:var(--accent);text-transform:uppercase;margin-bottom:14px;opacity:0.8;}
+  h1.page-title{font-family:'Orbitron',monospace;font-weight:900;font-size:clamp(1.7rem,4vw,2.7rem);letter-spacing:0.06em;background:linear-gradient(135deg,#fff 0%,var(--accent) 60%,#0077ff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  .sec-label{display:flex;align-items:center;gap:14px;font-family:'Orbitron',monospace;font-size:0.62rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--accent);margin:40px 0 18px;}
+  .sec-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);}
+  .topic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;}
+  .topic-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;overflow:hidden;text-decoration:none;display:flex;align-items:center;gap:14px;padding:13px 16px;transition:transform 0.15s,box-shadow 0.2s,border-color 0.2s;position:relative;animation:fadeUp 0.45s ease both;}
+  .topic-card:nth-child(2){animation-delay:.06s;}
+  .topic-card:nth-child(3){animation-delay:.12s;}
+  .topic-card.active-t:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,229,255,0.1);border-color:var(--accent);}
+  .topic-card.locked-t{opacity:0.32;pointer-events:none;}
+  .t-stripe{position:absolute;left:0;top:0;bottom:0;width:3px;}
+  .s-cyan{background:linear-gradient(180deg,var(--accent),#0077ff);}
+  .s-purple{background:linear-gradient(180deg,#a78bfa,#6366f1);}
+  .s-green{background:linear-gradient(180deg,var(--accent3),#22c55e);}
+  .t-icon{font-size:1.2rem;flex-shrink:0;width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:7px;}
+  .ic{background:#00e5ff12;border:1px solid #00e5ff25;}
+  .ip{background:#a78bfa12;border:1px solid #a78bfa25;}
+  .ig{background:#a3e63512;border:1px solid #a3e63525;}
+  .t-info{flex:1;min-width:0;}
+  .t-name{font-family:'Orbitron',monospace;font-size:0.76rem;font-weight:700;color:#fff;letter-spacing:0.05em;margin-bottom:2px;}
+  .t-sub{font-family:'Share Tech Mono',monospace;font-size:0.61rem;color:var(--dim);letter-spacing:0.07em;}
+  .t-badge{font-family:'Share Tech Mono',monospace;font-size:0.57rem;letter-spacing:0.12em;padding:2px 8px;border-radius:20px;text-transform:uppercase;flex-shrink:0;}
+  .ba{background:#a3e63515;color:var(--accent3);border:1px solid #a3e63530;}
+  .bs{background:#6b7fa315;color:var(--dim);border:1px solid #6b7fa328;}
+  footer{text-align:center;padding-top:52px;margin-top:10px;border-top:1px solid var(--border);font-family:'Share Tech Mono',monospace;font-size:0.66rem;color:var(--dim);letter-spacing:0.1em;}
+  footer a{color:var(--accent);text-decoration:none;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
 </style>
 </head>
 <body>
 <div class="wrap">
-
   <nav>
     <a href="index.html">riig.github.io</a>
     <span class="sep">/</span>
-    <span>Study Library</span>
+    <span>Cyber Library</span>
   </nav>
-
   <div class="page-header">
     <div class="ph-eyebrow">Notes reformatted and structured by Claude Sonnet 4.6</div>
-    <h1 class="page-title">STUDY LIBRARY</h1>
-    <p class="ph-sub">Select a category to begin. Each category contains courses broken into structured, digestible parts — built for people learning computers and cybersecurity from scratch.</p>
-    <div class="stat-row">
-      <div class="stat-chip">
-        <span class="stat-num">1</span>
-        <span class="stat-label">Category Active</span>
-      </div>
-      <div class="stat-chip">
-        <span class="stat-num">2</span>
-        <span class="stat-label">Parts Available</span>
-      </div>
-    </div>
+    <h1 class="page-title">CYBER LIBRARY</h1>
   </div>
-
-  <div class="sec-label">// Categories</div>
-
-  <div class="cat-grid">
-
-    <!-- OS Fundamentals — ACTIVE -->
-    <a class="cat-card active-cat" href="linux-fundamentals.html">
-      <div class="card-stripe stripe-cyan"></div>
-      <div class="card-inner">
-        <div class="card-top">
-          <div class="card-icon-wrap ci-cyan">🖥️</div>
-          <span class="card-badge badge-active">In Progress</span>
-        </div>
-        <div class="card-name">OS Fundamentals</div>
-        <p class="card-desc">Core concepts across Linux, Windows, macOS, and Android — the foundation of operating system knowledge from a security perspective.</p>
-        <div class="card-progress">
-          <div class="prog-label"><span>Active Courses</span><span>1 / 4</span></div>
-          <div class="prog-bar"><div class="prog-fill" style="width:47%"></div></div>
-        </div>
-        <div class="card-parts">
-          <span class="part-chip part-active">🐧 Linux · Pts 1–2</span>
-          <span class="part-chip part-soon">🪟 Windows</span>
-          <span class="part-chip part-soon">🍎 macOS</span>
-          <span class="part-chip part-soon">🤖 Android</span>
-        </div>
-        <div class="card-cta">Open Category</div>
+  <div class="sec-label">// Topics</div>
+  <div class="topic-grid">
+    <a class="topic-card active-t" href="os-fundamentals.html">
+      <div class="t-stripe s-cyan"></div>
+      <div class="t-icon ic">🖥️</div>
+      <div class="t-info">
+        <div class="t-name">OS Fundamentals</div>
+        <div class="t-sub">Linux · Windows · macOS · Android</div>
       </div>
+      <span class="t-badge ba">Active</span>
     </a>
-
-    <!-- Networking — Coming Soon -->
-    <div class="cat-card locked-cat">
-      <div class="card-stripe stripe-purple"></div>
-      <div class="card-inner">
-        <div class="card-top">
-          <div class="card-icon-wrap ci-purple">🌐</div>
-          <span class="card-badge badge-soon">Coming Soon</span>
-        </div>
-        <div class="card-name">Networking Fundamentals</div>
-        <p class="card-desc">TCP/IP, subnetting, routing, DNS, HTTP, and packet analysis — the essentials for understanding how systems communicate.</p>
-        <div class="card-parts">
-          <span class="part-chip part-soon">Protocols</span>
-          <span class="part-chip part-soon">Packet Analysis</span>
-          <span class="part-chip part-soon">Enumeration</span>
-        </div>
+    <div class="topic-card locked-t">
+      <div class="t-stripe s-purple"></div>
+      <div class="t-icon ip">🌐</div>
+      <div class="t-info">
+        <div class="t-name">Networking</div>
+        <div class="t-sub">TCP/IP · DNS · Packets · Enumeration</div>
       </div>
+      <span class="t-badge bs">Soon</span>
     </div>
-
-    <!-- Web Security — Coming Soon -->
-    <div class="cat-card locked-cat">
-      <div class="card-stripe stripe-green"></div>
-      <div class="card-inner">
-        <div class="card-top">
-          <div class="card-icon-wrap ci-green">🕸️</div>
-          <span class="card-badge badge-soon">Coming Soon</span>
-        </div>
-        <div class="card-name">Web Application Security</div>
-        <p class="card-desc">OWASP Top 10, SQL injection, XSS, authentication flaws, and how to identify and exploit web vulnerabilities responsibly.</p>
-        <div class="card-parts">
-          <span class="part-chip part-soon">OWASP Top 10</span>
-          <span class="part-chip part-soon">Exploitation</span>
-          <span class="part-chip part-soon">Burp Suite</span>
-        </div>
+    <div class="topic-card locked-t">
+      <div class="t-stripe s-green"></div>
+      <div class="t-icon ig">🕸️</div>
+      <div class="t-info">
+        <div class="t-name">Web App Security</div>
+        <div class="t-sub">OWASP · SQLi · XSS · Burp Suite</div>
       </div>
+      <span class="t-badge bs">Soon</span>
     </div>
-
   </div>
-
   <footer>
-    <p><a href="index.html">← Home</a> &nbsp;·&nbsp; Study Library &nbsp;·&nbsp; riig.github.io</p>
+    <p><a href="index.html">← Home</a> &nbsp;·&nbsp; Cyber Library &nbsp;·&nbsp; riig.github.io</p>
   </footer>
-
 </div>
 </body>
 </html>

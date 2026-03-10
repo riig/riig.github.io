@@ -6,756 +6,354 @@
 <title>Linux Fundamentals — riig.github.io</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Exo+2:ital,wght@0,300;0,400;0,600;0,700;1,300&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg:        #0a0d13;
-    --bg2:       #0f1420;
-    --bg3:       #141926;
-    --panel:     #111827;
-    --border:    #1e2d45;
-    --accent:    #00e5ff;
-    --accent2:   #ff4d6d;
-    --accent3:   #a3e635;
-    --gold:      #fbbf24;
-    --purple:    #a78bfa;
-    --text:      #c9d1e0;
-    --dim:       #6b7fa3;
-    --code-bg:   #080c14;
-    --code-bdr:  #1a3a5c;
-    --glow:      0 0 20px rgba(0,229,255,0.2);
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body {
-    background: var(--bg); color: var(--text);
-    font-family: 'Exo 2', sans-serif; font-weight: 300;
-    min-height: 100vh; overflow-x: hidden;
-  }
-  body::before {
-    content: ''; position: fixed; inset: 0;
-    background-image:
-      linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px);
-    background-size: 44px 44px; pointer-events: none; z-index: 0;
-  }
-  .wrap { position: relative; z-index: 1; max-width: 980px; margin: 0 auto; padding: 0 24px 80px; }
-
-  /* NAV */
-  nav { display: flex; align-items: center; gap: 10px; padding: 20px 0; border-bottom: 1px solid var(--border); margin-bottom: 0; font-family: 'Share Tech Mono', monospace; font-size: 0.75rem; color: var(--dim); letter-spacing: 0.1em; }
-  nav a { color: var(--accent); text-decoration: none; }
-  nav a:hover { text-decoration: underline; }
-  .nav-sep { color: var(--border); }
-
-  /* COURSE HEADER */
-  .course-header { padding: 48px 0 38px; border-bottom: 1px solid var(--border); margin-bottom: 0; position: relative; }
-  .course-header::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 240px; height: 2px; background: linear-gradient(90deg, var(--accent), transparent); }
-  .ch-badge { display: inline-flex; align-items: center; gap: 8px; font-family: 'Share Tech Mono', monospace; font-size: 0.68rem; letter-spacing: 0.18em; color: var(--accent3); background: #a3e63510; border: 1px solid #a3e63530; padding: 4px 12px; border-radius: 3px; margin-bottom: 16px; }
-  .ch-badge::before { content: '●'; font-size: 0.5rem; }
-  h1.course-title { font-family: 'Orbitron', monospace; font-weight: 900; font-size: clamp(1.6rem, 4vw, 2.6rem); letter-spacing: 0.06em; background: linear-gradient(135deg, #fff 0%, var(--accent) 60%, #0077ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 10px; }
-  .course-meta { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; color: var(--dim); letter-spacing: 0.1em; margin-top: 12px; }
-  .meta-item { display: flex; align-items: center; gap: 6px; }
-  .meta-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent3); }
-
-  /* TAB BAR */
-  .tab-bar { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 40px; overflow-x: auto; scrollbar-width: none; }
-  .tab-bar::-webkit-scrollbar { display: none; }
-  .tab-btn { display: flex; flex-direction: column; align-items: center; padding: 16px 28px 14px; border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; flex-shrink: 0; position: relative; }
-  .tab-btn:hover .tab-label { color: var(--text); }
-  .tab-btn.active { border-bottom-color: var(--accent); }
-  .tab-btn.active .tab-label { color: var(--accent); }
-  .tab-btn.locked { cursor: not-allowed; opacity: 0.38; }
-  .tab-label { font-family: 'Orbitron', monospace; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; color: var(--dim); text-transform: uppercase; margin-bottom: 3px; transition: color 0.2s; }
-  .tab-sub { font-family: 'Share Tech Mono', monospace; font-size: 0.6rem; color: var(--dim); letter-spacing: 0.1em; opacity: 0.7; }
-  .tab-lock { position: absolute; top: 10px; right: 10px; font-size: 0.6rem; opacity: 0.4; }
-
-  /* PANELS */
-  .tab-panel { display: none; }
-  .tab-panel.active { display: block; animation: fadeIn 0.3s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
-  /* COMING SOON */
-  .coming-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 80px 20px; text-align: center; border: 1px dashed var(--border); border-radius: 12px; background: var(--panel); }
-  .coming-icon { font-size: 3rem; margin-bottom: 20px; opacity: 0.35; }
-  .coming-title { font-family: 'Orbitron', monospace; font-size: 1.1rem; color: var(--dim); letter-spacing: 0.1em; margin-bottom: 10px; }
-  .coming-sub { font-size: 0.85rem; color: var(--dim); opacity: 0.7; max-width: 380px; line-height: 1.7; }
-
-  /* ═══════════════════════════════
-     QUICK REF + TOOLTIPS
-  ═══════════════════════════════ */
-  .quick-ref { background: var(--panel); border: 1px solid var(--border); border-top: 2px solid var(--accent); border-radius: 8px; padding: 26px 30px; margin-bottom: 36px; box-shadow: var(--glow); }
-  .sec-label { font-family: 'Orbitron', monospace; font-size: 0.62rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
-  .sec-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--border), transparent); }
-  .cmd-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 9px; }
-
-  /* pill + tooltip */
-  .cmd-pill {
-    display: flex; align-items: center; gap: 10px;
-    background: var(--code-bg); border: 1px solid var(--code-bdr);
-    border-radius: 6px; padding: 8px 13px;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    position: relative; cursor: default;
-  }
-  .cmd-pill:hover { border-color: var(--accent); box-shadow: 0 0 10px rgba(0,229,255,0.12); }
-  .cmd-pill code { font-family: 'Share Tech Mono', monospace; font-size: 0.8rem; color: var(--accent); white-space: nowrap; }
-  .cmd-pill span.pdesc { font-size: 0.72rem; color: var(--dim); line-height: 1.3; }
-
-  /* tooltip bubble */
-  .cmd-pill .tip-box {
-    display: none;
-    position: absolute; top: calc(100% + 7px); left: 0;
-    min-width: 260px; max-width: 340px; z-index: 80;
-    background: #080c14; border: 1px solid var(--accent);
-    border-radius: 7px; padding: 11px 14px;
-    font-family: 'Share Tech Mono', monospace; font-size: 0.67rem;
-    line-height: 1.75; color: var(--dim);
-    box-shadow: 0 8px 32px rgba(0,229,255,0.18);
-    pointer-events: none;
-  }
-  .cmd-pill:hover .tip-box { display: block; animation: tipIn 0.12s ease; }
-  @keyframes tipIn { from{opacity:0;transform:translateY(-3px);}to{opacity:1;transform:translateY(0);} }
-  .tip-box .tip-cmd  { color: var(--accent); display: block; margin-bottom: 4px; }
-  .tip-box .tip-flag { color: var(--accent3); }
-  .tip-box .tip-note { color: var(--dim); font-style: italic; display: block; margin-top: 5px; border-top: 1px solid var(--border); padding-top: 5px; }
-  /* prevent tooltip from clipping at right edge */
-  .cmd-pill:nth-child(5n) .tip-box,
-  .cmd-pill:nth-child(5n-1) .tip-box { left: auto; right: 0; }
-
-  /* SECTION CARDS */
-  .section-card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 28px; overflow: hidden; transition: box-shadow 0.3s; }
-  .section-card:hover { box-shadow: 0 4px 32px rgba(0,229,255,0.07); }
-  .card-header { display: flex; align-items: center; gap: 13px; padding: 16px 26px; background: linear-gradient(90deg, #0f1e30, var(--bg3)); border-bottom: 1px solid var(--border); }
-  .card-icon { width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 7px; font-size: 1rem; flex-shrink: 0; }
-  .icon-blue   { background: #00e5ff1a; border: 1px solid #00e5ff33; }
-  .icon-red    { background: #ff4d6d1a; border: 1px solid #ff4d6d33; }
-  .icon-green  { background: #a3e6351a; border: 1px solid #a3e63533; }
-  .icon-gold   { background: #fbbf241a; border: 1px solid #fbbf2433; }
-  .icon-purple { background: #a78bfa1a; border: 1px solid #a78bfa33; }
-  .icon-dim    { background: #6b7fa31a; border: 1px solid #6b7fa333; }
-  .card-title { font-family: 'Orbitron', monospace; font-size: 0.86rem; font-weight: 700; letter-spacing: 0.07em; color: #fff; }
-  .card-num { margin-left: auto; font-family: 'Share Tech Mono', monospace; font-size: 0.68rem; color: var(--dim); letter-spacing: 0.14em; }
-  .card-body { padding: 22px 26px; }
-  p { margin-bottom: 13px; font-size: 0.93rem; color: var(--text); line-height: 1.75; }
-  p:last-child { margin-bottom: 0; }
-  strong, b { color: #fff; font-weight: 600; }
-  .hi   { color: var(--accent);  font-weight: 600; }
-  .hi-r { color: var(--accent2); font-weight: 600; }
-  .hi-g { color: var(--accent3); font-weight: 600; }
-  .hi-y { color: var(--gold);    font-weight: 600; }
-  .hi-p { color: var(--purple);  font-weight: 600; }
-
-  /* TERMINAL BLOCK */
-  .cmd-block { margin: 16px 0; border-radius: 8px; overflow: hidden; border: 1px solid var(--code-bdr); box-shadow: 0 2px 14px rgba(0,0,0,0.4); }
-  .cmd-bar { display: flex; align-items: center; justify-content: space-between; padding: 7px 14px; background: #0b1929; border-bottom: 1px solid var(--code-bdr); }
-  .dots { display: flex; gap: 5px; }
-  .dot { width: 10px; height: 10px; border-radius: 50%; }
-  .dr { background: #ff5f57; } .dy { background: #febc2e; } .dg { background: #28c840; }
-  .cmd-lbl { font-family: 'Share Tech Mono', monospace; font-size: 0.65rem; color: var(--dim); letter-spacing: 0.12em; }
-  .cmd-content { background: var(--code-bg); padding: 15px 18px; font-family: 'Share Tech Mono', monospace; font-size: 0.82rem; line-height: 1.85; overflow-x: auto; }
-  .pr  { color: var(--accent3); }
-  .ct  { color: #e2e8f0; }
-  .cc  { color: var(--dim); }
-  .out { color: #94a3b8; }
-  .oh  { color: var(--gold); }
-
-  code { font-family: 'Share Tech Mono', monospace; font-size: 0.84em; background: #0f1e30; color: var(--accent); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--code-bdr); }
-
-  /* NOTE BOXES */
-  .note-box { display: flex; gap: 13px; padding: 13px 16px; border-radius: 8px; margin: 16px 0; font-size: 0.87rem; }
-  .note-box.tip  { background: #00e5ff0a; border-left: 3px solid var(--accent); }
-  .note-box.warn { background: #ff4d6d0a; border-left: 3px solid var(--accent2); }
-  .note-box.good { background: #a3e6350a; border-left: 3px solid var(--accent3); }
-  .ni { font-size: 1.05rem; flex-shrink: 0; line-height: 1.65; }
-  .nt { color: var(--text); line-height: 1.65; }
-  .nt strong { display: block; margin-bottom: 4px; }
-
-  /* TABLES */
-  .styled-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; margin: 16px 0; }
-  .styled-table th { background: #0b1929; color: var(--accent); font-family: 'Orbitron', monospace; font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase; padding: 9px 15px; text-align: left; border-bottom: 1px solid var(--border); }
-  .styled-table td { padding: 9px 15px; border-bottom: 1px solid #151f30; vertical-align: top; }
-  .styled-table tr:hover td { background: #0f1c2e; }
-  .styled-table td:first-child { font-family: 'Share Tech Mono', monospace; color: var(--accent); white-space: nowrap; }
-  .styled-table td:last-child { color: var(--dim); }
-
-  /* SHORTCUTS */
-  .shortcut-row { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 14px; }
-  .sc-chip { display: flex; align-items: center; gap: 7px; background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: 6px 12px; font-size: 0.8rem; }
-  .key { font-family: 'Share Tech Mono', monospace; font-size: 0.75rem; background: #1a2840; border: 1px solid #2a4060; color: var(--gold); padding: 2px 7px; border-radius: 4px; }
-  .sc-chip span:last-child { color: var(--dim); font-size: 0.76rem; }
-
-  /* FD BADGE */
-  .fd-badge { display: inline-flex; align-items: center; gap: 5px; font-family: 'Share Tech Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; padding: 3px 9px; border-radius: 3px; margin: 0 3px; }
-  .fd-stdin  { background: #a3e63518; border: 1px solid #a3e63535; color: var(--accent3); }
-  .fd-stdout { background: #00e5ff15; border: 1px solid #00e5ff30; color: var(--accent); }
-  .fd-stderr { background: #ff4d6d15; border: 1px solid #ff4d6d30; color: var(--accent2); }
-
-  /* PERM DISPLAY */
-  .perm-display { font-family: 'Share Tech Mono', monospace; font-size: 0.8rem; background: var(--code-bg); border: 1px solid var(--code-bdr); border-radius: 6px; padding: 14px 18px; margin: 14px 0; line-height: 2; overflow-x: auto; color: #94a3b8; }
-  .perm-type { color: var(--gold); }
-  .perm-own  { color: var(--accent2); }
-  .perm-grp  { color: var(--accent); }
-  .perm-oth  { color: var(--accent3); }
-
-  /* DIVIDER */
-  .divider { display: flex; align-items: center; gap: 14px; margin: 36px 0; color: var(--dim); font-family: 'Share Tech Mono', monospace; font-size: 0.68rem; letter-spacing: 0.2em; }
-  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; }
-  .divider::before { background: linear-gradient(90deg, transparent, var(--border)); }
-  .divider::after  { background: linear-gradient(90deg, var(--border), transparent); }
-
-  footer { text-align: center; padding-top: 44px; border-top: 1px solid var(--border); margin-top: 16px; font-family: 'Share Tech Mono', monospace; font-size: 0.68rem; color: var(--dim); letter-spacing: 0.1em; }
-  footer a { color: var(--accent); text-decoration: none; }
-
-  @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
-  .section-card { animation: fadeUp 0.45s ease both; }
-  .section-card:nth-child(2)  { animation-delay:.04s; }
-  .section-card:nth-child(3)  { animation-delay:.08s; }
-  .section-card:nth-child(4)  { animation-delay:.12s; }
-  .section-card:nth-child(5)  { animation-delay:.16s; }
-  .section-card:nth-child(6)  { animation-delay:.20s; }
-  .section-card:nth-child(7)  { animation-delay:.24s; }
-  .section-card:nth-child(8)  { animation-delay:.28s; }
-  .section-card:nth-child(9)  { animation-delay:.32s; }
-  .section-card:nth-child(10) { animation-delay:.36s; }
-  .section-card:nth-child(11) { animation-delay:.40s; }
-  .section-card:nth-child(12) { animation-delay:.44s; }
-  .section-card:nth-child(13) { animation-delay:.48s; }
-  .section-card:nth-child(14) { animation-delay:.52s; }
-  .section-card:nth-child(15) { animation-delay:.56s; }
+  :root{--bg:#0a0d13;--bg2:#0f1420;--bg3:#141926;--panel:#111827;--border:#1e2d45;--accent:#00e5ff;--accent2:#ff4d6d;--accent3:#a3e635;--gold:#fbbf24;--purple:#a78bfa;--text:#c9d1e0;--dim:#6b7fa3;--code-bg:#080c14;--code-bdr:#1a3a5c;--glow:0 0 20px rgba(0,229,255,0.2);}
+  *{box-sizing:border-box;margin:0;padding:0;}html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;font-weight:300;min-height:100vh;overflow-x:hidden;}
+  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,229,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.025) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;z-index:0;}
+  .wrap{position:relative;z-index:1;max-width:980px;margin:0 auto;padding:0 24px 80px;}
+  nav{display:flex;align-items:center;gap:10px;padding:20px 0;border-bottom:1px solid var(--border);font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:var(--dim);letter-spacing:0.1em;}
+  nav a{color:var(--accent);text-decoration:none;}nav a:hover{text-decoration:underline;}.nav-sep{color:var(--border);}
+  .course-header{padding:40px 0 30px;border-bottom:1px solid var(--border);position:relative;}
+  .course-header::after{content:'';position:absolute;bottom:-1px;left:0;width:240px;height:2px;background:linear-gradient(90deg,var(--accent),transparent);}
+  .ch-badge{display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:0.68rem;letter-spacing:0.18em;color:var(--accent3);background:#a3e63510;border:1px solid #a3e63530;padding:4px 12px;border-radius:3px;margin-bottom:16px;}
+  .ch-badge::before{content:'●';font-size:0.5rem;}
+  h1.course-title{font-family:'Orbitron',monospace;font-weight:900;font-size:clamp(1.6rem,4vw,2.6rem);letter-spacing:0.06em;background:linear-gradient(135deg,#fff 0%,var(--accent) 60%,#0077ff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  .tab-bar{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:40px;overflow-x:auto;scrollbar-width:none;}
+  .tab-bar::-webkit-scrollbar{display:none;}
+  .tab-btn{display:flex;flex-direction:column;align-items:center;padding:16px 28px 14px;border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;transition:all 0.2s;flex-shrink:0;position:relative;}
+  .tab-btn:hover .tab-label{color:var(--text);}
+  .tab-btn.active{border-bottom-color:var(--accent);}.tab-btn.active .tab-label{color:var(--accent);}
+  .tab-btn.locked{cursor:not-allowed;opacity:0.38;}
+  .tab-label{font-family:'Orbitron',monospace;font-size:0.72rem;font-weight:700;letter-spacing:0.1em;color:var(--dim);text-transform:uppercase;margin-bottom:3px;transition:color 0.2s;}
+  .tab-sub{font-family:'Share Tech Mono',monospace;font-size:0.6rem;color:var(--dim);letter-spacing:0.1em;opacity:0.7;}
+  .tab-lock{position:absolute;top:10px;right:10px;font-size:0.6rem;opacity:0.4;}
+  .tab-panel{display:none;}.tab-panel.active{display:block;animation:fadeIn 0.3s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  .coming-panel{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;text-align:center;border:1px dashed var(--border);border-radius:12px;background:var(--panel);}
+  .coming-icon{font-size:3rem;margin-bottom:20px;opacity:0.35;}.coming-title{font-family:'Orbitron',monospace;font-size:1.1rem;color:var(--dim);letter-spacing:0.1em;margin-bottom:10px;}
+  .coming-sub{font-size:0.85rem;color:var(--dim);opacity:0.7;max-width:380px;line-height:1.7;}
+  .quick-ref{background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--accent);border-radius:8px;padding:26px 30px;margin-bottom:36px;box-shadow:var(--glow);}
+  .sec-label{font-family:'Orbitron',monospace;font-size:0.62rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--accent);margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+  .sec-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);}
+  .cmd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:9px;}
+  .cmd-pill{display:flex;align-items:center;gap:10px;background:var(--code-bg);border:1px solid var(--code-bdr);border-radius:6px;padding:8px 13px;transition:border-color 0.2s,box-shadow 0.2s;position:relative;cursor:default;}
+  .cmd-pill:hover{border-color:var(--accent);box-shadow:0 0 10px rgba(0,229,255,0.12);}
+  .cmd-pill code{font-family:'Share Tech Mono',monospace;font-size:0.8rem;color:var(--accent);white-space:nowrap;}
+  .cmd-pill .pdesc{font-size:0.72rem;color:var(--dim);line-height:1.3;}
+  .cmd-pill .tip-box{display:none;position:absolute;top:calc(100% + 7px);left:0;min-width:260px;max-width:340px;z-index:80;background:#080c14;border:1px solid var(--accent);border-radius:7px;padding:11px 14px;font-family:'Share Tech Mono',monospace;font-size:0.67rem;line-height:1.75;color:var(--dim);box-shadow:0 8px 32px rgba(0,229,255,0.18);pointer-events:none;}
+  .cmd-pill:hover .tip-box{display:block;animation:tipIn 0.12s ease;}
+  @keyframes tipIn{from{opacity:0;transform:translateY(-3px);}to{opacity:1;transform:translateY(0);}}
+  .tip-box .tip-cmd{color:var(--accent);display:block;margin-bottom:4px;}.tip-box .tip-flag{color:var(--accent3);}
+  .tip-box .tip-note{color:var(--dim);font-style:italic;display:block;margin-top:5px;border-top:1px solid var(--border);padding-top:5px;}
+  .cmd-pill:nth-child(5n) .tip-box,.cmd-pill:nth-child(5n-1) .tip-box{left:auto;right:0;}
+  .section-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;margin-bottom:28px;overflow:hidden;transition:box-shadow 0.3s;}
+  .section-card:hover{box-shadow:0 4px 32px rgba(0,229,255,0.07);}
+  .card-header{display:flex;align-items:center;gap:13px;padding:16px 26px;background:linear-gradient(90deg,#0f1e30,var(--bg3));border-bottom:1px solid var(--border);}
+  .card-icon{width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:7px;font-size:1rem;flex-shrink:0;}
+  .icon-blue{background:#00e5ff1a;border:1px solid #00e5ff33;}.icon-red{background:#ff4d6d1a;border:1px solid #ff4d6d33;}
+  .icon-green{background:#a3e6351a;border:1px solid #a3e63533;}.icon-gold{background:#fbbf241a;border:1px solid #fbbf2433;}
+  .icon-purple{background:#a78bfa1a;border:1px solid #a78bfa33;}.icon-dim{background:#6b7fa31a;border:1px solid #6b7fa333;}
+  .card-title{font-family:'Orbitron',monospace;font-size:0.86rem;font-weight:700;letter-spacing:0.07em;color:#fff;}
+  .card-num{margin-left:auto;font-family:'Share Tech Mono',monospace;font-size:0.68rem;color:var(--dim);letter-spacing:0.14em;}
+  .card-body{padding:22px 26px;}
+  p{margin-bottom:13px;font-size:0.93rem;color:var(--text);line-height:1.75;}p:last-child{margin-bottom:0;}
+  strong,b{color:#fff;font-weight:600;}
+  .hi{color:var(--accent);font-weight:600;}.hi-r{color:var(--accent2);font-weight:600;}.hi-g{color:var(--accent3);font-weight:600;}.hi-y{color:var(--gold);font-weight:600;}.hi-p{color:var(--purple);font-weight:600;}
+  .cmd-block{margin:16px 0;border-radius:8px;overflow:hidden;border:1px solid var(--code-bdr);box-shadow:0 2px 14px rgba(0,0,0,0.4);}
+  .cmd-bar{display:flex;align-items:center;justify-content:space-between;padding:7px 14px;background:#0b1929;border-bottom:1px solid var(--code-bdr);}
+  .dots{display:flex;gap:5px;}.dot{width:10px;height:10px;border-radius:50%;}
+  .dr{background:#ff5f57;}.dy{background:#febc2e;}.dg{background:#28c840;}
+  .cmd-lbl{font-family:'Share Tech Mono',monospace;font-size:0.65rem;color:var(--dim);letter-spacing:0.12em;}
+  .cmd-content{background:var(--code-bg);padding:15px 18px;font-family:'Share Tech Mono',monospace;font-size:0.82rem;line-height:1.85;overflow-x:auto;}
+  .pr{color:var(--accent3);}.ct{color:#e2e8f0;}.cc{color:var(--dim);}.out{color:#94a3b8;}.oh{color:var(--gold);}
+  code{font-family:'Share Tech Mono',monospace;font-size:0.84em;background:#0f1e30;color:var(--accent);padding:2px 6px;border-radius:4px;border:1px solid var(--code-bdr);}
+  .note-box{display:flex;gap:13px;padding:13px 16px;border-radius:8px;margin:16px 0;font-size:0.87rem;}
+  .note-box.tip{background:#00e5ff0a;border-left:3px solid var(--accent);}
+  .note-box.warn{background:#ff4d6d0a;border-left:3px solid var(--accent2);}
+  .note-box.good{background:#a3e6350a;border-left:3px solid var(--accent3);}
+  .ni{font-size:1.05rem;flex-shrink:0;line-height:1.65;}.nt{color:var(--text);line-height:1.65;}.nt strong{display:block;margin-bottom:4px;}
+  .styled-table{width:100%;border-collapse:collapse;font-size:0.84rem;margin:16px 0;}
+  .styled-table th{background:#0b1929;color:var(--accent);font-family:'Orbitron',monospace;font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;padding:9px 15px;text-align:left;border-bottom:1px solid var(--border);}
+  .styled-table td{padding:9px 15px;border-bottom:1px solid #151f30;vertical-align:top;}
+  .styled-table tr:hover td{background:#0f1c2e;}
+  .styled-table td:first-child{font-family:'Share Tech Mono',monospace;color:var(--accent);white-space:nowrap;}
+  .styled-table td:last-child{color:var(--dim);}
+  .shortcut-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px;}
+  .sc-chip{display:flex;align-items:center;gap:7px;background:var(--code-bg);border:1px solid var(--border);border-radius:6px;padding:6px 12px;font-size:0.8rem;}
+  .key{font-family:'Share Tech Mono',monospace;font-size:0.75rem;background:#1a2840;border:1px solid #2a4060;color:var(--gold);padding:2px 7px;border-radius:4px;}
+  .sc-chip span:last-child{color:var(--dim);font-size:0.76rem;}
+  .fd-badge{display:inline-flex;align-items:center;gap:5px;font-family:'Share Tech Mono',monospace;font-size:0.65rem;letter-spacing:0.1em;padding:3px 9px;border-radius:3px;margin:0 3px;}
+  .fd-stdin{background:#a3e63518;border:1px solid #a3e63535;color:var(--accent3);}
+  .fd-stdout{background:#00e5ff15;border:1px solid #00e5ff30;color:var(--accent);}
+  .fd-stderr{background:#ff4d6d15;border:1px solid #ff4d6d30;color:var(--accent2);}
+  .perm-display{font-family:'Share Tech Mono',monospace;font-size:0.8rem;background:var(--code-bg);border:1px solid var(--code-bdr);border-radius:6px;padding:14px 18px;margin:14px 0;line-height:2;overflow-x:auto;color:#94a3b8;}
+  .perm-type{color:var(--gold);}.perm-own{color:var(--accent2);}.perm-grp{color:var(--accent);}.perm-oth{color:var(--accent3);}
+  .divider{display:flex;align-items:center;gap:14px;margin:36px 0;color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:0.68rem;letter-spacing:0.2em;}
+  .divider::before,.divider::after{content:'';flex:1;height:1px;}
+  .divider::before{background:linear-gradient(90deg,transparent,var(--border));}.divider::after{background:linear-gradient(90deg,var(--border),transparent);}
+  footer{text-align:center;padding-top:44px;border-top:1px solid var(--border);margin-top:16px;font-family:'Share Tech Mono',monospace;font-size:0.68rem;color:var(--dim);letter-spacing:0.1em;}
+  footer a{color:var(--accent);text-decoration:none;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+  .section-card{animation:fadeUp 0.45s ease both;}
+  .section-card:nth-child(2){animation-delay:.05s;}.section-card:nth-child(3){animation-delay:.10s;}
+  .section-card:nth-child(4){animation-delay:.15s;}.section-card:nth-child(5){animation-delay:.20s;}
+  .section-card:nth-child(6){animation-delay:.25s;}.section-card:nth-child(7){animation-delay:.30s;}
+  .section-card:nth-child(8){animation-delay:.35s;}.section-card:nth-child(9){animation-delay:.40s;}
+  .section-card:nth-child(10){animation-delay:.45s;}.section-card:nth-child(11){animation-delay:.50s;}
+  .section-card:nth-child(12){animation-delay:.55s;}.section-card:nth-child(13){animation-delay:.60s;}
+  .section-card:nth-child(14){animation-delay:.65s;}
 </style>
 </head>
 <body>
 <div class="wrap">
 
   <nav>
-    <a href="index.html">riig.github.io</a>
-    <span class="nav-sep">/</span>
-    <a href="library.html">Library</a>
-    <span class="nav-sep">/</span>
-    <a href="os-fundamentals.html">OS Fundamentals</a>
-    <span class="nav-sep">/</span>
+    <a href="index.html">riig.github.io</a><span class="nav-sep">/</span>
+    <a href="library.html">Cyber Library</a><span class="nav-sep">/</span>
+    <a href="os-fundamentals.html">OS Fundamentals</a><span class="nav-sep">/</span>
     <span>Linux Fundamentals</span>
   </nav>
 
   <div class="course-header">
     <div class="ch-badge">In Progress · 14/30 Sections</div>
     <h1 class="course-title">LINUX FUNDAMENTALS</h1>
-    <div class="course-meta">
-      <div class="meta-item"><span class="meta-dot"></span> Study Session: Active</div>
-      <div class="meta-item"><span class="meta-dot"></span> 30 Sections · 3 Parts</div>
-    </div>
   </div>
 
   <div class="tab-bar">
-    <button class="tab-btn active" onclick="switchTab(0)" id="tab0">
-      <span class="tab-label">Part 1</span>
-      <span class="tab-sub">Sections 1–10</span>
-    </button>
-    <button class="tab-btn active" onclick="switchTab(1)" id="tab1">
-      <span class="tab-label">Part 2</span>
-      <span class="tab-sub">Sections 11–20</span>
-    </button>
-    <button class="tab-btn locked" onclick="return false" id="tab2">
-      <span class="tab-label">Part 3</span>
-      <span class="tab-sub">Sections 21–30</span>
-      <span class="tab-lock">🔒</span>
-    </button>
+    <button class="tab-btn active" onclick="switchTab(0)"><span class="tab-label">Part 1</span><span class="tab-sub">Sections 1–10</span></button>
+    <button class="tab-btn" onclick="switchTab(1)"><span class="tab-label">Part 2</span><span class="tab-sub">Sections 11–20</span></button>
+    <button class="tab-btn locked" onclick="return false"><span class="tab-label">Part 3</span><span class="tab-sub">Sections 21–30</span><span class="tab-lock">🔒</span></button>
   </div>
 
-  <!-- ═══════════════════════════════════════
-       PART 1
-  ═══════════════════════════════════════ -->
+  <!-- PART 1 -->
   <div class="tab-panel active" id="panel0">
-
-    <!-- QUICK REF PART 1 -->
     <div class="quick-ref">
       <div class="sec-label">⚡ Quick Command Reference — Part 1</div>
       <div class="cmd-grid">
-
-        <div class="cmd-pill">
-          <code>ssh</code><span class="pdesc">Remote login</span>
-          <div class="tip-box">
-            <span class="tip-cmd">ssh user@host</span>
-            <span class="tip-flag">-p 2222</span> — custom port<br>
-            <span class="tip-flag">-i key.pem</span> — identity file<br>
-            <span class="tip-flag">-L 8080:localhost:80</span> — local port forward<br>
-            <span class="tip-note">Standard way to access remote Linux systems securely.</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>whoami</code><span class="pdesc">Current username</span>
-          <div class="tip-box">
-            <span class="tip-cmd">whoami</span>
-            No flags needed — outputs just the current username.<br>
-            <span class="tip-note">Works on both Linux and Windows. First thing to run after access.</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>id</code><span class="pdesc">User identity &amp; groups</span>
-          <div class="tip-box">
-            <span class="tip-cmd">id</span>
-            <span class="tip-flag">-u</span> — print UID only<br>
-            <span class="tip-flag">-g</span> — print GID only<br>
-            <span class="tip-flag">-G</span> — print all group IDs<br>
-            <span class="tip-note">Check for sudo, adm, or other high-value groups.</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>hostname</code><span class="pdesc">System hostname</span>
-          <div class="tip-box">
-            <span class="tip-cmd">hostname</span>
-            <span class="tip-flag">-I</span> — show all IP addresses<br>
-            <span class="tip-flag">-f</span> — fully qualified domain name<br>
-            <span class="tip-note">Confirms which machine you've accessed.</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>uname</code><span class="pdesc">OS / kernel info</span>
-          <div class="tip-box">
-            <span class="tip-cmd">uname -a</span> — all info<br>
-            <span class="tip-flag">-r</span> — kernel release (for exploit search)<br>
-            <span class="tip-flag">-s</span> — kernel name<br>
-            <span class="tip-flag">-m</span> — machine hardware (x86_64)<br>
-            <span class="tip-note">Use -r output to search for known kernel exploits.</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>pwd</code><span class="pdesc">Working directory</span>
-          <div class="tip-box">
-            <span class="tip-cmd">pwd</span>
-            <span class="tip-flag">-L</span> — logical path (follows symlinks)<br>
-            <span class="tip-flag">-P</span> — physical path (resolves symlinks)<br>
-            <span class="tip-note">Always know where you are before running commands.</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>ls</code><span class="pdesc">List directory</span>
-          <div class="tip-box">
-            <span class="tip-cmd">ls -la</span> — all files + details<br>
-            <span class="tip-flag">-l</span> — long format (perms, owner, size)<br>
-            <span class="tip-flag">-a</span> — include hidden files (dot files)<br>
-            <span class="tip-flag">-i</span> — show inode numbers<br>
-            <span class="tip-flag">-t</span> — sort by modification time<br>
-            <span class="tip-flag">-lt</span> — long format sorted newest first<br>
-            <span class="tip-note">Combine flags freely: ls -lta, ls -lhi, etc.</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>cd</code><span class="pdesc">Change directory</span>
-          <div class="tip-box">
-            <span class="tip-cmd">cd /path/to/dir</span><br>
-            <span class="tip-flag">cd -</span> — jump to last directory<br>
-            <span class="tip-flag">cd ..</span> — go up one level<br>
-            <span class="tip-flag">cd ~</span> — go to home directory<br>
-            <span class="tip-note">TAB twice after partial path to see completions.</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>touch</code><span class="pdesc">Create empty file</span>
-          <div class="tip-box">
-            <span class="tip-cmd">touch file.txt</span><br>
-            <span class="tip-flag">-t 202301010000</span> — set custom timestamp<br>
-            <span class="tip-flag">-a</span> — change access time only<br>
-            <span class="tip-note">Also updates file timestamps if file already exists.</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>mkdir</code><span class="pdesc">Create directory</span>
-          <div class="tip-box">
-            <span class="tip-cmd">mkdir dirname</span><br>
-            <span class="tip-flag">-p</span> — create parent dirs automatically<br>
-            <span class="tip-flag">-m 755</span> — set permissions on creation<br>
-            <span class="tip-note">mkdir -p a/b/c/d creates full nested path in one shot.</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>mv</code><span class="pdesc">Move / rename</span>
-          <div class="tip-box">
-            <span class="tip-cmd">mv src dest</span><br>
-            <span class="tip-flag">-i</span> — prompt before overwrite<br>
-            <span class="tip-flag">-n</span> — never overwrite<br>
-            <span class="tip-flag">-v</span> — verbose output<br>
-            <span class="tip-note">Same command for both moving and renaming.</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>cp</code><span class="pdesc">Copy file/dir</span>
-          <div class="tip-box">
-            <span class="tip-cmd">cp src dest</span><br>
-            <span class="tip-flag">-r</span> — recursive (copy directories)<br>
-            <span class="tip-flag">-p</span> — preserve timestamps &amp; permissions<br>
-            <span class="tip-flag">-i</span> — prompt before overwrite<br>
-            <span class="tip-note">Use -r when copying entire directories.</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>tree</code><span class="pdesc">Visual dir tree</span>
-          <div class="tip-box">
-            <span class="tip-cmd">tree .</span><br>
-            <span class="tip-flag">-a</span> — show hidden files<br>
-            <span class="tip-flag">-L 2</span> — limit depth to 2 levels<br>
-            <span class="tip-flag">-d</span> — directories only<br>
-            <span class="tip-note">Great for visualising nested directory structures.</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>nano</code><span class="pdesc">Simple text editor</span>
-          <div class="tip-box">
-            <span class="tip-cmd">nano file.txt</span><br>
-            <span class="tip-flag">Ctrl+O</span> — save file<br>
-            <span class="tip-flag">Ctrl+X</span> — exit<br>
-            <span class="tip-flag">Ctrl+W</span> — search<br>
-            <span class="tip-note">Easiest terminal editor for beginners. Key hints shown at bottom.</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>vim</code><span class="pdesc">Advanced text editor</span>
-          <div class="tip-box">
-            <span class="tip-cmd">vim file.txt</span><br>
-            <span class="tip-flag">i</span> — enter insert mode<br>
-            <span class="tip-flag">Esc</span> — return to normal mode<br>
-            <span class="tip-flag">:w</span> — write (save)<br>
-            <span class="tip-flag">:q!</span> — quit without saving<br>
-            <span class="tip-note">Modal editor — steep learning curve, extreme power.</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>cat</code><span class="pdesc">Read &amp; display file</span>
-          <div class="tip-box">
-            <span class="tip-cmd">cat file.txt</span><br>
-            <span class="tip-flag">-n</span> — show line numbers<br>
-            <span class="tip-flag">-A</span> — show hidden characters<br>
-            <span class="tip-flag">&gt; out.txt</span> — redirect to file<br>
-            <span class="tip-note">Also used for piping: cat file | grep pattern</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>which</code><span class="pdesc">Find binary path</span>
-          <div class="tip-box">
-            <span class="tip-cmd">which python3</span><br>
-            Returns full path to executable if it exists in PATH.<br>
-            <span class="tip-note">Use to check if tools like wget, curl, gcc are available.</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>find</code><span class="pdesc">Search filesystem</span>
-          <div class="tip-box">
-            <span class="tip-cmd">find / -name "*.conf" 2>/dev/null</span><br>
-            <span class="tip-flag">-type f</span> — files only<br>
-            <span class="tip-flag">-type d</span> — directories only<br>
-            <span class="tip-flag">-user root</span> — owned by root<br>
-            <span class="tip-flag">-size +20k</span> — larger than 20KB<br>
-            <span class="tip-flag">-newermt DATE</span> — modified after date<br>
-            <span class="tip-note">2>/dev/null hides permission errors from output.</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>locate</code><span class="pdesc">Fast file search (db)</span>
-          <div class="tip-box">
-            <span class="tip-cmd">locate *.conf</span><br>
-            <span class="tip-flag">sudo updatedb</span> — refresh database first<br>
-            <span class="tip-note">Much faster than find but relies on an indexed database.</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>ip a</code><span class="pdesc">Network interfaces</span>
-          <div class="tip-box">
-            <span class="tip-cmd">ip a</span> — all interfaces<br>
-            <span class="tip-flag">ip link</span> — link-layer only<br>
-            <span class="tip-flag">ip route</span> — routing table<br>
-            <span class="tip-flag">ip a | grep mtu</span> — MTU per interface<br>
-            <span class="tip-note">MTU 1500 = standard Ethernet. lo = loopback (65536).</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>ifconfig</code><span class="pdesc">Network interfaces (legacy)</span>
-          <div class="tip-box">
-            <span class="tip-cmd">ifconfig</span><br>
-            <span class="tip-flag">ifconfig eth0</span> — specific interface<br>
-            <span class="tip-note">Older tool, replaced by ip. Still common on many systems.</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>netstat</code><span class="pdesc">Network status</span>
-          <div class="tip-box">
-            <span class="tip-cmd">netstat -tulpn</span> — listening ports<br>
-            <span class="tip-flag">-t</span> TCP&nbsp; <span class="tip-flag">-u</span> UDP&nbsp; <span class="tip-flag">-l</span> listen<br>
-            <span class="tip-flag">-p</span> — show PID/process<br>
-            <span class="tip-note">Great for enumerating open services on a target.</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>ss</code><span class="pdesc">Socket investigation</span>
-          <div class="tip-box">
-            <span class="tip-cmd">ss -tulpn</span> — same as netstat<br>
-            <span class="tip-flag">-s</span> — socket summary<br>
-            <span class="tip-note">Faster and more modern than netstat.</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>ps</code><span class="pdesc">Process status</span>
-          <div class="tip-box">
-            <span class="tip-cmd">ps aux</span> — all processes<br>
-            <span class="tip-flag">-e</span> — every process<br>
-            <span class="tip-flag">-f</span> — full format<br>
-            <span class="tip-flag">ps aux | grep ssh</span> — filter by name<br>
-            <span class="tip-note">Use to enumerate running services and their users.</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>who</code><span class="pdesc">Logged-in users</span>
-          <div class="tip-box">
-            <span class="tip-cmd">who</span><br>
-            <span class="tip-flag">-a</span> — all info<br>
-            <span class="tip-flag">w</span> — similar but with load info<br>
-            <span class="tip-note">Shows who else is on the system — useful for awareness.</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>env</code><span class="pdesc">Environment variables</span>
-          <div class="tip-box">
-            <span class="tip-cmd">env</span><br>
-            <span class="tip-flag">printenv PATH</span> — specific variable<br>
-            <span class="tip-note">Check for credentials or secrets stored in env vars.</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>lsblk</code><span class="pdesc">Block devices</span>
-          <div class="tip-box">
-            <span class="tip-cmd">lsblk</span><br>
-            <span class="tip-flag">-f</span> — show filesystem types<br>
-            <span class="tip-note">Useful for spotting mounted drives and partitions.</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>lsusb</code><span class="pdesc">USB devices</span>
-          <div class="tip-box">
-            <span class="tip-cmd">lsusb</span><br>
-            <span class="tip-flag">-v</span> — verbose device details<br>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>lsof</code><span class="pdesc">Open files</span>
-          <div class="tip-box">
-            <span class="tip-cmd">lsof</span><br>
-            <span class="tip-flag">-i :80</span> — who is using port 80<br>
-            <span class="tip-flag">-u root</span> — files opened by root<br>
-            <span class="tip-note">Powerful for finding what processes hold network connections.</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>lspci</code><span class="pdesc">PCI devices</span>
-          <div class="tip-box">
-            <span class="tip-cmd">lspci</span><br>
-            <span class="tip-flag">-v</span> — verbose<br>
-            <span class="tip-flag">-k</span> — show kernel drivers in use<br>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>clear</code><span class="pdesc">Clear terminal</span>
-          <div class="tip-box">
-            <span class="tip-cmd">clear</span> or <span class="tip-flag">Ctrl+L</span><br>
-            <span class="tip-note">Shortcut is faster. Output stays in scroll buffer.</span>
-          </div>
-        </div>
-
+        <div class="cmd-pill"><code>ssh</code><span class="pdesc">Remote login</span><div class="tip-box"><span class="tip-cmd">ssh user@host</span><span class="tip-flag">-p 2222</span> — custom port<br><span class="tip-flag">-i key.pem</span> — identity/key file<br><span class="tip-flag">-L 8080:localhost:80</span> — local port forward<br><span class="tip-flag">-D 1080</span> — SOCKS proxy<br><span class="tip-note">Standard encrypted remote access. Always prefer key-based auth over passwords.</span></div></div>
+        <div class="cmd-pill"><code>whoami</code><span class="pdesc">Current username</span><div class="tip-box"><span class="tip-cmd">whoami</span>No flags — outputs only the username.<br><span class="tip-note">Works on Linux and Windows. Run immediately after gaining access to any system.</span></div></div>
+        <div class="cmd-pill"><code>id</code><span class="pdesc">User &amp; group IDs</span><div class="tip-box"><span class="tip-cmd">id</span><span class="tip-flag">-u</span> — UID only<br><span class="tip-flag">-g</span> — primary GID only<br><span class="tip-flag">-G</span> — all supplementary group IDs<br><span class="tip-flag">-n</span> — show names instead of numbers<br><span class="tip-note">sudo group = can run as root. adm group = can read /var/log.</span></div></div>
+        <div class="cmd-pill"><code>hostname</code><span class="pdesc">System hostname</span><div class="tip-box"><span class="tip-cmd">hostname</span><span class="tip-flag">-I</span> — all IP addresses<br><span class="tip-flag">-f</span> — FQDN (fully qualified domain name)<br><span class="tip-flag">-s</span> — short hostname only<br><span class="tip-note">Confirms which machine you've landed on. Great sanity check during pivoting.</span></div></div>
+        <div class="cmd-pill"><code>uname</code><span class="pdesc">OS / kernel info</span><div class="tip-box"><span class="tip-cmd">uname -a</span> — everything at once<br><span class="tip-flag">-r</span> — kernel release (search this for exploits)<br><span class="tip-flag">-s</span> — kernel name<br><span class="tip-flag">-m</span> — machine arch (x86_64, arm64...)<br><span class="tip-flag">-n</span> — network hostname<br><span class="tip-note">Paste uname -r output into searchsploit or Google + "exploit".</span></div></div>
+        <div class="cmd-pill"><code>pwd</code><span class="pdesc">Current directory path</span><div class="tip-box"><span class="tip-cmd">pwd</span><span class="tip-flag">-L</span> — logical path (default, follows symlinks)<br><span class="tip-flag">-P</span> — physical path (resolves all symlinks)<br><span class="tip-note">Run before any destructive command. Know where you are at all times.</span></div></div>
+        <div class="cmd-pill"><code>ls</code><span class="pdesc">List directory</span><div class="tip-box"><span class="tip-cmd">ls -la</span> — all files with full details<br><span class="tip-flag">-l</span> — long format<br><span class="tip-flag">-a</span> — show hidden dot files<br><span class="tip-flag">-h</span> — human-readable sizes (KB/MB/GB)<br><span class="tip-flag">-i</span> — show inode numbers<br><span class="tip-flag">-t</span> — sort by modified time, newest first<br><span class="tip-flag">-R</span> — recursive listing<br><span class="tip-note">Combine freely: ls -lath, ls -laR, ls -li</span></div></div>
+        <div class="cmd-pill"><code>cd</code><span class="pdesc">Change directory</span><div class="tip-box"><span class="tip-cmd">cd /absolute/path</span><br><span class="tip-flag">cd -</span> — return to previous directory<br><span class="tip-flag">cd ..</span> — go up one level<br><span class="tip-flag">cd ~</span> — home directory<br><span class="tip-flag">cd ~/Documents</span> — relative to home<br><span class="tip-note">Double-tap TAB after any partial path to see completions.</span></div></div>
+        <div class="cmd-pill"><code>touch</code><span class="pdesc">Create / update file</span><div class="tip-box"><span class="tip-cmd">touch newfile.txt</span><br><span class="tip-flag">-t 202401010800</span> — set custom timestamp<br><span class="tip-flag">-a</span> — update access time only<br><span class="tip-flag">-m</span> — update modification time only<br><span class="tip-note">If file exists, touch only updates its timestamp — does not clear content.</span></div></div>
+        <div class="cmd-pill"><code>mkdir</code><span class="pdesc">Create directory</span><div class="tip-box"><span class="tip-cmd">mkdir dirname</span><br><span class="tip-flag">-p</span> — create full nested path at once<br><span class="tip-flag">-m 700</span> — set permissions on creation<br><span class="tip-flag">-v</span> — verbose (show each dir created)<br><span class="tip-note">mkdir -p a/b/c/d — creates all missing parents in one command.</span></div></div>
+        <div class="cmd-pill"><code>mv</code><span class="pdesc">Move / rename</span><div class="tip-box"><span class="tip-cmd">mv old new</span> — rename<br><span class="tip-cmd">mv file /dest/</span> — move<br><span class="tip-flag">-i</span> — prompt before overwriting<br><span class="tip-flag">-n</span> — never overwrite existing<br><span class="tip-flag">-v</span> — verbose<br><span class="tip-note">mv has no undo. Use -i in scripts to prevent silent overwrites.</span></div></div>
+        <div class="cmd-pill"><code>cp</code><span class="pdesc">Copy files/dirs</span><div class="tip-box"><span class="tip-cmd">cp src dest</span><br><span class="tip-flag">-r</span> — recursive (required for dirs)<br><span class="tip-flag">-p</span> — preserve timestamps, perms, owner<br><span class="tip-flag">-i</span> — confirm before overwrite<br><span class="tip-flag">-u</span> — only copy if source is newer<br><span class="tip-note">cp -rp is useful for making full backups that preserve metadata.</span></div></div>
+        <div class="cmd-pill"><code>rm</code><span class="pdesc">Remove files/dirs</span><div class="tip-box"><span class="tip-cmd">rm file.txt</span><br><span class="tip-flag">-r</span> — recursive (delete directories)<br><span class="tip-flag">-f</span> — force, no prompts<br><span class="tip-flag">-i</span> — confirm each deletion<br><span class="tip-note">rm is permanent. There is no trash bin. Always double-check the path.</span></div></div>
+        <div class="cmd-pill"><code>tree</code><span class="pdesc">Visual dir tree</span><div class="tip-box"><span class="tip-cmd">tree .</span><br><span class="tip-flag">-a</span> — include hidden files<br><span class="tip-flag">-L 2</span> — limit depth to 2 levels<br><span class="tip-flag">-d</span> — directories only<br><span class="tip-flag">-h</span> — human-readable file sizes<br><span class="tip-note">Not installed by default on all systems: apt install tree</span></div></div>
+        <div class="cmd-pill"><code>nano</code><span class="pdesc">Simple text editor</span><div class="tip-box"><span class="tip-cmd">nano file.txt</span><br><span class="tip-flag">Ctrl+O</span> — save (Write Out)<br><span class="tip-flag">Ctrl+X</span> — exit<br><span class="tip-flag">Ctrl+W</span> — search<br><span class="tip-flag">Ctrl+K / Ctrl+U</span> — cut / paste line<br><span class="tip-note">^ in nano's menu means Ctrl. Best editor for quick edits when you're learning.</span></div></div>
+        <div class="cmd-pill"><code>vim</code><span class="pdesc">Modal power editor</span><div class="tip-box"><span class="tip-cmd">vim file.txt</span><br><span class="tip-flag">i</span> — enter insert mode<br><span class="tip-flag">Esc</span> — return to normal mode<br><span class="tip-flag">:w</span> — save &nbsp; <span class="tip-flag">:q!</span> — quit no save<br><span class="tip-flag">:wq</span> — save and quit<br><span class="tip-flag">dd</span> — delete line &nbsp; <span class="tip-flag">yy</span> — copy line<br><span class="tip-note">Run vimtutor in terminal for a free 25-min interactive course.</span></div></div>
+        <div class="cmd-pill"><code>cat</code><span class="pdesc">Read &amp; stream files</span><div class="tip-box"><span class="tip-cmd">cat file.txt</span><br><span class="tip-flag">-n</span> — show line numbers<br><span class="tip-flag">-A</span> — show all hidden chars (^I for tab, $ for newline)<br><span class="tip-flag">cat f1 f2 &gt; combined</span> — concatenate files<br><span class="tip-note">cat = concatenate. Its name hints at its original purpose: joining files.</span></div></div>
+        <div class="cmd-pill"><code>which</code><span class="pdesc">Find binary in PATH</span><div class="tip-box"><span class="tip-cmd">which python3</span><br>Returns full path if found, nothing if not.<br><span class="tip-flag">which -a python3</span> — show all matches in PATH<br><span class="tip-note">Use to confirm which version of a tool the shell will actually run.</span></div></div>
+        <div class="cmd-pill"><code>find</code><span class="pdesc">Deep filesystem search</span><div class="tip-box"><span class="tip-cmd">find / -name "*.conf" 2>/dev/null</span><br><span class="tip-flag">-type f</span> files &nbsp; <span class="tip-flag">-type d</span> dirs<br><span class="tip-flag">-user root</span> — owned by root<br><span class="tip-flag">-perm -4000</span> — SUID files<br><span class="tip-flag">-size +10M</span> — larger than 10MB<br><span class="tip-flag">-mtime -7</span> — modified in last 7 days<br><span class="tip-note">2>/dev/null silences permission errors. Essential for recon.</span></div></div>
+        <div class="cmd-pill"><code>locate</code><span class="pdesc">Fast indexed search</span><div class="tip-box"><span class="tip-cmd">locate passwd</span><br><span class="tip-flag">sudo updatedb</span> — refresh database first<br><span class="tip-flag">-i</span> — case insensitive<br><span class="tip-flag">-c</span> — count matches only<br><span class="tip-note">Uses a pre-built index. Much faster than find but won't catch brand-new files.</span></div></div>
+        <div class="cmd-pill"><code>ip a</code><span class="pdesc">Network interfaces</span><div class="tip-box"><span class="tip-cmd">ip a</span> — all interfaces + IPs<br><span class="tip-flag">ip link</span> — link layer (MAC, state)<br><span class="tip-flag">ip route</span> — routing table<br><span class="tip-flag">ip neigh</span> — ARP table (neighbours)<br><span class="tip-note">Modern replacement for ifconfig. Available on all current distros.</span></div></div>
+        <div class="cmd-pill"><code>ifconfig</code><span class="pdesc">Network interfaces (legacy)</span><div class="tip-box"><span class="tip-cmd">ifconfig</span><br><span class="tip-flag">ifconfig eth0</span> — specific interface only<br><span class="tip-note">Older tool, still widely present. Use ip a on modern systems.</span></div></div>
+        <div class="cmd-pill"><code>netstat</code><span class="pdesc">Network connections</span><div class="tip-box"><span class="tip-cmd">netstat -tulpn</span> — all listening ports<br><span class="tip-flag">-t</span> TCP &nbsp;<span class="tip-flag">-u</span> UDP &nbsp;<span class="tip-flag">-l</span> listening<br><span class="tip-flag">-p</span> — show process/PID<br><span class="tip-flag">-n</span> — numeric (no DNS lookup)<br><span class="tip-note">Great for discovering locally running services not visible from outside.</span></div></div>
+        <div class="cmd-pill"><code>ss</code><span class="pdesc">Socket statistics</span><div class="tip-box"><span class="tip-cmd">ss -tulpn</span> — same as netstat equivalent<br><span class="tip-flag">-s</span> — socket summary stats<br><span class="tip-flag">ss -tp</span> — established TCP with process<br><span class="tip-note">Faster and more detailed than netstat. Preferred on modern Linux.</span></div></div>
+        <div class="cmd-pill"><code>ps</code><span class="pdesc">Process list</span><div class="tip-box"><span class="tip-cmd">ps aux</span> — all processes, all users<br><span class="tip-flag">ps aux | grep ssh</span> — filter by name<br><span class="tip-flag">ps -ef</span> — full format listing<br><span class="tip-flag">ps -u www-data</span> — specific user's processes<br><span class="tip-note">Look for unusual processes running as root or under service accounts.</span></div></div>
+        <div class="cmd-pill"><code>who</code><span class="pdesc">Logged-in users</span><div class="tip-box"><span class="tip-cmd">who</span><br><span class="tip-flag">w</span> — extended version with load &amp; what they're doing<br><span class="tip-flag">last</span> — login history<br><span class="tip-note">Useful for situational awareness — are other users or admins active?</span></div></div>
+        <div class="cmd-pill"><code>env</code><span class="pdesc">Environment variables</span><div class="tip-box"><span class="tip-cmd">env</span> — print all env vars<br><span class="tip-flag">printenv HOME</span> — specific variable<br><span class="tip-flag">echo $PATH</span> — show PATH<br><span class="tip-note">Check for credentials, tokens, or API keys stored carelessly in env vars.</span></div></div>
+        <div class="cmd-pill"><code>lsblk</code><span class="pdesc">Block devices</span><div class="tip-box"><span class="tip-cmd">lsblk</span><br><span class="tip-flag">-f</span> — show filesystem type and UUID<br><span class="tip-flag">-o NAME,SIZE,TYPE,MOUNTPOINT</span> — custom columns<br><span class="tip-note">Shows disks, partitions, and where they're mounted.</span></div></div>
+        <div class="cmd-pill"><code>lsusb</code><span class="pdesc">USB devices</span><div class="tip-box"><span class="tip-cmd">lsusb</span><br><span class="tip-flag">-v</span> — verbose device details<br><span class="tip-flag">-t</span> — tree layout<br></div></div>
+        <div class="cmd-pill"><code>lsof</code><span class="pdesc">Open files &amp; sockets</span><div class="tip-box"><span class="tip-cmd">lsof -i :80</span> — what's using port 80<br><span class="tip-flag">-u root</span> — files opened by root<br><span class="tip-flag">-p 1234</span> — files opened by PID<br><span class="tip-flag">lsof /etc/passwd</span> — who has this file open<br><span class="tip-note">Powerful for finding network connections per-process without netstat.</span></div></div>
+        <div class="cmd-pill"><code>lspci</code><span class="pdesc">PCI hardware</span><div class="tip-box"><span class="tip-cmd">lspci</span><br><span class="tip-flag">-v</span> — verbose<br><span class="tip-flag">-k</span> — show kernel driver in use<br><span class="tip-flag">-nn</span> — show vendor/device IDs<br></div></div>
+        <div class="cmd-pill"><code>clear</code><span class="pdesc">Clear terminal</span><div class="tip-box"><span class="tip-cmd">clear</span> or <span class="tip-flag">Ctrl+L</span><br>Output is still accessible by scrolling up.<br><span class="tip-note">Ctrl+L is faster and does the same thing.</span></div></div>
       </div>
-    </div><!-- end quick-ref -->
+    </div>
 
     <!-- 01: SSH -->
     <div class="section-card">
-      <div class="card-header">
-        <div class="card-icon icon-blue">🔐</div>
-        <div class="card-title">Connecting via SSH</div>
-        <div class="card-num">01 / 10</div>
-      </div>
+      <div class="card-header"><div class="card-icon icon-blue">🔐</div><div class="card-title">Connecting via SSH</div><div class="card-num">01 / 10</div></div>
       <div class="card-body">
-        <p>SSH (Secure Shell) lets you remotely access machines securely over a network — the standard way to connect to any remote Linux system.</p>
+        <p><span class="hi">SSH (Secure Shell)</span> is an encrypted protocol for remotely accessing and controlling Linux systems over a network. Any time you need to work on a machine that isn't physically in front of you — a server, a VPS, a lab machine, a target — SSH is how you get there.</p>
+        <p>The basic syntax is <code>ssh username@ip_address</code>. The system will prompt for a password, or if key-based authentication is set up, log you in automatically.</p>
         <div class="cmd-block">
-          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — basic connection</span></div>
           <div class="cmd-content">
-<span class="pr">$</span> <span class="ct">ssh user@&lt;TARGET_IP&gt;</span><br>
-<span class="out">user@&lt;TARGET_IP&gt;'s password: <span class="oh">••••••••</span></span><br>
-<span class="out">Welcome to Ubuntu 20.04 LTS...</span><br>
-<span class="out">JohnDoe@target:~$</span>
+<span class="pr">$</span> <span class="ct">ssh JohnDoe@10.10.14.5</span><br>
+<span class="out">JohnDoe@10.10.14.5's password: <span class="oh">••••••••</span></span><br>
+<span class="out">Welcome to Ubuntu 20.04.4 LTS (GNU/Linux 5.4.0-113-generic x86_64)</span><br>
+<span class="out">Last login: Mon Nov 13 17:34:22 2023 from 10.10.14.2</span><br>
+<span class="pr">JohnDoe@target[~]$</span>
           </div>
         </div>
-        <div class="note-box tip"><span class="ni">💡</span><div class="nt"><strong>Tip</strong>Replace <code>&lt;TARGET_IP&gt;</code> with the actual IP address of the machine you are connecting to.</div></div>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — common SSH flags</span></div>
+          <div class="cmd-content">
+<span class="cc"># Connect on a non-default port (default is 22)</span><br>
+<span class="pr">$</span> <span class="ct">ssh -p 2222 JohnDoe@10.10.14.5</span><br><br>
+<span class="cc"># Use a private key file for authentication instead of a password</span><br>
+<span class="pr">$</span> <span class="ct">ssh -i ~/.ssh/id_rsa JohnDoe@10.10.14.5</span><br><br>
+<span class="cc"># Local port forward — tunnel remote port 80 to local port 8080</span><br>
+<span class="pr">$</span> <span class="ct">ssh -L 8080:localhost:80 JohnDoe@10.10.14.5</span><br><br>
+<span class="cc"># Verbose mode — useful for debugging connection problems</span><br>
+<span class="pr">$</span> <span class="ct">ssh -v JohnDoe@10.10.14.5</span>
+          </div>
+        </div>
+        <div class="note-box tip"><span class="ni">💡</span><div class="nt"><strong>Key-based authentication</strong>Instead of typing a password every time, you can generate an SSH key pair with <code>ssh-keygen</code> and copy your public key to the server with <code>ssh-copy-id user@host</code>. After that, SSH logs you in automatically and is more secure than passwords.</div></div>
+        <div class="note-box warn"><span class="ni">⚠️</span><div class="nt"><strong>Host verification</strong>The first time you connect to a new host, SSH shows a fingerprint and asks you to verify it. Type <code>yes</code> to accept. This protects you from connecting to a fake server (man-in-the-middle attack). Known hosts are stored in <code>~/.ssh/known_hosts</code>.</div></div>
       </div>
     </div>
 
     <!-- 02: hostname -->
     <div class="section-card">
-      <div class="card-header">
-        <div class="card-icon icon-green">🖥️</div>
-        <div class="card-title">hostname — Identify the Machine</div>
-        <div class="card-num">02 / 10</div>
-      </div>
+      <div class="card-header"><div class="card-icon icon-green">🖥️</div><div class="card-title">hostname — Identify the Machine</div><div class="card-num">02 / 10</div></div>
       <div class="card-body">
-        <p>The <span class="hi">hostname</span> command prints the name of the computer you are currently logged into. Useful for confirming which machine you have accessed during an engagement.</p>
+        <p>The <span class="hi">hostname</span> command prints the name assigned to the computer you are logged into. Every Linux machine has a hostname — it's used to identify the machine on a network and shows up in your shell prompt.</p>
+        <p>This matters during security work because when you're pivoting through multiple machines, <code>hostname</code> is how you confirm which box you're actually on before running any commands.</p>
         <div class="cmd-block">
           <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
           <div class="cmd-content">
 <span class="pr">JohnDoe@target[~]$</span> <span class="ct">hostname</span><br>
-<span class="out oh">linux-target-01</span>
+<span class="out oh">linux-target-01</span><br><br>
+<span class="cc"># Show all IP addresses associated with this hostname</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">hostname -I</span><br>
+<span class="out oh">10.10.14.5 172.17.0.1</span><br><br>
+<span class="cc"># Show the fully qualified domain name (FQDN)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">hostname -f</span><br>
+<span class="out">linux-target-01.intranet.local</span>
           </div>
         </div>
+        <div class="note-box tip"><span class="ni">💡</span><div class="nt"><strong>Hostname in your prompt</strong>The hostname typically appears in your shell prompt automatically — e.g. <code>JohnDoe@linux-target-01:~$</code>. But it's good practice to run <code>hostname</code> explicitly, especially after escalating privileges or switching users, to confirm nothing unexpected changed.</div></div>
       </div>
     </div>
 
     <!-- 03: whoami -->
     <div class="section-card">
-      <div class="card-header">
-        <div class="card-icon icon-red">👤</div>
-        <div class="card-title">whoami — Current User</div>
-        <div class="card-num">03 / 10</div>
-      </div>
+      <div class="card-header"><div class="card-icon icon-red">👤</div><div class="card-title">whoami — Know Your User</div><div class="card-num">03 / 10</div></div>
       <div class="card-body">
-        <p><span class="hi">whoami</span> works on both <strong>Windows and Linux</strong>. After gaining access to a system this is one of the <span class="hi-y">first commands to run</span> — knowing which user you are running as tells you what you can and cannot do on that system.</p>
+        <p><span class="hi">whoami</span> prints the username of the account currently running the shell. It's one of the simplest commands but also one of the most important — especially after gaining initial access to a system, escalating privileges, or switching users with <code>su</code>.</p>
+        <p>It works identically on <strong>Linux, macOS, and Windows</strong> (via PowerShell or CMD), making it a universal first command regardless of which OS you land on.</p>
         <div class="cmd-block">
           <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
           <div class="cmd-content">
 <span class="pr">JohnDoe@target[~]$</span> <span class="ct">whoami</span><br>
-<span class="out oh">JohnDoe</span>
+<span class="out oh">JohnDoe</span><br><br>
+<span class="cc"># After switching to root...</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">sudo su</span><br>
+<span class="pr">root@target[~]#</span> <span class="ct">whoami</span><br>
+<span class="out oh">root</span>
           </div>
         </div>
-        <div class="note-box warn"><span class="ni">⚠️</span><div class="nt"><strong>Why it matters</strong>Your current user determines <strong>privileges</strong> and <strong>access</strong> on the system — a critical first step before attempting any further enumeration or privilege escalation.</div></div>
+        <p>The difference between <code>JohnDoe</code> and <code>root</code> is everything — root is the superuser account with unlimited access to the entire system. As a regular user you're heavily restricted; as root nothing is off limits.</p>
+        <div class="note-box warn"><span class="ni">⚠️</span><div class="nt"><strong>Why this is the first command you run</strong>Your username determines exactly what you can read, write, and execute. Running destructive commands as root by accident can wipe a system. Running enumeration as a low-privilege user tells you what you still need to escalate to. Always know who you are before doing anything else.</div></div>
       </div>
     </div>
 
     <!-- 04: id -->
     <div class="section-card">
-      <div class="card-header">
-        <div class="card-icon icon-gold">🪪</div>
-        <div class="card-title">id — User Identity &amp; Group Membership</div>
-        <div class="card-num">04 / 10</div>
-      </div>
+      <div class="card-header"><div class="card-icon icon-gold">🪪</div><div class="card-title">id — Full Identity &amp; Group Membership</div><div class="card-num">04 / 10</div></div>
       <div class="card-body">
-        <p><span class="hi">id</span> expands on <code>whoami</code> by showing your effective group memberships and IDs — invaluable for understanding what permissions and access you actually have on a system.</p>
+        <p><span class="hi">id</span> goes deeper than <code>whoami</code>. It shows your <strong>UID</strong> (user ID number), <strong>GID</strong> (primary group ID), and every supplementary group you belong to. Groups on Linux are how access to files, devices, and services is controlled beyond simple user ownership.</p>
         <div class="cmd-block">
           <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
           <div class="cmd-content">
 <span class="pr">JohnDoe@target[~]$</span> <span class="ct">id</span><br>
-<span class="out">uid=1000(<span class="oh">JohnDoe</span>) gid=1000(JohnDoe) groups=1000(JohnDoe),</span><br>
-<span class="out">  4(adm),24(cdrom),27(<span class="oh">sudo</span>),30(dip),46(plugdev),116(lpadmin)</span>
+<span class="out">uid=1000(<span class="oh">JohnDoe</span>) gid=1000(JohnDoe) groups=1000(JohnDoe),4(<span class="oh">adm</span>),24(cdrom),27(<span class="oh">sudo</span>),30(dip),46(plugdev),116(lpadmin)</span><br><br>
+<span class="cc"># Check another user's identity without switching to them</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">id www-data</span><br>
+<span class="out">uid=33(www-data) gid=33(www-data) groups=33(www-data)</span>
           </div>
         </div>
         <table class="styled-table">
-          <thead><tr><th>Group</th><th>What it means</th></tr></thead>
+          <thead><tr><th>Group</th><th>What access it grants</th><th>Security relevance</th></tr></thead>
           <tbody>
-            <tr><td>adm (4)</td><td>Can read logs in <code>/var/log</code> — potential access to sensitive info</td></tr>
-            <tr><td>sudo (27)</td><td>🚨 Can run commands as root — key privilege escalation path</td></tr>
-            <tr><td>any custom group</td><td>Always investigate non-standard groups — they may grant access to files or services</td></tr>
+            <tr><td>sudo (27)</td><td>Run any command as root with <code>sudo</code></td><td>🚨 Highest value — direct path to full system access</td></tr>
+            <tr><td>adm (4)</td><td>Read system logs in <code>/var/log/</code></td><td>Logs can contain passwords, keys, or user activity</td></tr>
+            <tr><td>docker</td><td>Control Docker containers</td><td>Docker group = trivial root escalation via container escape</td></tr>
+            <tr><td>disk</td><td>Direct read access to raw block devices</td><td>Can read entire filesystem contents, bypassing permissions</td></tr>
+            <tr><td>lxd / lxc</td><td>Manage Linux containers</td><td>Similar to docker — escalation path to root</td></tr>
           </tbody>
         </table>
+        <div class="note-box good"><span class="ni">🔍</span><div class="nt"><strong>Quick privilege check</strong>The first thing to check on any system is whether you're in the <code>sudo</code> group. If you are and know the account password, you can run <code>sudo -l</code> to see exactly which commands are permitted, or <code>sudo su</code> to become root.</div></div>
       </div>
     </div>
 
     <!-- 05: uname -->
     <div class="section-card">
-      <div class="card-header">
-        <div class="card-icon icon-blue">⚙️</div>
-        <div class="card-title">uname — Kernel &amp; System Info</div>
-        <div class="card-num">05 / 10</div>
-      </div>
+      <div class="card-header"><div class="card-icon icon-blue">⚙️</div><div class="card-title">uname — Kernel &amp; System Information</div><div class="card-num">05 / 10</div></div>
       <div class="card-body">
-        <p><span class="hi">uname</span> prints information about the operating system and kernel. The most useful flags are <code>-a</code> (all info at once) and <code>-r</code> (kernel release version alone).</p>
+        <p><span class="hi">uname</span> prints technical information about the operating system kernel running on the machine. This is essential for understanding what version of Linux you're dealing with and for searching for known vulnerabilities tied to that exact kernel version.</p>
         <div class="cmd-block">
           <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
           <div class="cmd-content">
+<span class="cc"># Print everything in one line (most useful)</span><br>
 <span class="pr">JohnDoe@target[~]$</span> <span class="ct">uname -a</span><br>
-<span class="out">Linux target <span class="oh">4.15.0-99-generic</span> #100-Ubuntu SMP Wed Apr 22 20:32:56 UTC 2020 x86_64 GNU/Linux</span><br><br>
+<span class="out">Linux target <span class="oh">4.15.0-99-generic</span> #100-Ubuntu SMP Wed Apr 22 20:32:56 UTC 2020 <span class="oh">x86_64</span> x86_64 x86_64 GNU/Linux</span><br><br>
+<span class="cc"># Just the kernel version — useful for exploit research</span><br>
 <span class="pr">JohnDoe@target[~]$</span> <span class="ct">uname -r</span><br>
-<span class="out oh">4.15.0-99-generic</span>
+<span class="out oh">4.15.0-99-generic</span><br><br>
+<span class="cc"># Machine hardware architecture</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">uname -m</span><br>
+<span class="out">x86_64</span>
           </div>
         </div>
         <table class="styled-table">
-          <thead><tr><th>Flag</th><th>Output</th></tr></thead>
+          <thead><tr><th>Flag</th><th>What it prints</th><th>Example output</th></tr></thead>
           <tbody>
-            <tr><td>uname -a</td><td>All info — kernel name, hostname, release, version, arch, OS</td></tr>
-            <tr><td>uname -r</td><td>Kernel release version — useful for searching known vulnerabilities</td></tr>
-            <tr><td>uname -s</td><td>Kernel name (e.g. <code>Linux</code>)</td></tr>
-            <tr><td>uname -n</td><td>Network node hostname</td></tr>
-            <tr><td>uname -m</td><td>Machine hardware architecture (e.g. <code>x86_64</code>)</td></tr>
-            <tr><td>uname -o</td><td>Operating system (e.g. <code>GNU/Linux</code>)</td></tr>
+            <tr><td>uname -a</td><td>All info combined</td><td>Full kernel + arch + OS string</td></tr>
+            <tr><td>uname -r</td><td>Kernel release</td><td><code>4.15.0-99-generic</code></td></tr>
+            <tr><td>uname -s</td><td>Kernel name</td><td><code>Linux</code></td></tr>
+            <tr><td>uname -n</td><td>Network hostname</td><td><code>target</code></td></tr>
+            <tr><td>uname -m</td><td>Machine architecture</td><td><code>x86_64</code> (64-bit Intel/AMD)</td></tr>
+            <tr><td>uname -o</td><td>Operating system</td><td><code>GNU/Linux</code></td></tr>
+            <tr><td>uname -v</td><td>Kernel build version</td><td><code>#100-Ubuntu SMP Wed Apr 22...</code></td></tr>
           </tbody>
         </table>
-        <div class="note-box tip"><span class="ni">💡</span><div class="nt"><strong>Kernel version research</strong>Take the output of <code>uname -r</code> and search it alongside terms like "exploit" or "privilege escalation" to quickly find publicly known kernel vulnerabilities for that exact version.</div></div>
+        <div class="note-box tip"><span class="ni">💡</span><div class="nt"><strong>Kernel exploit research workflow</strong>Copy the output of <code>uname -r</code> (e.g. <code>4.15.0-99-generic</code>) and search it on sites like <strong>exploit-db.com</strong>, use <code>searchsploit</code> on Kali, or paste it into Google with the word "exploit". Older kernels on unpatched systems are frequently vulnerable to local privilege escalation.</div></div>
       </div>
     </div>
 
     <!-- 06: ip -->
     <div class="section-card">
-      <div class="card-header">
-        <div class="card-icon icon-purple">🌐</div>
-        <div class="card-title">ip — Network Interfaces &amp; Routing</div>
-        <div class="card-num">06 / 10</div>
-      </div>
+      <div class="card-header"><div class="card-icon icon-purple">🌐</div><div class="card-title">ip — Network Interfaces, Addresses &amp; Routing</div><div class="card-num">06 / 10</div></div>
       <div class="card-body">
-        <p>The <span class="hi">ip</span> command shows and manipulates routing, network devices, interfaces, and tunnels. It is the modern replacement for <code>ifconfig</code> and is standard on all current Linux distributions.</p>
-        <p>Each network interface has an <span class="hi-y">MTU (Maximum Transmission Unit)</span> — the largest packet size it can transmit. Standard Ethernet interfaces use an MTU of <strong>1500 bytes</strong>. The loopback interface (<code>lo</code>) uses 65536.</p>
+        <p>The <span class="hi">ip</span> command is the standard tool for inspecting and configuring network interfaces on Linux. It replaced the older <code>ifconfig</code> command and gives you more detail and control. Every machine on a network has at least one interface with an IP address — <code>ip</code> is how you find that information.</p>
+        <p>Understanding the output: each network interface has a name (<code>eth0</code>, <code>ens33</code>, <code>wlan0</code>), an IP address, and an <span class="hi-y">MTU (Maximum Transmission Unit)</span> — the largest data packet the interface will send. Standard Ethernet uses <strong>1500 bytes</strong>. The loopback interface (<code>lo</code> at 127.0.0.1) uses 65536 and only carries traffic between processes on the same machine.</p>
         <div class="cmd-block">
           <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
           <div class="cmd-content">
 <span class="pr">JohnDoe@target[~]$</span> <span class="ct">ip a</span><br>
-<span class="out">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu <span class="oh">65536</span> qdisc noqueue state UNKNOWN</span><br>
-<span class="out">    inet 127.0.0.1/8 scope host lo</span><br>
-<span class="out">2: <span class="oh">eth0</span>: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu <span class="oh">1500</span> qdisc pfifo_fast</span><br>
-<span class="out">    inet 10.10.x.x/24 scope global eth0</span><br><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">ip a | grep mtu</span><br>
-<span class="out">1: lo: ... mtu 65536 ...   2: <span class="oh">eth0</span>: ... mtu <span class="oh">1500</span> ...</span>
+<span class="out">1: <span class="oh">lo</span>: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN</span><br>
+<span class="out">    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</span><br>
+<span class="out">    inet <span class="oh">127.0.0.1/8</span> scope host lo</span><br>
+<span class="out">2: <span class="oh">eth0</span>: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP</span><br>
+<span class="out">    link/ether 00:50:56:b9:2a:f7 brd ff:ff:ff:ff:ff:ff</span><br>
+<span class="out">    inet <span class="oh">10.10.14.5/24</span> brd 10.10.14.255 scope global eth0</span><br><br>
+<span class="cc"># View the routing table — how the system decides where to send traffic</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">ip route</span><br>
+<span class="out">default via <span class="oh">10.10.14.1</span> dev eth0 proto dhcp</span><br>
+<span class="out">10.10.14.0/24 dev eth0 proto kernel scope link src 10.10.14.5</span><br><br>
+<span class="cc"># View ARP table — IPs mapped to MAC addresses of nearby devices</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">ip neigh</span><br>
+<span class="out">10.10.14.1 dev eth0 lladdr 00:50:56:c0:00:08 REACHABLE</span>
           </div>
         </div>
         <table class="styled-table">
           <thead><tr><th>Command</th><th>What it shows</th></tr></thead>
           <tbody>
-            <tr><td>ip a</td><td>All interfaces with IP addresses, MTU, and state</td></tr>
-            <tr><td>ip link</td><td>Link-layer info (MAC, MTU, flags) — no IP addresses</td></tr>
-            <tr><td>ip a | grep mtu</td><td>Show only MTU lines for quick comparison</td></tr>
-            <tr><td>ip route</td><td>Routing table — find gateways and network segments</td></tr>
+            <tr><td>ip a</td><td>All interfaces: IP, MAC, MTU, state</td></tr>
+            <tr><td>ip link</td><td>Link-layer only — MAC address, interface state, no IPs</td></tr>
+            <tr><td>ip route</td><td>Routing table — where traffic is sent, what the gateway is</td></tr>
+            <tr><td>ip neigh</td><td>ARP/neighbor cache — nearby devices and their MACs</td></tr>
           </tbody>
         </table>
+        <div class="note-box tip"><span class="ni">💡</span><div class="nt"><strong>Multiple interfaces = multiple networks</strong>If a machine has two IP addresses on different subnets (e.g. <code>10.10.14.x</code> and <code>192.168.1.x</code>), it's connected to two networks. This is a common sign you can pivot through this machine to reach hosts on the second network that aren't directly accessible.</div></div>
       </div>
     </div>
 
     <!-- 07: Navigation -->
     <div class="section-card">
-      <div class="card-header">
-        <div class="card-icon icon-green">🗂️</div>
-        <div class="card-title">Navigation — pwd, ls, cd</div>
-        <div class="card-num">07 / 10</div>
-      </div>
+      <div class="card-header"><div class="card-icon icon-green">🗂️</div><div class="card-title">Navigation — pwd, ls, cd</div><div class="card-num">07 / 10</div></div>
       <div class="card-body">
-        <p>Navigation in Linux is done entirely through the terminal. Confirm <em>where you are</em> with <span class="hi">pwd</span>, list contents with <span class="hi">ls</span>, and move with <span class="hi">cd</span>.</p>
+        <p>Linux has no graphical file browser by default — you navigate entirely through the terminal. The three commands you use constantly are <span class="hi">pwd</span> (where am I), <span class="hi">ls</span> (what's here), and <span class="hi">cd</span> (go somewhere). Master these and the terminal stops feeling foreign.</p>
 
         <div class="sec-label" style="margin-top:4px;">pwd — Print Working Directory</div>
+        <p>Always know your current location before running commands. <code>pwd</code> prints the full absolute path of where you are in the filesystem.</p>
         <div class="cmd-block">
           <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
           <div class="cmd-content">
@@ -765,695 +363,641 @@
         </div>
 
         <div class="sec-label">ls — List Directory Contents</div>
+        <p>By default <code>ls</code> shows only visible files. Hidden files start with a dot (e.g. <code>.bashrc</code>, <code>.ssh</code>) and require the <code>-a</code> flag. The <code>-l</code> flag gives you the long format with permissions, ownership, size, and timestamps.</p>
         <div class="cmd-block">
-          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — ls variants</span></div>
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — ls variants from minimal to maximum detail</span></div>
           <div class="cmd-content">
-<span class="cc"># Basic list</span><br>
+<span class="cc"># Basic — just names</span><br>
 <span class="pr">JohnDoe@target[~]$</span> <span class="ct">ls</span><br>
 <span class="out">Desktop  Documents  Downloads  Music  Pictures  Public  Templates  Videos</span><br><br>
-<span class="cc"># Long format — permissions, owner, size, date</span><br>
+<span class="cc"># Long format — permissions, links, owner, group, size, date, name</span><br>
 <span class="pr">JohnDoe@target[~]$</span> <span class="ct">ls -l</span><br>
-<span class="out">drwxr-xr-x 2 JohnDoe users 4096 Nov 13 17:37 Desktop</span><br>
-<span class="out">drwxr-xr-x 2 JohnDoe users 4096 Nov 13 17:34 Documents ...</span><br><br>
-<span class="cc"># Long format + hidden files (dot files)</span><br>
+<span class="out">total 32</span><br>
+<span class="out">drwxr-xr-x 2 JohnDoe users <span class="oh">4096</span> Nov 13 17:37 Desktop</span><br>
+<span class="out">drwxr-xr-x 2 JohnDoe users  4096 Nov 13 17:34 Documents</span><br><br>
+<span class="cc"># All files including hidden dot files, long format</span><br>
 <span class="pr">JohnDoe@target[~]$</span> <span class="ct">ls -la</span><br>
-<span class="out"><span class="oh">.bash_history  .bashrc</span>  Desktop  Documents ...</span><br><br>
-<span class="cc"># Inode numbers + long format + hidden files (max detail)</span><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">ls -ila</span><br>
-<span class="out"><span class="oh">262401</span> drwxr-xr-x 2 JohnDoe users 4096 Nov 13 17:37 Desktop</span><br><br>
-<span class="cc"># Sort by modification time — newest first (useful for recent backups)</span><br>
+<span class="out"><span class="oh">drwxr-xr-x 2 JohnDoe users 4096 Nov 13 .bash_history</span></span><br>
+<span class="out"><span class="oh">-rw-r--r-- 1 JohnDoe users  220 Nov 13 .bashrc</span></span><br>
+<span class="out">drwxr-xr-x 2 JohnDoe users 4096 Nov 13 Desktop ...</span><br><br>
+<span class="cc"># Human-readable sizes (shows KB, MB, GB instead of raw bytes)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">ls -lah</span><br>
+<span class="out">-rw-r--r-- 1 JohnDoe users <span class="oh">4.0K</span> Nov 13 17:37 Desktop</span><br><br>
+<span class="cc"># Sort by modification time, newest first — find recently changed files</span><br>
 <span class="pr">JohnDoe@target[~]$</span> <span class="ct">ls -lt /var/backups</span><br>
-<span class="out">total 24</span><br>
-<span class="out">-rw-r--r-- 1 root root  2048 Mar  7 10:12 <span class="oh">shadow.bak</span></span><br>
-<span class="out">-rw-r--r-- 1 root root  4096 Mar  6 08:30 passwd.bak</span><br>
-<span class="out">-rw-r--r-- 1 root root  1024 Mar  5 07:11 group.bak</span>
+<span class="out">-rw-r--r-- 1 root root 2048 Mar  7 10:12 <span class="oh">shadow.bak</span></span><br>
+<span class="out">-rw-r--r-- 1 root root 4096 Mar  6 08:30 passwd.bak</span><br><br>
+<span class="cc"># Show inode numbers alongside each file</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">ls -lai</span><br>
+<span class="out"><span class="oh">262401</span> drwxr-xr-x 2 JohnDoe users 4096 Nov 13 17:37 Desktop</span><br><br>
+<span class="cc"># List contents of a specific path without going there first</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">ls -la /var/www/html/</span>
           </div>
         </div>
 
         <div class="sec-label">ls -l Column Breakdown</div>
         <table class="styled-table">
-          <thead><tr><th>Column</th><th>Meaning</th></tr></thead>
+          <thead><tr><th>Column</th><th>What it means</th></tr></thead>
           <tbody>
-            <tr><td>drwxr-xr-x</td><td>File type (<code>d</code>=dir, <code>-</code>=file) + permissions for owner / group / others</td></tr>
-            <tr><td>2</td><td>Number of hard links</td></tr>
-            <tr><td>JohnDoe</td><td>Owner</td></tr>
-            <tr><td>users</td><td>Group owner</td></tr>
-            <tr><td>4096</td><td>Size in bytes</td></tr>
-            <tr><td>Nov 13 17:37</td><td>Last modified timestamp</td></tr>
+            <tr><td>drwxr-xr-x</td><td>File type + permissions: <code>d</code>=directory, <code>-</code>=file, <code>l</code>=symlink. Three permission groups: owner / group / others</td></tr>
+            <tr><td>2</td><td>Number of hard links pointing to this inode</td></tr>
+            <tr><td>JohnDoe</td><td>Owning user</td></tr>
+            <tr><td>users</td><td>Owning group</td></tr>
+            <tr><td>4096</td><td>Size in bytes (use <code>-h</code> for KB/MB/GB)</td></tr>
+            <tr><td>Nov 13 17:37</td><td>Last modification time</td></tr>
           </tbody>
         </table>
-        <div class="note-box tip"><span class="ni">💡</span><div class="nt"><strong>Inodes</strong>Every file has an <strong>inode</strong> — a unique filesystem ID. The <code>-i</code> flag on <code>ls</code> reveals it. <code>-t</code> sorts by time so the newest file is always at the top — handy for spotting the most recently modified backup or log.</div></div>
+        <div class="note-box tip"><span class="ni">💡</span><div class="nt"><strong>Inodes</strong>Every file on Linux has an inode — a unique number the filesystem uses to track it. The filename is just a label pointing to the inode. Hard links are multiple filenames pointing to the same inode (same data on disk). Use <code>ls -i</code> to see inode numbers and <code>stat filename</code> for full inode details.</div></div>
 
         <div class="sec-label">cd — Change Directory</div>
         <div class="cmd-block">
-          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — cd variants</span></div>
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — cd navigation patterns</span></div>
           <div class="cmd-content">
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">cd /dev/shm</span> <span class="cc"># absolute path</span><br>
-<span class="pr">JohnDoe@target[/dev/shm]$</span> <span class="ct">cd -</span> <span class="cc"># jump back to last dir</span><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">cd ..</span> <span class="cc"># parent directory</span><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">cd /dev/s</span> <span class="cc">[TAB TAB] → shm/ snd/</span>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">cd /etc</span>             <span class="cc"># absolute path</span><br>
+<span class="pr">JohnDoe@target[/etc]$</span> <span class="ct">cd apache2</span>        <span class="cc"># relative path (from current location)</span><br>
+<span class="pr">JohnDoe@target[/etc/apache2]$</span> <span class="ct">cd ..</span>     <span class="cc"># go up one level</span><br>
+<span class="pr">JohnDoe@target[/etc]$</span> <span class="ct">cd -</span>              <span class="cc"># jump back to previous directory</span><br>
+<span class="pr">JohnDoe@target[/etc/apache2]$</span> <span class="ct">cd ~</span>      <span class="cc"># home directory</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">cd /var/</span><span class="cc">[TAB TAB]   # autocomplete shows: backups/ cache/ lib/ log/...</span>
           </div>
         </div>
-        <div class="note-box tip"><span class="ni">💡</span><div class="nt"><strong>Dot notation</strong><code>.</code> = current directory &nbsp;|&nbsp; <code>..</code> = parent directory &nbsp;|&nbsp; <code>~</code> = home directory</div></div>
+        <div class="note-box tip"><span class="ni">💡</span><div class="nt"><strong>Special path symbols</strong><code>.</code> = the current directory &nbsp;·&nbsp; <code>..</code> = one level up &nbsp;·&nbsp; <code>~</code> = your home directory &nbsp;·&nbsp; <code>-</code> = previous directory. These can be combined: <code>cd ../../etc</code> goes up two levels then into etc.</div></div>
       </div>
     </div>
 
     <!-- 08: File Management -->
     <div class="section-card">
-      <div class="card-header">
-        <div class="card-icon icon-gold">📁</div>
-        <div class="card-title">File Management — touch, mkdir, mv, cp</div>
-        <div class="card-num">08 / 10</div>
-      </div>
+      <div class="card-header"><div class="card-icon icon-gold">📁</div><div class="card-title">File Management — touch, mkdir, mv, cp, rm</div><div class="card-num">08 / 10</div></div>
       <div class="card-body">
-        <p>Linux gives you full control over files and directories from the command line — creating, moving, renaming, and copying are all fast one-liners.</p>
+        <p>Creating, organizing, moving, copying, and deleting files from the terminal is fast and precise once you know the commands. Unlike a GUI where mistakes can be undone, <strong>terminal file operations are mostly irreversible</strong> — there is no Recycle Bin. Develop the habit of double-checking paths before pressing Enter.</p>
         <div class="cmd-block">
-          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — creating files and directories</span></div>
           <div class="cmd-content">
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">touch info.txt</span> <span class="cc"># create empty file</span><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">mkdir Storage</span> <span class="cc"># create dir</span><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">mkdir -p Storage/local/user/documents</span> <span class="cc"># nested</span><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">touch ./Storage/local/user/userinfo.txt</span><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">tree .</span><br>
-<span class="out">.</span><br>
-<span class="out">├── info.txt</span><br>
-<span class="out">└── Storage/local/user/</span><br>
-<span class="out">    ├── documents</span><br>
-<span class="out">    └── <span class="oh">userinfo.txt</span></span><br><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">mv info.txt information.txt</span> <span class="cc"># rename</span><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">mv information.txt readme.txt Storage/</span> <span class="cc"># move multiple</span><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">cp Storage/readme.txt Storage/local/</span> <span class="cc"># copy</span>
+<span class="cc"># Create an empty file (or update its timestamp if it already exists)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">touch report.txt</span><br><br>
+<span class="cc"># Create multiple files at once</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">touch file1.txt file2.txt file3.txt</span><br><br>
+<span class="cc"># Create a directory</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">mkdir logs</span><br><br>
+<span class="cc"># Create a full nested path in one command (-p = parents)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">mkdir -p project/src/modules/auth</span><br><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">tree project</span><br>
+<span class="out">project/</span><br>
+<span class="out">└── src/</span><br>
+<span class="out">    └── modules/</span><br>
+<span class="out">        └── <span class="oh">auth/</span></span>
           </div>
         </div>
-        <div class="note-box warn"><span class="ni">⚠️</span><div class="nt"><strong>mv vs cp</strong><code>mv</code> moves the file (source deleted). <code>cp</code> copies it (source remains). Always double-check your destination before running <code>mv</code>.</div></div>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — moving and renaming</span></div>
+          <div class="cmd-content">
+<span class="cc"># Rename a file (mv is used for both moving AND renaming)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">mv report.txt final_report.txt</span><br><br>
+<span class="cc"># Move a file into a directory</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">mv final_report.txt logs/</span><br><br>
+<span class="cc"># Move multiple files into a directory at once</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">mv file1.txt file2.txt file3.txt logs/</span><br><br>
+<span class="cc"># Rename a directory</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">mv logs archive</span>
+          </div>
+        </div>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — copying</span></div>
+          <div class="cmd-content">
+<span class="cc"># Copy a file</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">cp config.txt config.bak</span><br><br>
+<span class="cc"># Copy a file into a directory</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">cp config.txt /etc/myapp/</span><br><br>
+<span class="cc"># Copy an entire directory recursively (-r required for directories)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">cp -r project/ project_backup/</span><br><br>
+<span class="cc"># Copy preserving timestamps, permissions, and owner (-p = preserve)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">cp -rp /etc/apache2/ ~/apache2_backup/</span>
+          </div>
+        </div>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — deleting</span></div>
+          <div class="cmd-content">
+<span class="cc"># Delete a single file</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">rm oldfile.txt</span><br><br>
+<span class="cc"># Delete a directory and all its contents recursively</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">rm -r project_backup/</span><br><br>
+<span class="cc"># Delete with confirmation prompt for each file (-i = interactive)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">rm -ri logs/</span><br>
+<span class="out">rm: remove directory 'logs/'? <span class="oh">y</span></span>
+          </div>
+        </div>
+        <div class="note-box warn"><span class="ni">⚠️</span><div class="nt"><strong>rm has no undo</strong>There is no Recycle Bin on Linux. <code>rm -rf /</code> or <code>rm -rf ./</code> with a bad path can destroy the entire system. Always verify your path with <code>pwd</code> and <code>ls</code> before using <code>rm -r</code>. In scripts, use <code>-i</code> to prompt before each deletion.</div></div>
       </div>
     </div>
 
     <!-- 09: Text Editors -->
     <div class="section-card">
-      <div class="card-header">
-        <div class="card-icon icon-dim">✏️</div>
-        <div class="card-title">Text Editors — nano, vim, cat</div>
-        <div class="card-num">09 / 10</div>
-      </div>
+      <div class="card-header"><div class="card-icon icon-dim">✏️</div><div class="card-title">Text Editors &amp; File Reading — nano, vim, cat</div><div class="card-num">09 / 10</div></div>
       <div class="card-body">
-        <p>Linux provides several ways to view and edit files directly from the terminal without a graphical interface. <span class="hi">nano</span> is the easiest starting point, <span class="hi-p">vim</span> is the most powerful, and <span class="hi">cat</span> is used to quickly read or redirect file contents.</p>
+        <p>On Linux, everything is a file — configurations, logs, scripts, user data. Being able to read and edit files directly in the terminal is a core skill. You have three main tools: <span class="hi">cat</span> for quickly reading content, <span class="hi">nano</span> for beginner-friendly editing, and <span class="hi-p">vim</span> for serious terminal editing power.</p>
 
-        <div class="sec-label" style="margin-top:4px;">nano — Beginner-Friendly Editor</div>
+        <div class="sec-label" style="margin-top:4px;">cat — Read, Display &amp; Combine Files</div>
+        <p><code>cat</code> streams file contents directly to the terminal. It's fast and has no interface to navigate — just raw output. Perfect for quick reads, combining files, and piping content into other commands.</p>
         <div class="cmd-block">
           <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
           <div class="cmd-content">
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">nano notes.txt</span>
+<span class="cc"># Read and print a file</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">cat /etc/hostname</span><br>
+<span class="out oh">linux-target-01</span><br><br>
+<span class="cc"># Show line numbers (-n)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">cat -n /etc/hosts</span><br>
+<span class="out">     1  127.0.0.1   localhost</span><br>
+<span class="out">     2  10.10.14.5  linux-target-01</span><br><br>
+<span class="cc"># View key security files</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">cat /etc/passwd</span>    <span class="cc"># user accounts</span><br>
+<span class="pr">root@target[~]#</span>   <span class="ct">cat /etc/shadow</span>    <span class="cc"># password hashes (root only)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">cat /etc/group</span>     <span class="cc"># group definitions</span><br><br>
+<span class="cc"># Combine (concatenate) multiple files into one</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">cat part1.txt part2.txt &gt; combined.txt</span>
+          </div>
+        </div>
+        <div class="note-box warn"><span class="ni">⚠️</span><div class="nt"><strong>/etc/passwd vs /etc/shadow</strong><code>/etc/passwd</code> is readable by everyone and contains usernames, UIDs, home directories, and shell assignments. Password hashes moved to <code>/etc/shadow</code>, which is readable only by root. If <code>/etc/shadow</code> is readable by your user — that's a serious misconfiguration worth noting.</div></div>
+
+        <div class="sec-label">nano — Beginner-Friendly Interactive Editor</div>
+        <p>Nano opens a full-screen editor inside the terminal. Unlike vim, it behaves like a normal text editor — you type and characters appear. Keyboard shortcuts are displayed at the bottom of the screen at all times. The <code>^</code> symbol means <strong>Ctrl</strong>.</p>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
+          <div class="cmd-content">
+<span class="cc"># Create and open a new file (or open existing)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">nano notes.txt</span><br><br>
+<span class="cc"># Edit a system config file (needs sudo for protected files)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">sudo nano /etc/hosts</span>
           </div>
         </div>
         <div class="shortcut-row">
-          <div class="sc-chip"><span class="key">Ctrl+O</span><span>Save file</span></div>
+          <div class="sc-chip"><span class="key">Ctrl+O</span><span>Save (Write Out)</span></div>
           <div class="sc-chip"><span class="key">Ctrl+X</span><span>Exit</span></div>
           <div class="sc-chip"><span class="key">Ctrl+W</span><span>Search</span></div>
           <div class="sc-chip"><span class="key">Ctrl+K</span><span>Cut line</span></div>
-          <div class="sc-chip"><span class="key">Ctrl+U</span><span>Paste line</span></div>
+          <div class="sc-chip"><span class="key">Ctrl+U</span><span>Paste (Uncut)</span></div>
+          <div class="sc-chip"><span class="key">Ctrl+G</span><span>Help</span></div>
+          <div class="sc-chip"><span class="key">Ctrl+_</span><span>Go to line #</span></div>
+          <div class="sc-chip"><span class="key">Alt+U</span><span>Undo</span></div>
         </div>
-        <div class="note-box tip"><span class="ni">💡</span><div class="nt"><strong>nano tip</strong>The <code>^</code> symbol in nano's bottom bar means <strong>Ctrl</strong>. So <code>^O</code> = <code>Ctrl+O</code> to write/save. Nano displays all shortcuts at the bottom of the screen.</div></div>
 
         <div class="sec-label">vim — Modal Power Editor</div>
-        <p>Vim is a modal editor — it has distinct modes for navigating vs typing. This makes it extremely fast once mastered.</p>
+        <p>Vim uses <strong>modes</strong> — it separates navigation and editing into distinct states. This feels strange at first but makes experienced users extremely fast. The key thing to understand: <strong>pressing keys in Normal mode runs commands, not text</strong>. You must enter Insert mode to type.</p>
         <table class="styled-table">
-          <thead><tr><th>Mode</th><th>How to enter</th><th>What it does</th></tr></thead>
+          <thead><tr><th>Mode</th><th>How to enter</th><th>What you can do</th></tr></thead>
           <tbody>
-            <tr><td>Normal</td><td>Default / <code>Esc</code></td><td>Navigation and commands — keys don't insert text</td></tr>
-            <tr><td>Insert</td><td><code>i</code></td><td>Type text into the buffer normally</td></tr>
-            <tr><td>Visual</td><td><code>v</code></td><td>Select and highlight text regions</td></tr>
-            <tr><td>Command</td><td><code>:</code></td><td>Enter single-line commands (save, quit, replace)</td></tr>
-            <tr><td>Replace</td><td><code>R</code></td><td>Overwrite existing characters as you type</td></tr>
+            <tr><td>Normal</td><td><code>Esc</code> (default on open)</td><td>Navigate, delete, copy, search. Keys are commands, not text input.</td></tr>
+            <tr><td>Insert</td><td><code>i</code> before cursor, <code>a</code> after, <code>o</code> new line below</td><td>Type text normally</td></tr>
+            <tr><td>Visual</td><td><code>v</code> char, <code>V</code> line, <code>Ctrl+v</code> block</td><td>Select text to copy, delete, or indent</td></tr>
+            <tr><td>Command</td><td><code>:</code></td><td>Run commands: save, quit, find+replace, set options</td></tr>
           </tbody>
         </table>
         <div class="shortcut-row">
-          <div class="sc-chip"><span class="key">i</span><span>Insert mode</span></div>
-          <div class="sc-chip"><span class="key">Esc</span><span>Normal mode</span></div>
+          <div class="sc-chip"><span class="key">i</span><span>Insert before cursor</span></div>
+          <div class="sc-chip"><span class="key">Esc</span><span>Back to Normal</span></div>
           <div class="sc-chip"><span class="key">:w</span><span>Save</span></div>
-          <div class="sc-chip"><span class="key">:q!</span><span>Quit no save</span></div>
-          <div class="sc-chip"><span class="key">:wq</span><span>Save &amp; quit</span></div>
+          <div class="sc-chip"><span class="key">:q!</span><span>Quit (no save)</span></div>
+          <div class="sc-chip"><span class="key">:wq</span><span>Save + quit</span></div>
+          <div class="sc-chip"><span class="key">dd</span><span>Delete line</span></div>
+          <div class="sc-chip"><span class="key">yy</span><span>Copy line</span></div>
+          <div class="sc-chip"><span class="key">p</span><span>Paste</span></div>
+          <div class="sc-chip"><span class="key">/text</span><span>Search forward</span></div>
+          <div class="sc-chip"><span class="key">:%s/old/new/g</span><span>Replace all</span></div>
         </div>
-        <div class="note-box good"><span class="ni">🧪</span><div class="nt"><strong>Learn vim interactively</strong>Run <code>vimtutor</code> in the terminal for a built-in 25-minute interactive tutorial. It's the fastest way to get comfortable with vim's mechanics.</div></div>
-
-        <div class="sec-label">cat — Read &amp; Redirect</div>
-        <div class="cmd-block">
-          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
-          <div class="cmd-content">
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">cat notes.txt</span><br>
-<span class="out">Here we can type everything we want and make our notes.</span><br><br>
-<span class="cc"># cat is commonly piped to other tools</span><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">cat /etc/passwd | grep "/bin/bash"</span>
-          </div>
-        </div>
-        <div class="note-box warn"><span class="ni">⚠️</span><div class="nt"><strong>/etc/passwd</strong>This file stores user info (username, UID, GID, home dir). Historically it held password hashes, but those now live in <code>/etc/shadow</code>. Misconfigured permissions on either file can be a critical vulnerability.</div></div>
+        <div class="note-box good"><span class="ni">🧪</span><div class="nt"><strong>Learn vim step by step</strong>Run <code>vimtutor</code> in your terminal — it's a free built-in interactive tutorial that takes about 25 minutes and teaches you everything you need to be productive. Vim comes pre-installed on virtually every Linux server, so investing in it pays off.</div></div>
       </div>
     </div>
 
-    <!-- 10: Find Tools -->
+    <!-- 10: Find -->
     <div class="section-card">
-      <div class="card-header">
-        <div class="card-icon icon-blue">🔍</div>
-        <div class="card-title">Finding Files — which, find, locate</div>
-        <div class="card-num">10 / 10</div>
-      </div>
+      <div class="card-header"><div class="card-icon icon-blue">🔍</div><div class="card-title">Finding Files — which, find, locate</div><div class="card-num">10 / 10</div></div>
       <div class="card-body">
-        <p>Once on a system you need to know how to find things — tools, configuration files, recently modified files. Three commands handle most of these cases.</p>
+        <p>Knowing how to locate files quickly is essential on any system. You might need to find a config file, locate a specific binary, identify recently modified files, or search for files with dangerous permissions. Linux gives you three tools for this — each with different speed/power tradeoffs.</p>
 
-        <div class="sec-label" style="margin-top:4px;">which — Locate a Binary</div>
+        <div class="sec-label" style="margin-top:4px;">which — Find a Binary in Your PATH</div>
+        <p><code>which</code> tells you the exact path to a program that would run if you typed its name. It only looks in directories listed in your <code>$PATH</code> variable — so if a tool isn't in PATH, <code>which</code> won't find it even if it exists elsewhere.</p>
         <div class="cmd-block">
           <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
           <div class="cmd-content">
 <span class="pr">JohnDoe@target[~]$</span> <span class="ct">which python3</span><br>
 <span class="out oh">/usr/bin/python3</span><br><br>
-<span class="cc"># If no result — tool is not in PATH or not installed</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">which curl wget nc nmap</span> <span class="cc"># check multiple at once</span><br>
+<span class="out">/usr/bin/curl</span><br>
+<span class="out">/usr/bin/wget</span><br>
+<span class="out oh">/usr/bin/nc</span><br><br>
+<span class="cc"># No output = not found in PATH</span><br>
 <span class="pr">JohnDoe@target[~]$</span> <span class="ct">which gcc</span><br>
-<span class="out cc">(no output)</span>
+<span class="out cc">(no output — gcc not installed or not in PATH)</span>
           </div>
         </div>
 
-        <div class="sec-label">find — Deep Filesystem Search</div>
+        <div class="sec-label">find — Deep Live Filesystem Search</div>
+        <p><code>find</code> searches the actual filesystem in real time and supports powerful filtering. It can search by name, type, size, owner, permissions, modification date, and more — and can execute commands on every match. The tradeoff is it can be slow on large systems.</p>
         <div class="cmd-block">
-          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — combining multiple filters</span></div>
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — common find patterns</span></div>
           <div class="cmd-content">
-<span class="cc"># Files owned by root, larger than 20KB, modified after 2020-03-03</span><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">find / -type f -name *.conf -user root -size +20k -newermt 2020-03-03 -exec ls -al {} \; 2>/dev/null</span><br>
-<span class="out">-rw-r--r-- 1 root root 136392 Apr 25 /usr/src/linux-headers-5.5.0/include/config/auto.conf</span><br>
-<span class="out">-rw-r--r-- 1 root root  95813 May  7 /usr/share/metasploit-framework/data/jtr/repeats32.conf</span><br>
-<span class="out">...</span>
+<span class="cc"># Find all .conf files anywhere on the system (suppress errors)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">find / -name "*.conf" 2>/dev/null</span><br><br>
+<span class="cc"># Find files owned by root, larger than 20KB, modified after a date</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">find / -type f -name "*.conf" -user root -size +20k -newermt 2020-01-01 2>/dev/null</span><br><br>
+<span class="cc"># Find all SUID binaries (setuid = runs as file owner, not calling user)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">find / -perm -4000 2>/dev/null</span><br>
+<span class="out oh">/usr/bin/passwd</span><br>
+<span class="out">/usr/bin/sudo</span><br><br>
+<span class="cc"># Find world-writable directories</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">find / -type d -perm -o+w 2>/dev/null</span><br><br>
+<span class="cc"># Find and execute a command on each result (-exec)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">find /var/log -name "*.log" -exec ls -lh {} \;</span><br><br>
+<span class="cc"># Files modified in the last 7 days</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">find /home -mtime -7 2>/dev/null</span>
           </div>
         </div>
         <table class="styled-table">
-          <thead><tr><th>Option</th><th>Meaning</th></tr></thead>
+          <thead><tr><th>Option</th><th>What it filters on</th></tr></thead>
           <tbody>
-            <tr><td>-type f</td><td>Files only (<code>-type d</code> for directories)</td></tr>
-            <tr><td>-name *.conf</td><td>Match filename pattern (asterisk = wildcard)</td></tr>
-            <tr><td>-user root</td><td>Owner must be root</td></tr>
-            <tr><td>-size +20k</td><td>Larger than 20KB (<code>-size -25k</code> = smaller than 25KB)</td></tr>
-            <tr><td>-newermt DATE</td><td>Modified after specified date</td></tr>
-            <tr><td>-exec ls -al {} \;</td><td>Run <code>ls -al</code> on every result</td></tr>
-            <tr><td>2>/dev/null</td><td>Suppress permission-denied errors</td></tr>
+            <tr><td>-type f / -type d</td><td>Files only / directories only</td></tr>
+            <tr><td>-name "*.sh"</td><td>Filename pattern (case-sensitive; use <code>-iname</code> for case-insensitive)</td></tr>
+            <tr><td>-user root</td><td>Owned by a specific user</td></tr>
+            <tr><td>-group sudo</td><td>Owned by a specific group</td></tr>
+            <tr><td>-size +10M</td><td>Larger than 10 megabytes (<code>+</code>=larger, <code>-</code>=smaller; k/M/G)</td></tr>
+            <tr><td>-perm -4000</td><td>Has SUID bit set</td></tr>
+            <tr><td>-perm -o+w</td><td>World-writable (others can write)</td></tr>
+            <tr><td>-mtime -7</td><td>Modified within the last 7 days</td></tr>
+            <tr><td>-exec cmd {} \;</td><td>Run a command on each result</td></tr>
+            <tr><td>2>/dev/null</td><td>Suppress "Permission denied" errors</td></tr>
           </tbody>
         </table>
 
-        <div class="sec-label">locate — Fast Index Search</div>
+        <div class="sec-label">locate — Fast Database-Driven Search</div>
+        <p><code>locate</code> searches a pre-built index of the filesystem rather than scanning live. This makes it dramatically faster than <code>find</code>, but it only knows about files that existed when the database was last updated. On active systems, run <code>sudo updatedb</code> first.</p>
         <div class="cmd-block">
           <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
           <div class="cmd-content">
-<span class="cc"># Update the database first, then search</span><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">sudo updatedb</span><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">locate *.conf</span><br>
-<span class="out">/etc/GeoIP.conf</span><br>
-<span class="out">/etc/NetworkManager/NetworkManager.conf</span><br>
-<span class="out">/etc/adduser.conf  ...</span>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">sudo updatedb</span> <span class="cc"># rebuild the index first</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">locate passwd</span><br>
+<span class="out">/etc/passwd</span><br>
+<span class="out">/etc/pam.d/passwd</span><br>
+<span class="out">/usr/share/doc/passwd</span><br><br>
+<span class="cc"># Case-insensitive search</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">locate -i readme</span><br><br>
+<span class="cc"># Count matches only</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">locate -c "*.conf"</span><br>
+<span class="out oh">1847</span>
           </div>
         </div>
-        <div class="note-box tip"><span class="ni">💡</span><div class="nt"><strong>find vs locate</strong><code>locate</code> is much faster but searches a pre-built database that may be stale. <code>find</code> searches the live filesystem and supports complex filters. Use <code>locate</code> for speed, <code>find</code> for precision.</div></div>
+        <div class="note-box tip"><span class="ni">💡</span><div class="nt"><strong>When to use which tool</strong>Use <code>which</code> to find executables in your PATH. Use <code>locate</code> when you need speed and the file is likely not brand new. Use <code>find</code> when you need precision — filtering by permissions, size, date, or running commands on results. <code>find</code> is indispensable for security enumeration and automation.</div></div>
       </div>
     </div>
 
     <div class="divider">── end of part 1 · sections 1–10 ──</div>
   </div><!-- end panel0 -->
 
-
-  <!-- ═══════════════════════════════════════
-       PART 2
-  ═══════════════════════════════════════ -->
+  <!-- PART 2 -->
   <div class="tab-panel" id="panel1">
-
-    <!-- QUICK REF PART 2 -->
     <div class="quick-ref">
       <div class="sec-label">⚡ Quick Command Reference — Part 2</div>
       <div class="cmd-grid">
-
-        <div class="cmd-pill">
-          <code>cat</code><span class="pdesc">Read / redirect</span>
-          <div class="tip-box">
-            <span class="tip-cmd">cat file.txt</span><br>
-            <span class="tip-flag">&gt; out.txt</span> — write (overwrites)<br>
-            <span class="tip-flag">&gt;&gt; out.txt</span> — append<br>
-            <span class="tip-flag">&lt; file</span> — use file as STDIN<br>
-            <span class="tip-flag">&lt;&lt; EOF</span> — heredoc / stream input<br>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>find</code><span class="pdesc">Deep search</span>
-          <div class="tip-box">
-            <span class="tip-cmd">find /etc/ -name shadow 2>/dev/null</span><br>
-            <span class="tip-flag">2&gt;/dev/null</span> — suppress errors (STDERR)<br>
-            <span class="tip-flag">1&gt; out.txt</span> — redirect STDOUT to file<br>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>grep</code><span class="pdesc">Pattern filter</span>
-          <div class="tip-box">
-            <span class="tip-cmd">grep "pattern" file</span><br>
-            <span class="tip-flag">-v</span> — invert (exclude matches)<br>
-            <span class="tip-flag">-E</span> — extended regex<br>
-            <span class="tip-flag">-i</span> — case insensitive<br>
-            <span class="tip-flag">-r</span> — recursive through directories<br>
-            <span class="tip-note">cat /etc/passwd | grep "/bin/bash"</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>more</code><span class="pdesc">Pager (basic)</span>
-          <div class="tip-box">
-            <span class="tip-cmd">cat /etc/passwd | more</span><br>
-            <span class="tip-flag">Space</span> — next page<br>
-            <span class="tip-flag">Q</span> — quit (output stays in terminal)<br>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>less</code><span class="pdesc">Pager (advanced)</span>
-          <div class="tip-box">
-            <span class="tip-cmd">less /etc/passwd</span><br>
-            <span class="tip-flag">Space / B</span> — forward / back<br>
-            <span class="tip-flag">/pattern</span> — search<br>
-            <span class="tip-flag">Q</span> — quit (output clears, unlike more)<br>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>head</code><span class="pdesc">First N lines</span>
-          <div class="tip-box">
-            <span class="tip-cmd">head /etc/passwd</span> — first 10 lines<br>
-            <span class="tip-flag">-n 20</span> — first 20 lines<br>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>tail</code><span class="pdesc">Last N lines</span>
-          <div class="tip-box">
-            <span class="tip-cmd">tail /etc/passwd</span> — last 10 lines<br>
-            <span class="tip-flag">-n 20</span> — last 20 lines<br>
-            <span class="tip-flag">-f</span> — follow live (great for logs)<br>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>sort</code><span class="pdesc">Sort output</span>
-          <div class="tip-box">
-            <span class="tip-cmd">cat file | sort</span> — alphabetical<br>
-            <span class="tip-flag">-n</span> — numeric sort<br>
-            <span class="tip-flag">-r</span> — reverse order<br>
-            <span class="tip-flag">-u</span> — unique lines only<br>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>cut</code><span class="pdesc">Extract columns</span>
-          <div class="tip-box">
-            <span class="tip-cmd">cut -d":" -f1 /etc/passwd</span><br>
-            <span class="tip-flag">-d</span> — delimiter character<br>
-            <span class="tip-flag">-f1</span> — field number (1 = first)<br>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>tr</code><span class="pdesc">Translate chars</span>
-          <div class="tip-box">
-            <span class="tip-cmd">echo "hello" | tr "a-z" "A-Z"</span><br>
-            <span class="tip-flag">tr ":" " "</span> — replace colon with space<br>
-            <span class="tip-flag">-d</span> — delete specified characters<br>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>column</code><span class="pdesc">Tabular formatting</span>
-          <div class="tip-box">
-            <span class="tip-cmd">cat file | column -t</span><br>
-            <span class="tip-flag">-t</span> — auto-align columns by whitespace<br>
-            <span class="tip-note">Pairs well with tr to replace delimiters first.</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>awk</code><span class="pdesc">Field processor</span>
-          <div class="tip-box">
-            <span class="tip-cmd">awk '{print $1, $NF}'</span><br>
-            <span class="tip-flag">$1</span> — first field&nbsp; <span class="tip-flag">$NF</span> — last field<br>
-            <span class="tip-flag">-F":"</span> — custom field separator<br>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>sed</code><span class="pdesc">Stream editor</span>
-          <div class="tip-box">
-            <span class="tip-cmd">sed 's/old/new/g'</span> — replace all<br>
-            <span class="tip-flag">s/</span> — substitute command<br>
-            <span class="tip-flag">/g</span> — global (all occurrences)<br>
-            <span class="tip-note">Works on STDIN via pipe — powerful for bulk text edits.</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>wc</code><span class="pdesc">Word / line count</span>
-          <div class="tip-box">
-            <span class="tip-cmd">cat file | wc -l</span> — count lines<br>
-            <span class="tip-flag">-w</span> — word count<br>
-            <span class="tip-flag">-c</span> — byte count<br>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>|</code><span class="pdesc">Pipe (chain commands)</span>
-          <div class="tip-box">
-            <span class="tip-cmd">cmd1 | cmd2 | cmd3</span><br>
-            Passes STDOUT of left command to STDIN of right.<br>
-            <span class="tip-note">The core of Linux power-use — chain as many as needed.</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>&gt;</code><span class="pdesc">Redirect STDOUT</span>
-          <div class="tip-box">
-            <span class="tip-cmd">cmd &gt; file.txt</span> — overwrite<br>
-            <span class="tip-flag">&gt;&gt;</span> — append to existing file<br>
-            <span class="tip-flag">1&gt;</span> — STDOUT explicitly<br>
-            <span class="tip-flag">2&gt;</span> — STDERR explicitly<br>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>2&gt;/dev/null</code><span class="pdesc">Suppress errors</span>
-          <div class="tip-box">
-            Redirects STDERR (FD 2) to null device — discards errors silently.<br>
-            <span class="tip-note">Append to any command to hide "Permission denied" noise.</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>chmod</code><span class="pdesc">Change permissions</span>
-          <div class="tip-box">
-            <span class="tip-cmd">chmod 755 file</span> — octal notation<br>
-            <span class="tip-flag">a+r</span> — add read for all<br>
-            <span class="tip-flag">u=rwx,g=rx,o=r</span> — symbolic<br>
-            <span class="tip-flag">-R</span> — recursive<br>
-            <span class="tip-note">7=rwx, 5=r-x, 4=r--, 0=---</span>
-          </div>
-        </div>
-
-        <div class="cmd-pill">
-          <code>chown</code><span class="pdesc">Change owner</span>
-          <div class="tip-box">
-            <span class="tip-cmd">chown user:group file</span><br>
-            <span class="tip-flag">-R</span> — recursive<br>
-            <span class="tip-note">Need root/sudo to change ownership to another user.</span>
-          </div>
-        </div>
-
+        <div class="cmd-pill"><code>stdin/out/err</code><span class="pdesc">File descriptors</span><div class="tip-box"><span class="tip-flag">FD 0</span> = STDIN (input)<br><span class="tip-flag">FD 1</span> = STDOUT (normal output)<br><span class="tip-flag">FD 2</span> = STDERR (error output)<br><span class="tip-note">All I/O in Linux flows through one of these three streams.</span></div></div>
+        <div class="cmd-pill"><code>&gt;</code><span class="pdesc">Redirect STDOUT</span><div class="tip-box"><span class="tip-cmd">cmd &gt; file</span> — overwrite file with output<br><span class="tip-flag">&gt;&gt;</span> — append instead of overwrite<br><span class="tip-flag">1&gt;</span> — explicit STDOUT redirect<br><span class="tip-note">Using &gt; on an existing file destroys its previous contents.</span></div></div>
+        <div class="cmd-pill"><code>2&gt;/dev/null</code><span class="pdesc">Discard errors</span><div class="tip-box">Redirects STDERR (FD 2) to /dev/null — a black hole device that discards all input.<br><span class="tip-note">Append to any command to hide permission denied and other errors cleanly.</span></div></div>
+        <div class="cmd-pill"><code>|</code><span class="pdesc">Pipe output</span><div class="tip-box"><span class="tip-cmd">cmd1 | cmd2 | cmd3</span><br>Connects STDOUT of left to STDIN of right.<br><span class="tip-note">Chain as many as needed. The backbone of Linux one-liners.</span></div></div>
+        <div class="cmd-pill"><code>grep</code><span class="pdesc">Filter by pattern</span><div class="tip-box"><span class="tip-cmd">grep "pattern" file</span><br><span class="tip-flag">-i</span> — case insensitive<br><span class="tip-flag">-v</span> — invert (exclude matches)<br><span class="tip-flag">-r</span> — recursive through dirs<br><span class="tip-flag">-n</span> — show line numbers<br><span class="tip-flag">-E</span> — extended regex (|, +, ?)<br><span class="tip-flag">-l</span> — show filenames only<br><span class="tip-note">grep -r "password" /etc/ 2>/dev/null — classic recon search.</span></div></div>
+        <div class="cmd-pill"><code>more</code><span class="pdesc">Pager (simple)</span><div class="tip-box"><span class="tip-cmd">cat file | more</span><br><span class="tip-flag">Space</span> — next page &nbsp;<span class="tip-flag">Q</span> — quit<br><span class="tip-note">Output stays in terminal after exit. Use less for cleaner experience.</span></div></div>
+        <div class="cmd-pill"><code>less</code><span class="pdesc">Pager (advanced)</span><div class="tip-box"><span class="tip-cmd">less file</span><br><span class="tip-flag">Space/B</span> — forward/back<br><span class="tip-flag">/pattern</span> — search forward<br><span class="tip-flag">?pattern</span> — search backward<br><span class="tip-flag">G</span> — go to end &nbsp;<span class="tip-flag">g</span> — go to start<br><span class="tip-flag">Q</span> — quit (clears output)<br><span class="tip-note">Man pages use less internally. Learning less = using man pages better.</span></div></div>
+        <div class="cmd-pill"><code>head</code><span class="pdesc">First N lines</span><div class="tip-box"><span class="tip-cmd">head file</span> — first 10 lines<br><span class="tip-flag">-n 25</span> — first 25 lines<br><span class="tip-flag">head -c 100</span> — first 100 bytes<br></div></div>
+        <div class="cmd-pill"><code>tail</code><span class="pdesc">Last N lines</span><div class="tip-box"><span class="tip-cmd">tail file</span> — last 10 lines<br><span class="tip-flag">-n 25</span> — last 25 lines<br><span class="tip-flag">-f</span> — follow live (stream updates)<br><span class="tip-note">tail -f /var/log/auth.log — watch login attempts in real time.</span></div></div>
+        <div class="cmd-pill"><code>sort</code><span class="pdesc">Sort lines</span><div class="tip-box"><span class="tip-cmd">sort file</span> — alphabetical<br><span class="tip-flag">-n</span> — numeric sort<br><span class="tip-flag">-r</span> — reverse order<br><span class="tip-flag">-u</span> — unique lines only<br><span class="tip-flag">-k2</span> — sort by 2nd field<br></div></div>
+        <div class="cmd-pill"><code>cut</code><span class="pdesc">Extract columns</span><div class="tip-box"><span class="tip-cmd">cut -d":" -f1 file</span><br><span class="tip-flag">-d</span> — delimiter character<br><span class="tip-flag">-f1,3</span> — fields 1 and 3<br><span class="tip-flag">-c1-10</span> — characters 1 to 10<br></div></div>
+        <div class="cmd-pill"><code>tr</code><span class="pdesc">Translate characters</span><div class="tip-box"><span class="tip-cmd">tr ":" " "</span> — replace : with space<br><span class="tip-flag">tr "a-z" "A-Z"</span> — uppercase conversion<br><span class="tip-flag">-d ":"</span> — delete specific characters<br><span class="tip-flag">-s " "</span> — squeeze repeated chars<br></div></div>
+        <div class="cmd-pill"><code>column</code><span class="pdesc">Align into table</span><div class="tip-box"><span class="tip-cmd">... | column -t</span><br>Auto-aligns whitespace-separated fields into neat columns.<br><span class="tip-note">Pair with tr to replace delimiters before formatting.</span></div></div>
+        <div class="cmd-pill"><code>awk</code><span class="pdesc">Field processor</span><div class="tip-box"><span class="tip-cmd">awk '{print $1, $NF}'</span><br><span class="tip-flag">$1</span> first field &nbsp;<span class="tip-flag">$NF</span> last field<br><span class="tip-flag">-F":"</span> — set field separator<br><span class="tip-flag">awk 'NR==5'</span> — print line 5<br><span class="tip-note">awk can do math, conditionals, and loops. A full language in itself.</span></div></div>
+        <div class="cmd-pill"><code>sed</code><span class="pdesc">Stream editor</span><div class="tip-box"><span class="tip-cmd">sed 's/old/new/g'</span> — replace all<br><span class="tip-flag">-i</span> — edit file in place<br><span class="tip-flag">-n '5p'</span> — print only line 5<br><span class="tip-flag">'/pattern/d'</span> — delete matching lines<br></div></div>
+        <div class="cmd-pill"><code>wc</code><span class="pdesc">Count lines/words</span><div class="tip-box"><span class="tip-cmd">wc -l file</span> — line count<br><span class="tip-flag">-w</span> — word count<br><span class="tip-flag">-c</span> — byte count<br><span class="tip-flag">-m</span> — character count<br></div></div>
+        <div class="cmd-pill"><code>chmod</code><span class="pdesc">Change permissions</span><div class="tip-box"><span class="tip-cmd">chmod 755 file</span> — octal<br><span class="tip-flag">a+r</span> — add read for all<br><span class="tip-flag">u-x</span> — remove exec from owner<br><span class="tip-flag">g+w</span> — add write to group<br><span class="tip-flag">-R</span> — recursive<br><span class="tip-note">755=rwxr-xr-x  644=rw-r--r--  700=rwx------</span></div></div>
+        <div class="cmd-pill"><code>chown</code><span class="pdesc">Change owner/group</span><div class="tip-box"><span class="tip-cmd">chown user:group file</span><br><span class="tip-flag">chown user file</span> — owner only<br><span class="tip-flag">chown :group file</span> — group only<br><span class="tip-flag">-R</span> — recursive<br><span class="tip-note">Requires root/sudo to change ownership to another user.</span></div></div>
+        <div class="cmd-pill"><code>grep -r</code><span class="pdesc">Recursive search</span><div class="tip-box"><span class="tip-cmd">grep -r "password" /etc/ 2>/dev/null</span><br><span class="tip-flag">-l</span> — show filenames only, not content<br><span class="tip-flag">-n</span> — include line numbers<br><span class="tip-note">Fastest way to hunt for credentials or config values across directories.</span></div></div>
       </div>
-    </div><!-- end quick-ref part 2 -->
+    </div>
 
     <!-- P2-01: File Descriptors -->
     <div class="section-card">
-      <div class="card-header">
-        <div class="card-icon icon-blue">📊</div>
-        <div class="card-title">File Descriptors &amp; Redirections</div>
-        <div class="card-num">11 / 20</div>
-      </div>
+      <div class="card-header"><div class="card-icon icon-blue">📊</div><div class="card-title">File Descriptors &amp; I/O Redirection</div><div class="card-num">11 / 20</div></div>
       <div class="card-body">
-        <p>A <span class="hi">file descriptor (FD)</span> is a reference maintained by the kernel to manage Input/Output operations. Think of it like a ticket number that connects a process to an open file, socket, or I/O resource. By default Linux provides three standard file descriptors:</p>
-
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin:16px 0;">
-          <span class="fd-badge fd-stdin">STDIN &nbsp;—&nbsp; FD 0</span>
-          <span class="fd-badge fd-stdout">STDOUT &nbsp;—&nbsp; FD 1</span>
-          <span class="fd-badge fd-stderr">STDERR &nbsp;—&nbsp; FD 2</span>
+        <p>Every process in Linux communicates through three standard data streams, each identified by a number called a <span class="hi">file descriptor (FD)</span>. Understanding these is what makes redirection and piping make sense — they're all just moving data between these streams.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 20px;">
+          <span class="fd-badge fd-stdin">STDIN — FD 0 — keyboard input</span>
+          <span class="fd-badge fd-stdout">STDOUT — FD 1 — normal output</span>
+          <span class="fd-badge fd-stderr">STDERR — FD 2 — error output</span>
         </div>
-
+        <p>When you type a command and press Enter, your typed text goes in via <strong>STDIN</strong>. The result prints to the terminal via <strong>STDOUT</strong>. Any error messages come through <strong>STDERR</strong> — a separate stream so that errors and results can be handled independently.</p>
         <div class="cmd-block">
-          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — redirect STDERR to suppress errors</span></div>
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — seeing STDOUT and STDERR separately</span></div>
           <div class="cmd-content">
-<span class="cc"># Without suppression — errors show alongside results</span><br>
+<span class="cc"># Both results and errors print to the terminal (mixed together)</span><br>
 <span class="pr">JohnDoe@target[~]$</span> <span class="ct">find /etc/ -name shadow</span><br>
-<span class="out">/etc/shadow</span><br>
-<span class="out oh">find: '/etc/ssl/private': Permission denied</span><br><br>
-<span class="cc"># Redirect STDERR (FD 2) to null — errors discarded</span><br>
+<span class="out">/etc/shadow</span>                                    <span class="cc">← STDOUT (found it)</span><br>
+<span class="out oh">find: '/etc/ssl/private': Permission denied</span>     <span class="cc">← STDERR (access error)</span><br><br>
+<span class="cc"># Redirect STDERR (FD 2) to /dev/null — silence all errors</span><br>
 <span class="pr">JohnDoe@target[~]$</span> <span class="ct">find /etc/ -name shadow 2>/dev/null</span><br>
-<span class="out">/etc/shadow</span><br><br>
-<span class="cc"># Redirect STDOUT to file, STDERR to separate file</span><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">find /etc/ -name shadow 2> stderr.txt 1> stdout.txt</span>
+<span class="out">/etc/shadow</span>                                    <span class="cc">← only clean results remain</span>
           </div>
         </div>
-
         <div class="cmd-block">
-          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — output redirection operators</span></div>
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — all redirection operators</span></div>
           <div class="cmd-content">
-<span class="cc"># Overwrite file with output</span><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">find /etc/ -name shadow 2>/dev/null > results.txt</span><br><br>
-<span class="cc"># APPEND to existing file (>> instead of >)</span><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">find /etc/ -name passwd >> results.txt 2>/dev/null</span><br><br>
-<span class="cc"># Use file as STDIN with &lt;</span><br>
+<span class="cc"># Write STDOUT to a file (overwrites if it exists)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">find /etc/ -name shadow 2>/dev/null &gt; results.txt</span><br><br>
+<span class="cc"># APPEND to a file instead of overwriting (&gt;&gt;)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">find /etc/ -name passwd 2>/dev/null &gt;&gt; results.txt</span><br><br>
+<span class="cc"># Send STDOUT and STDERR to separate files</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">find / -name "*.key" 1&gt; found.txt 2&gt; errors.txt</span><br><br>
+<span class="cc"># Redirect both STDOUT and STDERR to the same file</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">find / -name "*.key" &gt; output.txt 2&gt;&amp;1</span><br><br>
+<span class="cc"># Use a file as STDIN input (&lt;)</span><br>
 <span class="pr">JohnDoe@target[~]$</span> <span class="ct">cat &lt; results.txt</span><br>
 <span class="out">/etc/shadow</span><br>
 <span class="out">/etc/passwd</span><br><br>
-<span class="cc"># Heredoc — feed multiline text into command</span><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">cat &lt;&lt; EOF &gt; stream.txt</span><br>
-<span class="ct">&gt; Line one</span><br>
-<span class="ct">&gt; Line two</span><br>
-<span class="ct">&gt; EOF</span>
+<span class="cc"># Heredoc — feed multiline text as STDIN, stop at EOF marker</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">cat &lt;&lt; EOF &gt; notes.txt</span><br>
+<span class="ct">&gt; Line one of my notes</span><br>
+<span class="ct">&gt; Line two of my notes</span><br>
+<span class="ct">&gt; EOF</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">cat notes.txt</span><br>
+<span class="out">Line one of my notes</span><br>
+<span class="out">Line two of my notes</span>
           </div>
         </div>
-
         <table class="styled-table">
           <thead><tr><th>Operator</th><th>What it does</th></tr></thead>
           <tbody>
-            <tr><td>&gt;</td><td>Redirect STDOUT to file — <strong>overwrites</strong></td></tr>
-            <tr><td>&gt;&gt;</td><td>Redirect STDOUT to file — <strong>appends</strong></td></tr>
-            <tr><td>2&gt;/dev/null</td><td>Discard STDERR (hide errors)</td></tr>
+            <tr><td>&gt;</td><td>Redirect STDOUT to file — <strong>overwrites</strong> existing content</td></tr>
+            <tr><td>&gt;&gt;</td><td>Redirect STDOUT to file — <strong>appends</strong> to existing content</td></tr>
+            <tr><td>2&gt;/dev/null</td><td>Send STDERR to the null device (discard errors)</td></tr>
             <tr><td>2&gt; file</td><td>Redirect STDERR to a file</td></tr>
+            <tr><td>2&gt;&amp;1</td><td>Merge STDERR into STDOUT stream</td></tr>
             <tr><td>&lt;</td><td>Use file content as STDIN</td></tr>
-            <tr><td>&lt;&lt; EOF</td><td>Feed multiline heredoc as STDIN</td></tr>
-            <tr><td>|</td><td>Pipe STDOUT of one command to STDIN of next</td></tr>
+            <tr><td>&lt;&lt; EOF</td><td>Feed inline multiline text as STDIN (heredoc)</td></tr>
+            <tr><td>|</td><td>Pipe STDOUT of one command to STDIN of the next</td></tr>
           </tbody>
         </table>
-
-        <div class="sec-label">Pipes</div>
         <div class="cmd-block">
-          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — chaining commands with pipes</span></div>
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — piping: chaining multiple commands</span></div>
           <div class="cmd-content">
-<span class="cc"># Find .conf files in /etc, filter for systemd, count results</span><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">find /etc/ -name *.conf 2>/dev/null | grep systemd | wc -l</span><br>
-<span class="out oh">6</span>
+<span class="cc"># Find all .conf files → filter for "systemd" → count how many</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">find /etc/ -name "*.conf" 2>/dev/null | grep systemd | wc -l</span><br>
+<span class="out oh">6</span><br><br>
+<span class="cc"># Classic grep-through-logs pipeline</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">cat /var/log/auth.log | grep "Failed password" | tail -20</span>
           </div>
         </div>
-        <div class="note-box tip"><span class="ni">💡</span><div class="nt"><strong>Pipes are limitless</strong>You can chain as many pipe stages as you need. Each <code>|</code> passes the STDOUT of the left command into the STDIN of the right command. This is the foundation of Linux command-line power.</div></div>
+        <div class="note-box tip"><span class="ni">💡</span><div class="nt"><strong>Think of pipes as assembly lines</strong>Each command in a pipeline receives the previous command's output as its input and passes its own output forward. <code>cmd1 | cmd2 | cmd3</code> — data flows left to right, getting transformed at each stage. There's no limit to how many you can chain.</div></div>
       </div>
     </div>
 
     <!-- P2-02: Filter Contents -->
     <div class="section-card">
-      <div class="card-header">
-        <div class="card-icon icon-green">🔽</div>
-        <div class="card-title">Filtering &amp; Processing — more, less, head, tail, sort, grep, cut, tr, column, awk, sed, wc</div>
-        <div class="card-num">12 / 20</div>
-      </div>
+      <div class="card-header"><div class="card-icon icon-green">🔽</div><div class="card-title">Filtering &amp; Processing Text — grep, head, tail, sort, cut, tr, awk, sed, wc</div><div class="card-num">12 / 20</div></div>
       <div class="card-body">
-        <p>These tools are the backbone of text processing in Linux. Alone each one is simple — chained together via pipes they become incredibly powerful for extracting exactly the data you need from any output.</p>
+        <p>Linux gives you a powerful set of text-processing tools that each do one thing well. Combined via pipes, they become an incredibly precise toolkit for extracting exactly the data you need from any output, log, or file — without ever opening an editor.</p>
 
-        <div class="sec-label" style="margin-top:4px;">Pagers — more &amp; less</div>
+        <div class="sec-label" style="margin-top:4px;">Pagers — Reading Large Files Comfortably</div>
+        <p><code>more</code> and <code>less</code> let you scroll through large files one screen at a time instead of everything flooding the terminal at once. <code>less</code> is the more capable of the two — it lets you scroll backwards, search, and leaves a clean terminal when you exit.</p>
         <div class="cmd-block">
           <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
           <div class="cmd-content">
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">cat /etc/passwd | more</span> <span class="cc"># output stays in terminal after Q</span><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">less /etc/passwd</span> <span class="cc"># output clears after Q — cleaner</span>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">less /etc/passwd</span>      <span class="cc"># scroll with arrows, / to search, q to quit</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">cat /var/log/syslog | less</span>  <span class="cc"># pipe any output through less</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">man grep | less</span>            <span class="cc"># man pages already use less</span>
           </div>
         </div>
 
-        <div class="sec-label">Head &amp; Tail — First/Last N Lines</div>
+        <div class="sec-label">head &amp; tail — Read Specific Parts of a File</div>
         <div class="cmd-block">
           <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
           <div class="cmd-content">
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">head /etc/passwd</span> <span class="cc"># first 10 lines</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">head /etc/passwd</span>             <span class="cc"># first 10 lines</span><br>
 <span class="out">root:x:0:0:root:/root:/bin/bash</span><br>
-<span class="out">daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin ...</span><br><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">tail /etc/passwd</span> <span class="cc"># last 10 lines</span><br>
-<span class="out">user6:x:1000:1000:,,,:/home/user6:/bin/bash</span><br><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">tail -f /var/log/syslog</span> <span class="cc"># live follow — great for logs</span>
+<span class="out">daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin</span><br><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">head -n 3 /etc/passwd</span>          <span class="cc"># first 3 lines</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">tail -n 5 /etc/passwd</span>          <span class="cc"># last 5 lines</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">tail -f /var/log/auth.log</span>      <span class="cc"># live stream — new lines appear as they're written</span>
           </div>
         </div>
 
-        <div class="sec-label">grep — Pattern Search &amp; Filter</div>
+        <div class="sec-label">grep — Find Lines Matching a Pattern</div>
+        <p>Grep is the workhorse of text filtering. It scans input line by line and only outputs lines that match your pattern. It's used constantly — from filtering command output to hunting through logs and config files.</p>
         <div class="cmd-block">
-          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — grep patterns</span></div>
           <div class="cmd-content">
-<span class="cc"># Keep only lines matching pattern</span><br>
+<span class="cc"># Lines that contain the pattern</span><br>
 <span class="pr">JohnDoe@target[~]$</span> <span class="ct">cat /etc/passwd | grep "/bin/bash"</span><br>
-<span class="out">root:x:0:0:root:/root:/bin/bash</span><br>
+<span class="out oh">root:x:0:0:root:/root:/bin/bash</span><br>
 <span class="out oh">JohnDoe:x:1002:1002::/home/JohnDoe:/bin/bash</span><br><br>
-<span class="cc"># Invert — exclude lines matching pattern (-v)</span><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">cat /etc/passwd | grep -v "false\|nologin"</span><br>
-<span class="out">root:x:0:0:root:/root:/bin/bash</span>
+<span class="cc"># Inverted — lines that DON'T match (-v)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">cat /etc/passwd | grep -v "nologin\|false"</span><br>
+<span class="out">root:x:0:0:root:/root:/bin/bash</span><br><br>
+<span class="cc"># Search recursively through an entire directory (-r)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">grep -r "password" /etc/ 2>/dev/null</span><br><br>
+<span class="cc"># Case-insensitive (-i), show line numbers (-n)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">grep -in "admin" /etc/passwd</span><br>
+<span class="out">7:  <span class="oh">lpadmin</span>:x:116:65534::/var/run/lpadmin:/usr/sbin/nologin</span>
           </div>
         </div>
 
-        <div class="sec-label">cut, tr, column, awk, sed, wc — The Pipeline Chain</div>
+        <div class="sec-label">Building a Pipeline — cut, tr, column, awk, sed, wc</div>
+        <p>The real power of these tools is chaining them. Here's a step-by-step example that takes raw <code>/etc/passwd</code> content and progressively extracts and formats just the data we want:</p>
         <div class="cmd-block">
-          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — building a full pipeline step by step</span></div>
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — pipeline built step by step</span></div>
           <div class="cmd-content">
-<span class="cc"># 1. cut — extract field 1 (username) using : as delimiter</span><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">cat /etc/passwd | grep -v "false\|nologin" | cut -d":" -f1</span><br>
-<span class="out">root  sync  postgres  mrb3n  cr4y0n  JohnDoe</span><br><br>
-<span class="cc"># 2. tr — replace : with space for readable output</span><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">cat /etc/passwd | grep -v "false\|nologin" | tr ":" " "</span><br>
+<span class="cc"># Step 1 — filter: remove service accounts (no real shell)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">cat /etc/passwd | grep -v "nologin\|false"</span><br>
+<span class="out">root:x:0:0:root:/root:/bin/bash</span><br>
+<span class="out">JohnDoe:x:1002:1002::/home/JohnDoe:/bin/bash</span><br><br>
+<span class="cc"># Step 2 — cut: extract only the username (field 1, delimited by :)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">... | cut -d":" -f1</span><br>
+<span class="out">root</span><br>
+<span class="out oh">JohnDoe</span><br><br>
+<span class="cc"># Step 3 — tr: replace colons with spaces for readability</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">... | tr ":" " "</span><br>
 <span class="out">root x 0 0 root /root /bin/bash</span><br><br>
-<span class="cc"># 3. column -t — align into tidy table</span><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">... | tr ":" " " | column -t</span><br>
-<span class="out">root      x  0    0     root    /root          /bin/bash</span><br>
-<span class="out oh">JohnDoe   x  1002 1002  JohnDoe /home/JohnDoe  /bin/bash</span><br><br>
-<span class="cc"># 4. awk — print only first and last fields</span><br>
+<span class="cc"># Step 4 — column -t: auto-align into neat columns</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">... | column -t</span><br>
+<span class="out">root     x  0    0     root     /root          /bin/bash</span><br>
+<span class="out oh">JohnDoe  x  1002 1002  JohnDoe  /home/JohnDoe  /bin/bash</span><br><br>
+<span class="cc"># Step 5 — awk: print only first and last fields ($1 and $NF)</span><br>
 <span class="pr">JohnDoe@target[~]$</span> <span class="ct">... | awk '{print $1, $NF}'</span><br>
-<span class="out">root /bin/bash   JohnDoe /bin/bash</span><br><br>
-<span class="cc"># 5. sed — substitute text (s/find/replace/g)</span><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">... | sed 's/bin/BOX/g'</span><br>
-<span class="out">root /BOX/bash   JohnDoe /BOX/bash</span><br><br>
-<span class="cc"># 6. wc -l — count total matches</span><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">... | wc -l</span><br>
-<span class="out oh">6</span>
+<span class="out">root /bin/bash</span><br>
+<span class="out oh">JohnDoe /bin/bash</span><br><br>
+<span class="cc"># Step 6 — sed: do a text substitution (s/find/replace/g)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">... | sed 's/\/bin\/bash/SHELL/g'</span><br>
+<span class="out">root <span class="oh">SHELL</span></span><br>
+<span class="out">JohnDoe <span class="oh">SHELL</span></span><br><br>
+<span class="cc"># Step 7 — wc -l: count how many results</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">cat /etc/passwd | grep -v "nologin\|false" | wc -l</span><br>
+<span class="out oh">4</span>
           </div>
         </div>
-
-        <div class="note-box good"><span class="ni">🔗</span><div class="nt"><strong>The full pipeline</strong><code>cat /etc/passwd | grep -v "false\|nologin" | tr ":" " " | awk '{print $1, $NF}' | wc -l</code> — this single line filters, reformats, extracts, and counts in one shot. This is how experienced Linux users work.</div></div>
+        <div class="note-box good"><span class="ni">🔗</span><div class="nt"><strong>The full one-liner</strong><code>cat /etc/passwd | grep -v "nologin\|false" | tr ":" " " | awk '{print $1, $NF}' | sort | uniq</code> — filter, reformat, extract, sort, deduplicate. This kind of pipeline replaces what would take many lines of code in a scripting language.</div></div>
       </div>
     </div>
 
     <!-- P2-03: Regular Expressions -->
     <div class="section-card">
-      <div class="card-header">
-        <div class="card-icon icon-purple">🎯</div>
-        <div class="card-title">Regular Expressions (RegEx)</div>
-        <div class="card-num">13 / 20</div>
-      </div>
+      <div class="card-header"><div class="card-icon icon-purple">🎯</div><div class="card-title">Regular Expressions (RegEx)</div><div class="card-num">13 / 20</div></div>
       <div class="card-body">
-        <p><span class="hi-p">Regular expressions (RegEx)</span> are patterns used to search, match, and manipulate text. They are available in <code>grep</code>, <code>sed</code>, <code>awk</code>, and most programming languages — making them one of the most universally useful skills in cybersecurity.</p>
-        <p>At the core of RegEx are <strong>metacharacters</strong> — symbols that define the structure of a search rather than matching literal characters.</p>
+        <p><span class="hi-p">Regular expressions</span> are a pattern language for matching text. Rather than searching for exact strings, you write patterns that describe the shape of what you're looking for — numbers, email addresses, IP addresses, lines starting with a specific word, and so on.</p>
+        <p>They're supported in <code>grep</code>, <code>sed</code>, <code>awk</code>, Python, JavaScript, and most programming languages — making this one of the most transferable skills you can learn. The syntax is the same everywhere.</p>
 
-        <div class="sec-label" style="margin-top:4px;">Grouping Operators</div>
+        <div class="sec-label" style="margin-top:4px;">Core Metacharacters</div>
         <table class="styled-table">
-          <thead><tr><th>Operator</th><th>Description</th></tr></thead>
+          <thead><tr><th>Character</th><th>Meaning</th><th>Example</th></tr></thead>
           <tbody>
-            <tr><td>(a)</td><td>Round brackets — group parts of a pattern together</td></tr>
-            <tr><td>[a-z]</td><td>Square brackets — character class (any char in range)</td></tr>
-            <tr><td>{1,10}</td><td>Curly brackets — quantifier (how many times pattern repeats)</td></tr>
-            <tr><td>|</td><td>OR operator — match either left or right expression</td></tr>
-            <tr><td>.*</td><td>AND-like — both expressions must appear in order</td></tr>
+            <tr><td>.</td><td>Match any single character</td><td><code>c.t</code> matches "cat", "cut", "c3t"</td></tr>
+            <tr><td>*</td><td>Zero or more of the previous</td><td><code>lo*l</code> matches "ll", "lol", "lool"</td></tr>
+            <tr><td>+</td><td>One or more of the previous (extended)</td><td><code>lo+l</code> matches "lol", "lool" but not "ll"</td></tr>
+            <tr><td>?</td><td>Zero or one of the previous (extended)</td><td><code>colo?r</code> matches "color" and "colour"</td></tr>
+            <tr><td>^</td><td>Match start of line</td><td><code>^root</code> — lines starting with "root"</td></tr>
+            <tr><td>$</td><td>Match end of line</td><td><code>bash$</code> — lines ending with "bash"</td></tr>
+            <tr><td>[abc]</td><td>Match any character in the set</td><td><code>[aeiou]</code> matches any vowel</td></tr>
+            <tr><td>[a-z]</td><td>Match any character in the range</td><td><code>[0-9]</code> matches any digit</td></tr>
+            <tr><td>[^abc]</td><td>Match any character NOT in the set</td><td><code>[^0-9]</code> matches non-digits</td></tr>
+            <tr><td>(a|b)</td><td>Match a OR b (extended)</td><td><code>(cat|dog)</code> matches either word</td></tr>
+            <tr><td>{n,m}</td><td>Match between n and m times (extended)</td><td><code>[0-9]{1,3}</code> matches 1–3 digits</td></tr>
           </tbody>
         </table>
 
-        <div class="sec-label">OR and AND Operators with grep -E</div>
+        <div class="sec-label">grep with Regular Expressions</div>
         <div class="cmd-block">
-          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — regex patterns in grep</span></div>
           <div class="cmd-content">
-<span class="cc"># OR — lines containing "my" or "false"</span><br>
+<span class="cc"># Lines starting with "root"</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">grep "^root" /etc/passwd</span><br>
+<span class="out oh">root:x:0:0:root:/root:/bin/bash</span><br><br>
+<span class="cc"># Lines ending with "/bin/bash"</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">grep "/bin/bash$" /etc/passwd</span><br>
+<span class="out">root:x:0:0:root:/root:/bin/bash</span><br>
+<span class="out oh">JohnDoe:x:1002:1002::/home/JohnDoe:/bin/bash</span><br><br>
+<span class="cc"># Extended regex: OR operator — match "my" or "false" (-E flag)</span><br>
 <span class="pr">JohnDoe@target[~]$</span> <span class="ct">grep -E "(my|false)" /etc/passwd</span><br>
 <span class="out">lxd:x:105:65534::/var/lib/lxd/:/bin/false</span><br>
 <span class="out oh">mysql:x:116:120:MySQL Server,,:/nonexistent:/bin/false</span><br><br>
-<span class="cc"># AND — lines containing both "my" AND "false" in that order</span><br>
+<span class="cc"># Extended regex: AND-like — both terms in order (.*)</span><br>
 <span class="pr">JohnDoe@target[~]$</span> <span class="ct">grep -E "(my.*false)" /etc/passwd</span><br>
 <span class="out oh">mysql:x:116:120:MySQL Server,,:/nonexistent:/bin/false</span><br><br>
-<span class="cc"># Equivalent using two greps piped together</span><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">grep -E "my" /etc/passwd | grep -E "false"</span><br>
-<span class="out oh">mysql:x:116:120:MySQL Server,,:/nonexistent:/bin/false</span>
+<span class="cc"># Match lines with a UID between 1000 and 1999</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">grep -E "x:1[0-9]{3}" /etc/passwd</span>
           </div>
         </div>
-        <div class="note-box tip"><span class="ni">💡</span><div class="nt"><strong>-E for extended regex</strong>Always use <code>grep -E</code> when using operators like <code>|</code>, <code>+</code>, <code>?</code>, or grouping with <code>()</code>. Without <code>-E</code> these characters are treated as literal text.</div></div>
+        <div class="note-box tip"><span class="ni">💡</span><div class="nt"><strong>grep vs grep -E vs egrep</strong>Basic <code>grep</code> supports limited regex. <code>grep -E</code> (or its alias <code>egrep</code>) enables extended regex with <code>|</code>, <code>+</code>, <code>?</code>, <code>{n,m}</code>, and grouping with <code>()</code>. When in doubt, always use <code>grep -E</code>.</div></div>
+        <div class="note-box good"><span class="ni">🧪</span><div class="nt"><strong>Practice regex</strong>Use <strong>regex101.com</strong> — paste a regex and test it against sample text interactively, with a built-in explanation of every part of your pattern. It's the fastest way to learn and debug expressions.</div></div>
       </div>
     </div>
 
-    <!-- P2-04: Permission Management -->
+    <!-- P2-04: Permissions -->
     <div class="section-card">
-      <div class="card-header">
-        <div class="card-icon icon-gold">🔑</div>
-        <div class="card-title">Permission Management — chmod, chown, SUID, Sticky Bit</div>
-        <div class="card-num">14 / 20</div>
-      </div>
+      <div class="card-header"><div class="card-icon icon-gold">🔑</div><div class="card-title">Permission Management — chmod, chown, SUID, Sticky Bit</div><div class="card-num">14 / 20</div></div>
       <div class="card-body">
-        <p>Linux permissions control who can <strong>read (r)</strong>, <strong>write (w)</strong>, and <strong>execute (x)</strong> files and directories. They are assigned separately for the <span class="hi-r">owner</span>, <span class="hi">group</span>, and <span class="hi-g">others</span>.</p>
+        <p>Linux controls access to every file and directory through a permission system. Each file has an <span class="hi-r">owner</span> (a user) and an <span class="hi">owning group</span>. Permissions are set separately for three audiences: the owner, the group, and everyone else (others). The three permission types are <strong>read (r)</strong>, <strong>write (w)</strong>, and <strong>execute (x)</strong>.</p>
 
-        <div class="sec-label" style="margin-top:4px;">Reading Permissions</div>
+        <div class="sec-label" style="margin-top:4px;">Reading Permission Strings</div>
         <div class="perm-display">
-<span class="perm-type">-</span><span class="perm-own">rwx</span><span class="perm-grp">rw-</span><span class="perm-oth">r--</span>   1 root root 1641 May 4 23:42 /etc/passwd<br><br>
-<span style="color:var(--dim);">│</span> <span class="perm-own">│││</span> <span class="perm-grp">│││</span> <span class="perm-oth">│││</span><br>
-<span style="color:var(--dim);">│</span> <span class="perm-own">│││</span> <span class="perm-grp">│││</span> <span class="perm-oth">└──</span> Others: r-- (read only)<br>
-<span style="color:var(--dim);">│</span> <span class="perm-own">│││</span> <span class="perm-grp">└──</span> Group: rw- (read + write)<br>
-<span style="color:var(--dim);">│</span> <span class="perm-own">└──</span> Owner: rwx (read + write + execute)<br>
-<span style="color:var(--dim);">└──</span> Type: - (file) &nbsp;d (dir) &nbsp;l (link)
+<span class="perm-type">-</span><span class="perm-own">rwx</span><span class="perm-grp">rw-</span><span class="perm-oth">r--</span>   1 root root 1641 May  4 23:42 /etc/passwd<br><br>
+<span style="color:var(--dim);">│   ├── Owner: rwx  (read + write + execute)</span><br>
+<span style="color:var(--dim);">│   ├── Group: rw-  (read + write)</span><br>
+<span style="color:var(--dim);">│   └── Others: r-- (read only)</span><br>
+<span style="color:var(--dim);">└── Type: - (file)  d (directory)  l (symlink)  c (char device)  b (block device)</span>
         </div>
+        <div class="note-box tip"><span class="ni">💡</span><div class="nt"><strong>Permissions on directories work differently</strong>On a directory: <code>r</code> = can list contents (<code>ls</code>), <code>w</code> = can create/delete files inside, <code>x</code> = can enter it (<code>cd</code>). You need execute on a directory to traverse it — even if you can see the directory's name, without execute you'll get "Permission denied" when trying to enter.</div></div>
 
         <div class="sec-label">chmod — Change Permissions</div>
+        <p>Permissions can be set two ways: <strong>symbolic</strong> (letters) or <strong>octal</strong> (numbers). Octal is faster once you know the values; symbolic is easier to read when making specific targeted changes.</p>
         <div class="cmd-block">
-          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — symbolic and octal permission changes</span></div>
           <div class="cmd-content">
-<span class="cc"># Add read permission for all users (symbolic)</span><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">chmod a+r shell &amp;&amp; ls -l shell</span><br>
-<span class="out">-rwxr-xr-x  1 JohnDoe JohnDoe 0 May 4 22:12 shell</span><br><br>
-<span class="cc"># Set permissions using octal notation</span><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">chmod 754 shell &amp;&amp; ls -l shell</span><br>
-<span class="out">-rwxr-xr--  1 JohnDoe JohnDoe 0 May 4 22:12 shell</span>
+<span class="cc"># Symbolic — who(u/g/o/a) + operator(+/-/=) + permission(r/w/x)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">chmod u+x script.sh</span>      <span class="cc"># add execute for owner</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">chmod a+r file.txt</span>        <span class="cc"># add read for all users</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">chmod o-rw secret.txt</span>     <span class="cc"># remove read+write from others</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">chmod g=rx shared/</span>        <span class="cc"># set group to exactly read+execute</span><br><br>
+<span class="cc"># Octal — three digits: owner / group / others</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">chmod 755 script.sh</span>       <span class="cc"># rwxr-xr-x (owner all, others read+exec)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">chmod 644 config.txt</span>      <span class="cc"># rw-r--r-- (owner rw, others read)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">chmod 600 private.key</span>     <span class="cc"># rw------- (owner only)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">chmod 700 ~/.ssh/</span>         <span class="cc"># rwx------ (SSH dir should always be 700)</span><br><br>
+<span class="cc"># Recursive — apply to directory and all contents</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">chmod -R 755 /var/www/html/</span>
           </div>
         </div>
-
-        <div class="sec-label">Octal Notation Reference</div>
         <table class="styled-table">
-          <thead><tr><th>Octal</th><th>Binary</th><th>Permissions</th><th>Meaning</th></tr></thead>
+          <thead><tr><th>Octal</th><th>Binary</th><th>Permissions</th><th>Common use case</th></tr></thead>
           <tbody>
-            <tr><td>7</td><td>111</td><td>rwx</td><td>Read + Write + Execute</td></tr>
-            <tr><td>6</td><td>110</td><td>rw-</td><td>Read + Write</td></tr>
-            <tr><td>5</td><td>101</td><td>r-x</td><td>Read + Execute</td></tr>
-            <tr><td>4</td><td>100</td><td>r--</td><td>Read only</td></tr>
-            <tr><td>0</td><td>000</td><td>---</td><td>No permissions</td></tr>
+            <tr><td>7</td><td>111</td><td>rwx</td><td>Owner of executable scripts</td></tr>
+            <tr><td>6</td><td>110</td><td>rw-</td><td>Config files the owner edits</td></tr>
+            <tr><td>5</td><td>101</td><td>r-x</td><td>Group access to scripts</td></tr>
+            <tr><td>4</td><td>100</td><td>r--</td><td>Read-only for others</td></tr>
+            <tr><td>0</td><td>000</td><td>---</td><td>No access at all</td></tr>
           </tbody>
         </table>
 
-        <div class="sec-label">chown — Change Owner</div>
+        <div class="sec-label">chown — Change File Ownership</div>
         <div class="cmd-block">
           <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
           <div class="cmd-content">
-<span class="cc"># Syntax: chown user:group file</span><br>
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">chown root:root shell &amp;&amp; ls -l shell</span><br>
-<span class="out">-rwxr-xr--  1 <span class="oh">root root</span> 0 May 4 22:12 shell</span>
+<span class="cc"># Change owner and group together</span><br>
+<span class="pr">root@target[~]#</span> <span class="ct">chown www-data:www-data /var/www/html/index.php</span><br><br>
+<span class="cc"># Change owner only</span><br>
+<span class="pr">root@target[~]#</span> <span class="ct">chown JohnDoe report.txt</span><br><br>
+<span class="cc"># Change group only (colon with no user)</span><br>
+<span class="pr">root@target[~]#</span> <span class="ct">chown :developers project/</span><br><br>
+<span class="cc"># Recursive ownership change</span><br>
+<span class="pr">root@target[~]#</span> <span class="ct">chown -R www-data:www-data /var/www/</span>
           </div>
         </div>
 
-        <div class="sec-label">SUID &amp; SGID — Elevated Execution Bits</div>
-        <p>The <span class="hi-r">SUID (Set User ID)</span> and <span class="hi-p">SGID (Set Group ID)</span> bits allow a file to run with the permissions of its <em>owner</em> rather than the user who executes it. They appear as <code>s</code> in place of <code>x</code> in permission strings.</p>
+        <div class="sec-label">SUID &amp; SGID — Special Execution Bits</div>
+        <p>The <span class="hi-r">SUID (Set User ID)</span> bit on an executable means it runs with the file <em>owner's</em> permissions instead of the caller's. If that file is owned by root, any user who runs it gets root-level access for that program's duration. They appear as <code>s</code> where the execute bit would normally be.</p>
         <div class="cmd-block">
-          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — find SUID binaries on the system</span></div>
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — finding and understanding SUID binaries</span></div>
           <div class="cmd-content">
-<span class="pr">JohnDoe@target[~]$</span> <span class="ct">find / -perm -4000 2>/dev/null</span><br>
+<span class="cc"># passwd runs as root (SUID) so any user can change their own password</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">ls -l /usr/bin/passwd</span><br>
+<span class="out">-rw<span class="oh">s</span>r-xr-x 1 root root 59640 Mar 14 2022 /usr/bin/passwd</span>   <span class="cc">← s = SUID</span><br><br>
+<span class="cc"># Find ALL SUID files on the system (security audit / privesc recon)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">find / -perm -4000 -type f 2>/dev/null</span><br>
 <span class="out oh">/usr/bin/passwd</span><br>
 <span class="out">/usr/bin/sudo</span><br>
-<span class="out">/usr/bin/pkexec</span>
+<span class="out">/usr/bin/pkexec</span><br>
+<span class="out">/usr/bin/mount</span><br><br>
+<span class="cc"># Set SUID bit on a file (only do this when you understand the implications)</span><br>
+<span class="pr">root@target[~]#</span> <span class="ct">chmod u+s /path/to/program</span>   <span class="cc"># or: chmod 4755 /path/to/program</span>
           </div>
         </div>
-        <div class="note-box warn"><span class="ni">⚠️</span><div class="nt"><strong>SUID as a privesc vector</strong>If a program with SUID runs as root and offers shell access (e.g., via <code>!</code> in a pager), any user can spawn a root shell. GTFObins documents these misconfigurations. Always audit SUID binaries on a system you're assessing.</div></div>
+        <div class="note-box warn"><span class="ni">⚠️</span><div class="nt"><strong>SUID as a privilege escalation vector</strong>Any SUID binary that can be abused to spawn a shell — via file reads, shell escapes (<code>!</code> in pagers), or built-in commands — gives root access to any user who runs it. Check the full list of known SUID exploits at <strong>GTFOBins (gtfobins.github.io)</strong> — it's a reference for every binary that can be abused.</div></div>
 
-        <div class="sec-label">Sticky Bit — Shared Directory Protection</div>
-        <p>The <span class="hi-y">sticky bit</span> on a directory ensures that only the file's owner, the directory's owner, or root can delete or rename files inside — even if other users have write access to the directory.</p>
+        <div class="sec-label">Sticky Bit — Protecting Shared Directories</div>
+        <p>The <span class="hi-y">sticky bit</span> on a directory ensures that users can only delete or rename their <em>own</em> files inside it, even if they have write permission to the directory itself. This is how <code>/tmp</code> works — everyone can write to it, but you can't delete other users' files.</p>
         <div class="cmd-block">
           <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
           <div class="cmd-content">
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">ls -ld /tmp</span><br>
+<span class="out">drwxrwxrw<span class="oh">t</span> 12 root root 4096 Mar 10 08:22 /tmp</span>   <span class="cc">← lowercase t = sticky + execute</span><br><br>
 <span class="pr">JohnDoe@target[~]$</span> <span class="ct">ls -l</span><br>
-<span class="out">drw-rw-r-<span class="oh">t</span> 3 JohnDoe JohnDoe 4096 Jan 12 12:30 scripts</span><br>
-<span class="out">drw-rw-r-<span class="oh">T</span> 3 JohnDoe JohnDoe 4096 Jan 12 12:32 reports</span>
+<span class="out">drw-rw-r-<span class="oh">t</span> 3 JohnDoe JohnDoe 4096 Jan 12 scripts</span>   <span class="cc">← t: sticky set, others can enter</span><br>
+<span class="out">drw-rw-r-<span class="oh">T</span> 3 JohnDoe JohnDoe 4096 Jan 12 reports</span>   <span class="cc">← T: sticky set, others can't enter</span><br><br>
+<span class="cc"># Set the sticky bit on a directory</span><br>
+<span class="pr">root@target[~]#</span> <span class="ct">chmod +t /shared/uploads/</span>   <span class="cc"># or: chmod 1755 /shared/uploads/</span>
           </div>
         </div>
         <table class="styled-table">
-          <thead><tr><th>Bit</th><th>Meaning</th></tr></thead>
+          <thead><tr><th>Symbol</th><th>Sticky bit</th><th>Execute bit on directory</th><th>Effect</th></tr></thead>
           <tbody>
-            <tr><td>t (lowercase)</td><td>Sticky bit set AND execute (x) permission is also set — others can traverse the directory</td></tr>
-            <tr><td>T (uppercase)</td><td>Sticky bit set but NO execute (x) — others cannot enter the directory at all</td></tr>
+            <tr><td>t (lowercase)</td><td>✓ Set</td><td>✓ Set</td><td>Others can enter directory, but only delete their own files</td></tr>
+            <tr><td>T (uppercase)</td><td>✓ Set</td><td>✗ Not set</td><td>Others cannot enter directory at all — maximally restrictive</td></tr>
           </tbody>
         </table>
-        <div class="note-box tip"><span class="ni">💡</span><div class="nt"><strong>Execute on directories</strong>Execute permission on a directory means the ability to <em>enter</em> it (<code>cd</code> into it). Without execute, you cannot traverse the directory even if you can see its name — you'll get "Permission denied".</div></div>
       </div>
     </div>
 
-    <div class="divider">── 4 / 10 sections complete · part 2 in progress ──</div>
+    <div class="divider">── 4 / 10 sections · part 2 in progress ──</div>
   </div><!-- end panel1 -->
 
   <!-- PART 3 PANEL -->
@@ -1466,19 +1010,14 @@
   </div>
 
   <footer>
-    <p><a href="index.html">← Home</a> &nbsp;·&nbsp; <a href="library.html">Library</a> &nbsp;·&nbsp; Linux Fundamentals &nbsp;·&nbsp; riig.github.io</p>
+    <p><a href="index.html">← Home</a> &nbsp;·&nbsp; <a href="library.html">Cyber Library</a> &nbsp;·&nbsp; <a href="os-fundamentals.html">OS Fundamentals</a> &nbsp;·&nbsp; Linux Fundamentals &nbsp;·&nbsp; riig.github.io</p>
   </footer>
-
 </div>
 
 <script>
-function switchTab(index) {
-  document.querySelectorAll('.tab-btn').forEach((b, i) => {
-    b.classList.toggle('active', i === index);
-  });
-  document.querySelectorAll('.tab-panel').forEach((p, i) => {
-    p.classList.toggle('active', i === index);
-  });
+function switchTab(idx) {
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===idx));
+  document.querySelectorAll('.tab-panel').forEach((p,i)=>p.classList.toggle('active',i===idx));
 }
 </script>
 </body>
