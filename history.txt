@@ -1,0 +1,89 @@
+# ============================================================
+#  riig.github.io — Project History
+#  A running log of sessions, changes, and site state.
+# ============================================================
+
+
+# ============================================================
+#  SESSION 1 — 2026-03-10
+# ============================================================
+
+## What was done
+
+- Created config.txt — site-wide settings file (colors, fonts, labels,
+  logo URL slot, feature toggles). Claude reads this every session.
+
+- Created CLAUDE.md — persistent instructions for Claude. Rules include:
+  read config.txt on session start, read files before editing, keep CSS/JS
+  inline, don't auto-commit, ask before major structural changes.
+
+- library.html: Removed "Networking" and "Web App Security" topic cards.
+  Rule established: only categories with real content get added.
+
+- os-fundamentals.html: Replaced emoji icons (🐧🪟🍎🤖) with real brand
+  logos via cdn.simpleicons.org, each tinted to match their card color.
+    Linux     → Tux logo, cyan   (#00e5ff)
+    Windows   → Windows logo, pink/red (#ff4d6d)
+    macOS     → Apple logo, gold (#fbbf24)
+    Android   → Android logo, purple (#a78bfa)
+
+- library.html + os-fundamentals.html: Changed sub-description text from
+  inline bullet format ("Linux · Windows · macOS · Android") to stacked
+  vertical list (each item on its own line). Cards now grow in height
+  naturally with more items.
+
+- library.html + os-fundamentals.html: Removed all Active/Soon badge
+  elements and their CSS entirely.
+
+- index.html: Removed fake search bar (HTML, CSS, and JS all stripped).
+  A real search bar will be added later when ready.
+
+- index.html — Cursor animation: Fixed lag by switching from left/top
+  property animation to transform: translate() (GPU compositor, no layout
+  recalc). Added will-change: transform. Dot now snaps exact, ring trails.
+
+- index.html — Title hover animation: Replaced laggy titleGlitch (was
+  animating text-shadow + letter-spacing = forced paint/layout) with
+  titleFlare (transform: scale + filter: brightness/drop-shadow = smooth,
+  compositor-only glow+grow effect).
+
+
+## Site state at end of session
+
+Pages:
+  index.html            — Home. Typewriter title, 3 dir-cards (1 active,
+                          2 locked), scrolling status ticker, custom cursor.
+                          Search bar removed (placeholder for future).
+  library.html          — Topic hub. Only "OS Fundamentals" shown.
+  os-fundamentals.html  — Category hub. 4 OS cards (Linux active, 3 locked).
+                          Real brand logos, stacked sub-text, no badges.
+  linux-fundamentals.html — Main content. Tabbed (Part 1/2 active, Part 3
+                          locked). 14/30 sections live. Command reference
+                          pills with hover tooltips. Full section cards with
+                          code blocks, tables, note boxes.
+
+Library/ directory:
+  Raw plain-text source notes (excluded from git via .gitignore).
+  Linux Fundamentals 1-3, 2-3, 3-3 (Parts 1 and 2 have content, Part 3 empty).
+
+Config files:
+  config.txt   — Site settings. Edit to change colors, fonts, labels, etc.
+  CLAUDE.md    — Claude's session rules.
+  history.txt  — This file.
+
+Design system:
+  Colors (CSS vars):
+    --accent  #00e5ff  cyan, primary
+    --accent2 #ff4d6d  pink/red
+    --accent3 #a3e635  green
+    --gold    #fbbf24
+    --bg      #0a0d13  deepest bg
+    --panel   #111827  cards/panels
+    --border  #1e2d45
+    --text    #c9d1e0
+    --dim     #6b7fa3
+  Fonts: Share Tech Mono (mono/terminal), Orbitron (headings), Exo 2 (body)
+  All CSS and JS are inline per HTML file — no external stylesheets or scripts.
+  Breadcrumb nav: riig.github.io / Section / Page
+  Animated grid background + vignette on all pages.
+  Custom cursor (index only): ring trails, dot snaps exact, both use transform.

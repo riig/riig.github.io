@@ -1,0 +1,70 @@
+# ============================================================
+#  riig.github.io — Claude Sonnet 4.6 Configuration
+# ============================================================
+
+
+# --- IDENTITY -----------------------------------------------
+
+SITE_TITLE        = CYBER LIBRARY
+SITE_SUBTITLE     = Cybersecurity simplified..
+AUTHOR_HANDLE     = riig
+
+# Uncomment and paste a URL to enable a logo image in the navbar
+# LOGO_URL        = https://example.com/your-logo.png
+# LOGO_ALT        = riig logo
+
+
+# --- COLORS -------------------------------------------------
+# These are the current defaults. Change any hex value to update.
+
+COLOR_PRIMARY     = #00e5ff    # cyan — main accent, links, highlights
+COLOR_SECONDARY   = #ff4d6d    # pink/red — warnings, accents
+COLOR_TERTIARY    = #a3e635    # green — success, active states
+COLOR_GOLD        = #fbbf24    # gold — warnings, special notes
+COLOR_BG_DARK     = #0a0d13    # deepest background
+COLOR_BG_MID      = #111827    # card/panel backgrounds
+COLOR_BG_DEEPER   = #080c14    # navbar / footer backgrounds
+COLOR_TEXT        = #e2e8f0    # main body text
+COLOR_TEXT_MUTED  = #94a3b8    # secondary/dim text
+
+
+# --- FONTS --------------------------------------------------
+# Google Fonts are used. Change the name if you swap fonts.
+
+FONT_MONO         = Share Tech Mono   # code blocks, terminal text
+FONT_HEADING      = Orbitron          # page titles, section headers
+FONT_BODY         = Exo 2             # general body text
+
+
+# --- NAVBAR -------------------------------------------------
+
+NAVBAR_PROMPT     = riig@localhost:~$     # text shown in top-left of navbar
+# NAVBAR_LOGO_URL = (uses LOGO_URL above if set)
+
+
+# --- NOTES / CALLOUT BOXES ----------------------------------
+# Labels used on the colored note boxes inside content cards.
+
+NOTE_TIP_LABEL    = TIP
+NOTE_WARN_LABEL   = HEADS UP
+NOTE_GOOD_LABEL   = GOOD TO KNOW
+
+
+# --- CONTENT STATUS LABELS ----------------------------------
+# Text shown on locked/upcoming sections.
+
+LABEL_ACTIVE      = Active
+LABEL_SOON        = Soon
+LABEL_LOCKED      = 🔒 Locked
+
+
+# --- MISC ---------------------------------------------------
+
+# Fake search bar on index — set to false to hide it
+SEARCH_BAR        = false
+
+# Scrolling status ticker on index — set to false to hide it
+STATUS_TICKER     = true
+
+# Custom cursor (ring + dot) — set to false to use default cursor
+CUSTOM_CURSOR     = true

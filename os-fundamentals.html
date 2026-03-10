@@ -34,16 +34,14 @@
   .sg{background:linear-gradient(180deg,var(--gold),#f97316);}
   .sp{background:linear-gradient(180deg,var(--purple),#6366f1);}
   .c-icon{font-size:1.2rem;flex-shrink:0;width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:7px;}
+  .c-icon img{width:20px;height:20px;object-fit:contain;}
   .ic{background:#00e5ff12;border:1px solid #00e5ff25;}
   .ir{background:#ff4d6d12;border:1px solid #ff4d6d25;}
   .ig{background:#fbbf2412;border:1px solid #fbbf2425;}
   .ip{background:#a78bfa12;border:1px solid #a78bfa25;}
   .c-info{flex:1;min-width:0;}
   .c-name{font-family:'Orbitron',monospace;font-size:0.76rem;font-weight:700;color:#fff;letter-spacing:0.05em;margin-bottom:2px;}
-  .c-sub{font-family:'Share Tech Mono',monospace;font-size:0.61rem;color:var(--dim);letter-spacing:0.07em;}
-  .c-badge{font-family:'Share Tech Mono',monospace;font-size:0.57rem;letter-spacing:0.12em;padding:2px 8px;border-radius:20px;text-transform:uppercase;flex-shrink:0;}
-  .ba{background:#a3e63515;color:var(--accent3);border:1px solid #a3e63530;}
-  .bs{background:#6b7fa315;color:var(--dim);border:1px solid #6b7fa328;}
+  .c-sub{font-family:'Share Tech Mono',monospace;font-size:0.61rem;color:var(--dim);letter-spacing:0.07em;display:flex;flex-direction:column;gap:3px;}
   footer{text-align:center;padding-top:52px;margin-top:10px;border-top:1px solid var(--border);font-family:'Share Tech Mono',monospace;font-size:0.66rem;color:var(--dim);letter-spacing:0.1em;}
   footer a{color:var(--accent);text-decoration:none;}
   @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
@@ -64,39 +62,38 @@
   <div class="cat-grid">
     <a class="cat-card active-c" href="linux-fundamentals.html">
       <div class="c-stripe sc"></div>
-      <div class="c-icon ic">🐧</div>
+      <div class="c-icon ic"><img src="https://cdn.simpleicons.org/linux/00e5ff" alt="Linux"></div>
       <div class="c-info">
         <div class="c-name">Linux Fundamentals</div>
-        <div class="c-sub">Parts 1–2 active · 14 / 30 sections</div>
+        <div class="c-sub">
+          <span>Parts 1–2 active</span>
+          <span>14 / 30 sections</span>
+        </div>
       </div>
-      <span class="c-badge ba">Active</span>
     </a>
     <div class="cat-card locked-c">
       <div class="c-stripe sr"></div>
-      <div class="c-icon ir">🪟</div>
+      <div class="c-icon ir"><img src="https://cdn.simpleicons.org/windows/ff4d6d" alt="Windows"></div>
       <div class="c-info">
         <div class="c-name">Windows Fundamentals</div>
-        <div class="c-sub">Coming soon</div>
+        <div class="c-sub"><span>Coming soon</span></div>
       </div>
-      <span class="c-badge bs">Soon</span>
     </div>
     <div class="cat-card locked-c">
       <div class="c-stripe sg"></div>
-      <div class="c-icon ig">🍎</div>
+      <div class="c-icon ig"><img src="https://cdn.simpleicons.org/apple/fbbf24" alt="macOS"></div>
       <div class="c-info">
         <div class="c-name">macOS Fundamentals</div>
-        <div class="c-sub">Coming soon</div>
+        <div class="c-sub"><span>Coming soon</span></div>
       </div>
-      <span class="c-badge bs">Soon</span>
     </div>
     <div class="cat-card locked-c">
       <div class="c-stripe sp"></div>
-      <div class="c-icon ip">🤖</div>
+      <div class="c-icon ip"><img src="https://cdn.simpleicons.org/android/a78bfa" alt="Android"></div>
       <div class="c-info">
         <div class="c-name">Android Fundamentals</div>
-        <div class="c-sub">Coming soon</div>
+        <div class="c-sub"><span>Coming soon</span></div>
       </div>
-      <span class="c-badge bs">Soon</span>
     </div>
   </div>
   <footer>

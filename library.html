@@ -40,10 +40,7 @@
   .ig{background:#a3e63512;border:1px solid #a3e63525;}
   .t-info{flex:1;min-width:0;}
   .t-name{font-family:'Orbitron',monospace;font-size:0.76rem;font-weight:700;color:#fff;letter-spacing:0.05em;margin-bottom:2px;}
-  .t-sub{font-family:'Share Tech Mono',monospace;font-size:0.61rem;color:var(--dim);letter-spacing:0.07em;}
-  .t-badge{font-family:'Share Tech Mono',monospace;font-size:0.57rem;letter-spacing:0.12em;padding:2px 8px;border-radius:20px;text-transform:uppercase;flex-shrink:0;}
-  .ba{background:#a3e63515;color:var(--accent3);border:1px solid #a3e63530;}
-  .bs{background:#6b7fa315;color:var(--dim);border:1px solid #6b7fa328;}
+  .t-sub{font-family:'Share Tech Mono',monospace;font-size:0.61rem;color:var(--dim);letter-spacing:0.07em;display:flex;flex-direction:column;gap:3px;}
   footer{text-align:center;padding-top:52px;margin-top:10px;border-top:1px solid var(--border);font-family:'Share Tech Mono',monospace;font-size:0.66rem;color:var(--dim);letter-spacing:0.1em;}
   footer a{color:var(--accent);text-decoration:none;}
   @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
@@ -67,28 +64,14 @@
       <div class="t-icon ic">🖥️</div>
       <div class="t-info">
         <div class="t-name">OS Fundamentals</div>
-        <div class="t-sub">Linux · Windows · macOS · Android</div>
+        <div class="t-sub">
+          <span>Linux</span>
+          <span>Windows</span>
+          <span>macOS</span>
+          <span>Android</span>
+        </div>
       </div>
-      <span class="t-badge ba">Active</span>
     </a>
-    <div class="topic-card locked-t">
-      <div class="t-stripe s-purple"></div>
-      <div class="t-icon ip">🌐</div>
-      <div class="t-info">
-        <div class="t-name">Networking</div>
-        <div class="t-sub">TCP/IP · DNS · Packets · Enumeration</div>
-      </div>
-      <span class="t-badge bs">Soon</span>
-    </div>
-    <div class="topic-card locked-t">
-      <div class="t-stripe s-green"></div>
-      <div class="t-icon ig">🕸️</div>
-      <div class="t-info">
-        <div class="t-name">Web App Security</div>
-        <div class="t-sub">OWASP · SQLi · XSS · Burp Suite</div>
-      </div>
-      <span class="t-badge bs">Soon</span>
-    </div>
   </div>
   <footer>
     <p><a href="index.html">← Home</a> &nbsp;·&nbsp; Cyber Library &nbsp;·&nbsp; riig.github.io</p>
