@@ -28,7 +28,7 @@
     min-height: 100vh;
     display: flex; flex-direction: column;
     overflow-x: hidden;
-    cursor: none;
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Cline x1='0' y1='12' x2='9' y2='12' stroke='%2300e5ff' stroke-width='1.5'/%3E%3Cline x1='15' y1='12' x2='24' y2='12' stroke='%2300e5ff' stroke-width='1.5'/%3E%3Cline x1='12' y1='0' x2='12' y2='9' stroke='%2300e5ff' stroke-width='1.5'/%3E%3Cline x1='12' y1='15' x2='12' y2='24' stroke='%2300e5ff' stroke-width='1.5'/%3E%3Ccircle cx='12' cy='12' r='2.5' fill='none' stroke='%2300e5ff' stroke-width='1'/%3E%3C/svg%3E") 12 12, crosshair;
   }
 
   /* animated grid */
@@ -63,24 +63,7 @@
   }
   @keyframes scanScroll { 0%{background-position:0 0;} 100%{background-position:0 80px;} }
 
-  /* custom cursor */
-  .cursor-ring {
-    position: fixed; top:0; left:0; z-index:9999;
-    width:24px; height:24px;
-    border: 1px solid rgba(0,229,255,.7); border-radius: 50%;
-    pointer-events: none; will-change: transform;
-    transition: width .2s ease, height .2s ease, border-color .2s ease, opacity .2s ease;
-    mix-blend-mode: screen;
-  }
-  .cursor-dot {
-    position: fixed; top:0; left:0; z-index:9999;
-    width:4px; height:4px; background: var(--accent);
-    border-radius:50%; pointer-events:none; will-change: transform;
-  }
-  .cursor-ring.big   { width:38px; height:38px; border-color:var(--accent3); opacity:.8; }
-  .cursor-ring.click { width:14px; height:14px; border-color:var(--accent); opacity:.5; }
-
-  .wrap {
+.wrap {
     position: relative; z-index: 2;
     max-width: 900px; margin: 0 auto;
     padding: 0 28px 64px;
@@ -133,37 +116,7 @@
     50%{opacity:1;transform:translate(-50%,-50%) scale(1.1);}
   }
 
-  .hero-eyebrow {
-    font-family:'Share Tech Mono',monospace;
-    font-size:.7rem; letter-spacing:.3em; color:var(--accent);
-    text-transform:uppercase; margin-bottom:22px;
-    display:flex; align-items:center; gap:14px; opacity:.85;
-    animation: fadeUp .4s .05s ease both;
-  }
-  .hero-eyebrow::before,.hero-eyebrow::after {
-    content:''; width:36px; height:1px; background:var(--accent); opacity:.45;
-  }
-
-  .hero-title-wrap {
-    margin-bottom:54px; min-height:2.8rem;
-    animation: fadeUp .45s .12s ease both;
-  }
-  h1.hero-title {
-    font-family:'Orbitron',monospace; font-weight:900;
-    font-size:clamp(1.5rem,3.8vw,2.4rem);
-    letter-spacing:.07em; line-height:1.1; color:#fff;
-    text-shadow:0 0 36px rgba(0,229,255,.25);
-    cursor:none;
-  }
-  h1.hero-title:hover { animation:titleFlare .5s ease both; }
-  @keyframes titleFlare {
-    0%   { transform:scale(1);    filter:brightness(1); }
-    35%  { transform:scale(1.02); filter:brightness(1.45) drop-shadow(0 0 18px rgba(0,229,255,.75)); }
-    70%  { transform:scale(1.01); filter:brightness(1.15) drop-shadow(0 0 8px rgba(0,229,255,.4)); }
-    100% { transform:scale(1);    filter:brightness(1); }
-  }
-
-  .dir-grid {
+.dir-grid {
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
     gap:14px; width:100%; max-width:680px; margin:0 auto;
@@ -176,7 +129,7 @@
     border-radius:10px; padding:22px 22px 20px;
     text-decoration:none;
     transition:transform .18s,box-shadow .22s,border-color .22s;
-    position:relative; overflow:hidden; cursor:none;
+    position:relative; overflow:hidden;
   }
   .dir-card::after {
     content:''; position:absolute; inset:0;
@@ -262,8 +215,6 @@
 <body>
 
 <div class="scanlines"></div>
-<div class="cursor-ring" id="cRing"></div>
-<div class="cursor-dot"  id="cDot"></div>
 
 <div class="wrap">
 
@@ -278,14 +229,6 @@
   <section class="hero">
     <div class="hero-glow"></div>
 
-    <!-- eyebrow changed from "Personal Study Archive" -->
-    <div class="hero-eyebrow">Riig's Cybersecurity Library</div>
-
-    <!-- typewriter title — replaces giant RIIG + Cybersecurity Cheat Sheet -->
-    <div class="hero-title-wrap">
-      <h1 class="hero-title" id="heroTitle"></h1>
-    </div>
-
     <div class="dir-grid">
       <a class="dir-card cyan" href="library.html">
         <div class="dir-card-icon">📚</div>
@@ -294,9 +237,9 @@
         <div class="dir-card-cta">Enter Library</div>
       </a>
       <div class="dir-card locked">
-        <div class="dir-card-icon">🛠️</div>
-        <div class="dir-card-name">Tools &amp; Resources</div>
-        <p class="dir-card-desc">Popular software, reliable APIs, and much more.</p>
+        <div class="dir-card-icon">🚩</div>
+        <div class="dir-card-name">Placeholder Page</div>
+        <p class="dir-card-desc">Don't have anything to show here yet!</p>
         <div class="dir-card-cta">Coming Soon</div>
       </div>
       <div class="dir-card locked">
@@ -324,25 +267,6 @@
 </div>
 
 <script>
-/* CUSTOM CURSOR */
-const ring = document.getElementById('cRing');
-const dot  = document.getElementById('cDot');
-const rHalf = 12, dHalf = 2; // half of ring(24px) and dot(4px)
-let mx=-200,my=-200,rx=-200,ry=-200;
-document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
-document.addEventListener('mousedown', () => ring.classList.add('click'));
-document.addEventListener('mouseup',   () => ring.classList.remove('click'));
-document.querySelectorAll('a,.dir-card').forEach(el => {
-  el.addEventListener('mouseenter', () => ring.classList.add('big'));
-  el.addEventListener('mouseleave', () => ring.classList.remove('big'));
-});
-(function loop() {
-  rx += (mx-rx) * .15; ry += (my-ry) * .15;
-  dot.style.transform  = `translate(${mx-dHalf}px,${my-dHalf}px)`;
-  ring.style.transform = `translate(${rx-rHalf}px,${ry-rHalf}px)`;
-  requestAnimationFrame(loop);
-})();
-
 /* FINGERPRINT */
 (function() {
   const ua=navigator.userAgent;
@@ -371,20 +295,6 @@ document.querySelectorAll('a,.dir-card').forEach(el => {
   } catch(e){}
   document.getElementById('p-user').textContent=username;
   document.getElementById('p-host').textContent=tz;
-})();
-
-/* TYPEWRITER */
-(function() {
-  const el=document.getElementById('heroTitle');
-  const text='PERSONAL STUDY ARCHIVE';
-  let i=0;
-  function type() {
-    if(i<=text.length) {
-      el.textContent=text.slice(0,i); i++;
-      setTimeout(type, i===1 ? 700 : 60+Math.random()*35);
-    }
-  }
-  setTimeout(type,400);
 })();
 
 /* TICKER */
