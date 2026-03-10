@@ -95,11 +95,50 @@
   }
   @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
 
+  .term-input {
+    background: transparent; border: none; outline: none;
+    color: #e2e8f0; caret-color: #e2e8f0;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.68rem; letter-spacing: 0.14em;
+    width: 180px; padding: 0; margin-left: 1px;
+    vertical-align: middle;
+  }
+  .term-input::placeholder { color: transparent; }
+  .nav-tag:focus-within .cursor { display: none; }
+
+  .search-results {
+    position: absolute; top: 100%; left: 0;
+    background: #0d1017; border: 1px solid var(--border);
+    border-top: none; border-radius: 0 0 8px 8px;
+    width: 320px; z-index: 100; overflow: hidden;
+    display: none;
+  }
+  .search-results.open { display: block; }
+  .s-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 14px; cursor: pointer;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem; letter-spacing: 0.08em;
+    color: var(--dim); border-bottom: 1px solid #161e2e;
+    text-decoration: none; transition: background .12s;
+  }
+  .s-item:last-child { border-bottom: none; }
+  .s-item:hover, .s-item.active { background: #111827; color: var(--text); }
+  .s-item .s-icon { font-size: 0.9rem; flex-shrink: 0; }
+  .s-item .s-label { color: var(--accent); flex-shrink: 0; }
+  .s-item .s-path { color: #3a4f70; font-size: 0.58rem; margin-left: auto; }
+  .s-no-results {
+    padding: 10px 14px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.63rem; color: var(--dim); letter-spacing: 0.08em;
+  }
+  nav { position: relative; }
+
   /* HERO */
   .hero {
-    flex:1; display:flex; flex-direction:column;
-    align-items:center; justify-content:center;
-    text-align:center; padding:80px 0 56px;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:flex-start;
+    text-align:center; padding:32px 0 32px;
     position:relative;
   }
 
@@ -124,9 +163,9 @@
   }
 
   .dir-card {
-    display:flex; flex-direction:column;
+    display:flex; flex-direction:column; align-items:center;
     background:var(--panel); border:1px solid var(--border);
-    border-radius:10px; padding:22px 22px 20px;
+    border-radius:10px; padding:20px 22px 18px;
     text-decoration:none;
     transition:transform .18s,box-shadow .22s,border-color .22s;
     position:relative; overflow:hidden;
@@ -147,18 +186,12 @@
   .dir-card.cyan:hover      { border-color:var(--accent); box-shadow:0 8px 32px rgba(0,229,255,.12); }
   .dir-card.locked          { opacity:.38; pointer-events:none; cursor:default; }
 
-  .dir-card-icon  { font-size:1.55rem; margin-bottom:12px; line-height:1; }
-  .dir-card-name  { font-family:'Orbitron',monospace; font-size:.8rem; font-weight:700; letter-spacing:.07em; color:#fff; margin-bottom:6px; }
-  .dir-card-desc  { font-size:.76rem; color:var(--dim); line-height:1.55; flex:1; }
-  .dir-card-cta   { margin-top:16px; font-family:'Share Tech Mono',monospace; font-size:.67rem; color:var(--accent); letter-spacing:.12em; display:flex; align-items:center; gap:6px; transition:gap .2s; }
-  .dir-card:hover .dir-card-cta { gap:10px; }
-  .dir-card-cta::after { content:'→'; font-size:.88rem; }
-  .dir-card.locked .dir-card-cta { color:var(--dim); }
-  .dir-card.locked .dir-card-cta::after { content:'🔒'; font-size:.72rem; }
+  .dir-card-icon  { font-size:1.9rem; margin-bottom:10px; line-height:1; }
+  .dir-card-name  { font-family:'Orbitron',monospace; font-size:.8rem; font-weight:700; letter-spacing:.07em; color:#fff; }
 
   /* TICKER */
   .ticker-wrap {
-    margin-top:48px; width:100%; max-width:680px;
+    margin-top:28px; width:100%; max-width:680px;
     animation: fadeUp .5s .32s ease both;
   }
   .ticker-label {
@@ -221,8 +254,9 @@
   <nav>
     <!-- LEFT: terminal prompt (replaces riig.github.io logo) -->
     <span class="nav-tag">
-      <span class="p-user" id="p-user">user</span><span class="p-colon">@</span><span class="p-host" id="p-host">localhost</span><span class="p-colon">:</span><span class="p-path">~</span><span class="p-dollar">$ </span><span class="cursor"></span>
+      <span class="p-user" id="p-user">user</span><span class="p-colon">@</span><span class="p-host" id="p-host">localhost</span><span class="p-colon">:</span><span class="p-path">~</span><span class="p-dollar">$&nbsp;</span><span class="cursor"></span><input class="term-input" id="termSearch" type="text" autocomplete="off" spellcheck="false">
     </span>
+    <div class="search-results" id="searchResults"></div>
 
   </nav>
 
@@ -233,20 +267,14 @@
       <a class="dir-card cyan" href="library.html">
         <div class="dir-card-icon">📚</div>
         <div class="dir-card-name">Study Library</div>
-        <p class="dir-card-desc">Course notes reformatted into friendly, graspable parts.</p>
-        <div class="dir-card-cta">Enter Library</div>
       </a>
       <div class="dir-card locked">
         <div class="dir-card-icon">🚩</div>
         <div class="dir-card-name">Placeholder Page</div>
-        <p class="dir-card-desc">Don't have anything to show here yet!</p>
-        <div class="dir-card-cta">Coming Soon</div>
       </div>
       <div class="dir-card locked">
         <div class="dir-card-icon">🚩</div>
         <div class="dir-card-name">Placeholder Page</div>
-        <p class="dir-card-desc">Don't have anything to show here yet!</p>
-        <div class="dir-card-cta">Coming Soon</div>
       </div>
     </div>
 
@@ -254,7 +282,7 @@
     <div class="ticker-wrap">
       <div class="ticker-label">
         <span class="ticker-dot"></span>
-        system.log — hover to pause
+        system.log
       </div>
       <div class="ticker-track">
         <div class="ticker-inner" id="tickerInner"></div>
@@ -295,6 +323,82 @@
   } catch(e){}
   document.getElementById('p-user').textContent=username;
   document.getElementById('p-host').textContent=tz;
+})();
+
+/* SEARCH */
+(function() {
+  const INDEX = [
+    { icon:'📚', label:'Study Library',           path:'library.html',            tags:['library','study','topics','index','home'] },
+    { icon:'🖥️', label:'OS Fundamentals',          path:'os-fundamentals.html',    tags:['os','operating system','fundamentals','category'] },
+    { icon:'🐧', label:'Linux Fundamentals',       path:'linux-fundamentals.html', tags:['linux','fundamentals','unix','shell','bash','terminal','cli'] },
+    { icon:'🐧', label:'Linux — File System',      path:'linux-fundamentals.html#s3', tags:['filesystem','files','directories','paths','root','home','etc','bin'] },
+    { icon:'🐧', label:'Linux — Permissions',      path:'linux-fundamentals.html#s5', tags:['permissions','chmod','chown','rwx','ownership','groups'] },
+    { icon:'🐧', label:'Linux — Processes',        path:'linux-fundamentals.html#s7', tags:['processes','ps','top','kill','pid','daemon','jobs'] },
+    { icon:'🐧', label:'Linux — Package Managers', path:'linux-fundamentals.html#s9', tags:['apt','dnf','pacman','yum','packages','install','update'] },
+    { icon:'🐧', label:'Linux — Networking',       path:'linux-fundamentals.html#s11', tags:['networking','ifconfig','ip','ping','netstat','ssh','curl','wget'] },
+    { icon:'🐧', label:'Linux — Shell Scripting',  path:'linux-fundamentals.html#s13', tags:['scripting','bash','shell','script','variables','loops','functions'] },
+  ];
+
+  const input   = document.getElementById('termSearch');
+  const results = document.getElementById('searchResults');
+  let activeIdx = -1;
+
+  function show(items) {
+    activeIdx = -1;
+    if (!items.length) {
+      results.innerHTML = '<div class="s-no-results">no results — try another keyword</div>';
+    } else {
+      results.innerHTML = items.map((it, i) =>
+        `<a class="s-item" href="${it.path}" data-i="${i}">
+          <span class="s-icon">${it.icon}</span>
+          <span class="s-label">${it.label}</span>
+          <span class="s-path">${it.path.split('#')[0]}</span>
+        </a>`
+      ).join('');
+    }
+    results.classList.add('open');
+  }
+
+  function hide() {
+    results.classList.remove('open');
+    results.innerHTML = '';
+    activeIdx = -1;
+  }
+
+  input.addEventListener('input', function() {
+    const q = this.value.trim().toLowerCase();
+    if (!q) { hide(); return; }
+    const hits = INDEX.filter(it =>
+      it.label.toLowerCase().includes(q) ||
+      it.tags.some(t => t.includes(q))
+    );
+    show(hits);
+  });
+
+  input.addEventListener('keydown', function(e) {
+    const items = results.querySelectorAll('.s-item');
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      activeIdx = Math.min(activeIdx + 1, items.length - 1);
+      items.forEach((el, i) => el.classList.toggle('active', i === activeIdx));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      activeIdx = Math.max(activeIdx - 1, 0);
+      items.forEach((el, i) => el.classList.toggle('active', i === activeIdx));
+    } else if (e.key === 'Enter') {
+      if (activeIdx >= 0 && items[activeIdx]) {
+        window.location.href = items[activeIdx].href;
+      } else if (items.length === 1) {
+        window.location.href = items[0].href;
+      }
+    } else if (e.key === 'Escape') {
+      hide(); this.value = '';
+    }
+  });
+
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('nav')) hide();
+  });
 })();
 
 /* TICKER */
